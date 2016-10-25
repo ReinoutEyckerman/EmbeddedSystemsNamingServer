@@ -22,6 +22,15 @@ public class HashTableCreator {
         htName.put(name, digest);
         htIp.put(digest, ip;
         JSONObject joHtIp = new JSONObject(htIp);
+        try{
+            FileWriter fw = new FileWriter("hashtable.json")
+            fw.write(joHtIp.toJSONString());
+            fw.close();
+        }
+        catch (Exception e)
+        {
+            System.out.Println(e);
+        }
     }
 }
 
