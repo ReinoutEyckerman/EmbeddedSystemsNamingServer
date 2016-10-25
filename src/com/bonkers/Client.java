@@ -9,13 +9,7 @@ public class Client {
         try {
             Registry registry = LocateRegistry.getRegistry(host);
             ServerIntf stub = (ServerIntf) registry.lookup("ServerIntf");
-            int response = stub.getBalance();
-            System.out.println(response);
-            stub.withdrawMoney(10);
-            response = stub.getBalance();
-            System.out.println(response);
-            stub.addMoney(40);
-            response = stub.getBalance();
+            String response = stub.FindLocationFile("Filename");
             System.out.println(response);
 
 
