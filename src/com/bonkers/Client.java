@@ -1,7 +1,10 @@
 package com.bonkers;
 
+import java.io.File;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Client {
     public static void main(String args[]) throws Exception {
@@ -18,4 +21,14 @@ public class Client {
             e.printStackTrace();
         }
     }
+    private List<String> listFilesForFolder(final File folder) {
+        List<String> files=new ArrayList<>();
+        for (final File fileEntry : folder.listFiles()) {
+            if (!fileEntry.isDirectory()) {
+                files.add(fileEntry.getName());
+            }
+        }
+        return files;
+    }
+
 }
