@@ -1,17 +1,17 @@
 package com.bonkers;
 
-import org.json.simple.JSONObject;
-import org.json.simple.JsonObject;
+import com.google.gson.Gson;
 
 import java.io.FileWriter;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * Created by Jente on 25/10/2016.
  */
 public class HashTableCreator {
-    public Hashtable htName = new Hashtable();
-    public Hashtable htIp = new Hashtable();
+    public Map htIp = new HashMap();
     private int createHash(String ip)
     {
         int digest = Math.abs(ip.hashCode())%32768;
@@ -20,13 +20,16 @@ public class HashTableCreator {
 
     public void CreateHashTable(String ip, String name)
     {
-        int digest = createHash(ip);
-        htName.put(name, digest);
+        int digest = createHash(name);
         htIp.put(digest, ip);
-        JsonObject joHtIp = new JsonObject(htIp);
+    }
+    public void writeHashtable(Hashtable htIp)
+    {
+        Gson gson = new Gson();
+        String json = gson.toJson(htIp);
         try{
             FileWriter fw = new FileWriter("hashtable.json");
-            fw.write(joHtIp.toJson());
+            fw.write(json);
             fw.close();
         }
         catch (Exception e)
