@@ -1,6 +1,6 @@
 package com.bonkers;
 
-import org.json.simple.JsonObject;
+import com.google.gson.Gson;
 
 import java.io.FileWriter;
 import java.util.Hashtable;
@@ -25,10 +25,11 @@ public class HashTableCreator {
     }
     public void writeHashtable(Hashtable htIp)
     {
-        JsonObject joHtIp = new JsonObject(htIp);
+        Gson gson = new Gson();
+        String json = gson.toJson(htIp);
         try{
             FileWriter fw = new FileWriter("hashtable.json");
-            fw.write(joHtIp.toJson());
+            fw.write(json);
             fw.close();
         }
         catch (Exception e)
