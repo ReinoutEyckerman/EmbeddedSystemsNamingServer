@@ -1,6 +1,5 @@
 package com.bonkers;
 
-import org.json.simple.JSONObject;
 import org.json.simple.JsonObject;
 
 import java.io.FileWriter;
@@ -23,6 +22,9 @@ public class HashTableCreator {
         int digest = createHash(ip);
         htName.put(name, digest);
         htIp.put(digest, ip);
+    }
+    public void writeHashtable(Hashtable htIp)
+    {
         JsonObject joHtIp = new JsonObject(htIp);
         try{
             FileWriter fw = new FileWriter("hashtable.json");
