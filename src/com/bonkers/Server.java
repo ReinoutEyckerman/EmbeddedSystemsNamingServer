@@ -18,7 +18,7 @@ public class Server {
     private void GetIP()
     {
         try {
-            byte[] buf = new byte[256];
+            byte[] buf = new byte[2048];
 
             while (!IsFinished)
             {
@@ -27,12 +27,11 @@ public class Server {
                 InetAddress address = packet.getAddress();
                 int port = packet.getPort();
                 Nodename = new String(packet.getData());
-                String resp = "OK";
+                String resp = checkDoubles(Nodename, address);
                 buf = resp.getBytes();
                 packet = new DatagramPacket(buf, buf.length, address, port);
                 DatagramSocket socket = new DatagramSocket();
                 socket.send(packet);
-                HT.CreateHashTable(Nodename, address.toString());
             }
         }
         catch (IOException e)
@@ -40,6 +39,26 @@ public class Server {
             IsFinished = true;
             System.out.println(e);
         }
+    }
+
+    private String checkDoubles(String name, InetAddress ip)
+    {
+        String resp = null;
+        int hash = HT.createHash(name);
+        if(HT.htIp.containsKey(hash))
+        {
+            resp = "Name is already taken";
+        }
+        else if (HT.htIp.containsValue(ip.toString()))
+        {
+            resp = "IP already exists";
+        }
+        else
+        {
+            resp = "OK";
+            HT.CreateHashTable(Nodename, ip.toString());
+        }
+        return resp;
     }
 }
 

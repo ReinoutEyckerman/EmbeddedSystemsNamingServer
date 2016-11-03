@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class HashTableCreator {
     public Map htIp = new HashMap();
-    private int createHash(String ip)
+    public int createHash(String ip)
     {
         int digest = Math.abs(ip.hashCode())%32768;
         return digest;
