@@ -25,7 +25,7 @@ public class Client {
     DatagramPacket packet = null;
 
     public static void main(String args[]) throws Exception {
-        String host = "192.168.1.1";
+        String host = "localhost";
         try {
             Registry registry = LocateRegistry.getRegistry(host);
             ServerIntf stub = (ServerIntf) registry.lookup("ServerIntf");
@@ -47,18 +47,7 @@ public class Client {
         }
         return files;
     }
-    public static void FindFile(){
-        try {
-            ServerIntf obj = (ServerIntf) Naming.lookup("//"+"192.168.1.1"+"/Host");
-            obj.FindLocationFile("foto.jpg");
-        } catch (NotBoundException e) {
-            e.printStackTrace();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-    }
+
     private void sendDetailsToNameServer() throws IOException
     {
         br = new BufferedReader(new InputStreamReader(System.in));

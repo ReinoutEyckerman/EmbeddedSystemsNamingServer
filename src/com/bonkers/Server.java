@@ -3,7 +3,8 @@ package com.bonkers;
 import java.io.IOException;
 import java.net.*;
 
-public class Server {
+public class Server implements ServerIntf {
+
     private DatagramSocket socket = null;
     private HashTableCreator HT = null;
     private String Nodename = null;
@@ -13,6 +14,17 @@ public class Server {
         HT = new HashTableCreator();
         socket = new DatagramSocket(6790);
         GetIP();
+    }
+
+    public String FindLocationFile(String FileName){
+        HashTableCreator obj = new HashTableCreator();
+        int FileHash = obj.createHash(FileName);
+        String result =obj.readHashtable(FileHash);
+
+        if (result != null)
+            return result;
+        else
+            return " File Not Found";
     }
 
     private void GetIP()
