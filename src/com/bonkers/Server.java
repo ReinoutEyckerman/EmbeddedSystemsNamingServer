@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.*;
 
 public class Server {
-
     private DatagramSocket socket = null;
     private HashTableCreator HT = null;
     private String Nodename = null;
@@ -16,7 +15,7 @@ public class Server {
         GetIP();
     }
 
-    public void GetIP()
+    private void GetIP()
     {
         try {
             byte[] buf = new byte[256];
