@@ -1,8 +1,8 @@
 package com.bonkers;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
+import java.rmi.*;
+;
 
 public interface ServerIntf extends Remote {
-    public String FindLocationFile(String FileName) throws RemoteException;
+    String FindLocationFile(String FileName) throws RemoteException;
 }
