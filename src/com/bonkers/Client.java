@@ -16,15 +16,13 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bonkers.ServerIntf;
-
 public class Client {
     String ServerAddress = "192.168.1.1";
     BufferedReader br = null;
     DatagramSocket socket = null;
     DatagramPacket packet = null;
 
-    public void Client() throws Exception {
+    public Client() throws Exception {
         sendDetailsToNameServer();
         try {
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
