@@ -1,24 +1,31 @@
 package com.bonkers;
 
 import java.io.IOException;
-import java.net.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class Server implements ServerIntf {
+public class Server {
 
-    public Server() throws IOException {
-        GetIPThread CreateHashTable = new GetIPThread();
-        CreateHashTable.start();
-    }
+    public Server() throws IOException, InterruptedException {
+        ExecutorService executor = Executors.newFixedThreadPool(2);
 
-    public String FindLocationFile(String FileName){
-        HashTableCreator obj = new HashTableCreator();
-        int FileHash = obj.createHash(FileName);
-        String result =obj.readHashtable(FileHash);
-
-        if (result != null)
-            return result;
-        else
-            return " File Not Found";
+        List<Callable<Double>> Callables = Arrays.asList(
+                new GetIPThread(),
+                new RMIServer()
+        );
+        executor.invokeAll(Callables).stream().map(future -> {
+            try {
+                return future.get();
+            }
+            catch (Exception e)
+            {
+                throw new IllegalStateException(e);
+            }
+        }).forEach(System.out::println);
+        executor.shutdownNow();
     }
 }
 
