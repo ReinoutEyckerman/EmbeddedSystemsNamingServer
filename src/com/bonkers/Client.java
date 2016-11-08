@@ -29,20 +29,26 @@ public class Client implements QueueListener,NodeIntf {
     DatagramPacket packet = null;
     byte[] buf = null;
     MulticastCommunicator multicast=null;
-    private int id, previd, nextid;
+    private ServerIntf server;
+    private Tuple<Integer, String> id, previd, nextid;
 
 
     public Client(String name) throws Exception {
         this.name=name;
-        //multicast=new MulticastCommunicator(name);
-        //multicast.start();
-        //multicast.packetQueue.addListener(this);
+        multicast=new MulticastCommunicator(name);
+        multicast.start();
+        multicast.packetQueue.addListener(this);
         sendDetailsToNameServer();
         try {
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
+
             ServerIntf stub = (ServerIntf) registry.lookup("ServerIntf");
             String response = stub.FindLocationFile("8814");
             System.out.println("IP is");
+
+            server = (ServerIntf) registry.lookup("ServerIntf");
+            String response1 = server.FindLocationFile("Filename");
+
             System.out.println(response);
 
 
@@ -111,7 +117,42 @@ public class Client implements QueueListener,NodeIntf {
         return packet;
     }
     public void Shutdown(){
-
+        try {
+            Registry registry = LocateRegistry.getRegistry(previd.y);
+            NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
+            node.UpdateNextNeighbor(nextid);
+            registry=LocateRegistry.getRegistry(nextid.y);
+            node=(NodeIntf) registry.lookup("NodeIntf");
+            node.UpdatePreviousNeighbor(previd);
+            server.NodeShutdown(id);
+            System.exit(0);
+        } catch (Exception e) {
+            System.err.println("Client exception: " + e.toString());
+            e.printStackTrace();
+        }
+    }
+    public void NodeFailure(int id){
+        Tuple nodeFailed;
+        if(id==previd.x)
+            nodeFailed=previd;
+        else if(id==nextid.x)
+            nodeFailed=nextid;
+        else {
+            throw new IllegalArgumentException("What the actual fuck, this node isn't in my table yo");
+        }
+        try {
+            Tuple<Tuple<Integer,String>,Tuple<Integer,String>> neighbors=server.NodeFailure(nodeFailed);
+            Registry registry = LocateRegistry.getRegistry(neighbors.x.y);
+            NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
+            node.UpdateNextNeighbor(neighbors.y);
+            registry=LocateRegistry.getRegistry(neighbors.y.y);
+            node=(NodeIntf) registry.lookup("NodeIntf");
+            node.UpdatePreviousNeighbor(neighbors.x);
+            server.NodeShutdown(nodeFailed);
+        }catch(Exception e){
+            System.err.println("Client exception: " + e.toString());
+            e.printStackTrace();
+        }
     }
     @Override
     public void packetReceived() {
@@ -119,7 +160,13 @@ public class Client implements QueueListener,NodeIntf {
     }
 
     @Override
-    public void UpdateNextNeighbor(int nodeNumber) {
+    public void UpdateNextNeighbor(Tuple node) {
+        this.nextid=node;
+    }
+
+    @Override
+    public void UpdatePreviousNeighbor(Tuple node) {
+        this.previd=node;
 
     }
 }
