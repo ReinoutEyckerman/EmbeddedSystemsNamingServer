@@ -25,7 +25,7 @@ public class Client {
     DatagramPacket packet = null;
 
     public static void main(String args[]) throws Exception {
-        String host = "localhost";
+        String host = "192.168.1.1";
         try {
             Registry registry = LocateRegistry.getRegistry(host);
             ServerIntf stub = (ServerIntf) registry.lookup("ServerIntf");
