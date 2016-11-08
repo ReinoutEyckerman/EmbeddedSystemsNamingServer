@@ -27,8 +27,9 @@ public class HashTableCreator {
     {
         int digest = createHash(name);
         htIp.put(digest, ip);
+        writeHashtable(htIp);
     }
-    public void writeHashtable(Hashtable htIp)
+    public void writeHashtable(Map htIp)
     {
         Gson gson = new Gson();
         String json = gson.toJson(htIp);

@@ -16,22 +16,34 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 import com.bonkers.ServerIntf;
 import com.sun.org.apache.xpath.internal.operations.Mult;
 
 public class Client implements QueueListener {
+=======
+public class Client {
+>>>>>>> bbe106db0c64140978bc4eacdf21b5f9da9b5a85
     String ServerAddress = "192.168.1.1";
     private String name;
     BufferedReader br = null;
     DatagramSocket socket = null;
     DatagramPacket packet = null;
-
-    public Client(String name) throws Exception {
-this.name=name;
+<<<<<<< HEAD
+    MulticastCommunicator multicast=null;
+    public Client(String name){
+        this.name=name;
         multicast=new MulticastCommunicator(name);
         multicast.start();
         multicast.packetQueue.addListener(this);
+    }
+    public static void main(String args[]) throws Exception {
+        String host = "192.168.1.1";
+=======
+
+    public Client() throws Exception {
         sendDetailsToNameServer();
+>>>>>>> bbe106db0c64140978bc4eacdf21b5f9da9b5a85
         try {
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
             ServerIntf stub = (ServerIntf) registry.lookup("ServerIntf");
@@ -94,5 +106,10 @@ this.name=name;
         // get response
         packet = new DatagramPacket(buf, buf.length);
         socket.receive(packet);
+    }
+
+    @Override
+    public void packetReceived() {
+
     }
 }

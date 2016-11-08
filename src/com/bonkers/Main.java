@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         if(args.length>0) {
             switch (args[0]) {
                 case "server":
@@ -34,6 +34,10 @@ public class Main {
                         } else {
                             System.out.println("Argument is not a valid IPv4 address");
                         }
+                    }
+                    else
+                    {
+                        System.out.println("No IP address given");
                     }
                     break;
                 default:
