@@ -25,14 +25,16 @@ public class Client implements QueueListener,NodeIntf {
     BufferedReader br = null;
     DatagramSocket socket = null;
     DatagramPacket packet = null;
+    byte[] buf = null;
     MulticastCommunicator multicast=null;
     private int id, previd, nextid;
 
+
     public Client(String name) throws Exception {
         this.name=name;
-        multicast=new MulticastCommunicator(name);
-        multicast.start();
-        multicast.packetQueue.addListener(this);
+        //multicast=new MulticastCommunicator(name);
+        //multicast.start();
+        //multicast.packetQueue.addListener(this);
         sendDetailsToNameServer();
         try {
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
@@ -58,14 +60,16 @@ public class Client implements QueueListener,NodeIntf {
 
     private void sendDetailsToNameServer() throws IOException
     {
+        buf = new byte[2048];
         br = new BufferedReader(new InputStreamReader(System.in));
         // get a datagram socket
         socket = new DatagramSocket();
 
-        sendRequest();
+        DatagramPacket packet = sendRequest();
 
         // display response
-        String received = new String(packet.getData(), 0, packet.getLength());
+
+        String received = new String(packet.getData());
         if(received == "Name is already taken")
         {
             System.out.println("The node name already exists on the server please choose another one");
@@ -82,20 +86,21 @@ public class Client implements QueueListener,NodeIntf {
 
         socket.close();
     }
-    private void sendRequest() throws IOException
+    private DatagramPacket sendRequest() throws IOException
     {
         // send request
-        System.out.print("Give your client a name");
+        System.out.println("Give your client a name");
         String name = br.readLine();
         byte[] buf = new byte[2048];
         buf = name.getBytes();
-        InetAddress address = InetAddress.getByAddress(ServerAddress.getBytes());
+        InetAddress address = InetAddress.getByName(ServerAddress);
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 6790);
         socket.send(packet);
 
         // get response
         packet = new DatagramPacket(buf, buf.length);
         socket.receive(packet);
+        return packet;
     }
     public void Shutdown(){
 
