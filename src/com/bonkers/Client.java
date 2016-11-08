@@ -24,10 +24,10 @@ public class Client {
     DatagramSocket socket = null;
     DatagramPacket packet = null;
 
-    public static void main(String args[]) throws Exception {
-        String host = "192.168.1.1";
+    public Client() throws Exception {
+        sendDetailsToNameServer();
         try {
-            Registry registry = LocateRegistry.getRegistry(host);
+            Registry registry = LocateRegistry.getRegistry(ServerAddress);
             ServerIntf stub = (ServerIntf) registry.lookup("ServerIntf");
             String response = stub.FindLocationFile("Filename");
             System.out.println(response);

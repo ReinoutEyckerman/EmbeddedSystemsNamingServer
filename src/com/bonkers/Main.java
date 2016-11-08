@@ -35,6 +35,10 @@ public class Main {
                             System.out.println("Argument is not a valid IPv4 address");
                         }
                     }
+                    else
+                    {
+                        System.out.println("No IP address given");
+                    }
                     break;
                 default:
                     System.out.println("Unknown parameter: " + args[0]);
