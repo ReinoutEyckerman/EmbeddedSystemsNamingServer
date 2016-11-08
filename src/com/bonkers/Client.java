@@ -17,13 +17,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.bonkers.ServerIntf;
+import com.sun.org.apache.xpath.internal.operations.Mult;
 
-public class Client {
+public class Client implements QueueListener {
     String ServerAddress = "192.168.1.1";
+    private String name;
     BufferedReader br = null;
     DatagramSocket socket = null;
     DatagramPacket packet = null;
-
+    MulticastCommunicator multicast=null;
+    public Client(String name){
+        this.name=name;
+        multicast=new MulticastCommunicator(name);
+        multicast.start();
+        multicast.packetQueue.addListener(this);
+    }
     public static void main(String args[]) throws Exception {
         String host = "192.168.1.1";
         try {
@@ -88,5 +96,10 @@ public class Client {
         // get response
         packet = new DatagramPacket(buf, buf.length);
         socket.receive(packet);
+    }
+
+    @Override
+    public void packetReceived() {
+
     }
 }
