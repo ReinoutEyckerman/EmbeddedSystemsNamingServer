@@ -16,25 +16,34 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 import com.bonkers.ServerIntf;
 import com.sun.org.apache.xpath.internal.operations.Mult;
 
 public class Client implements QueueListener {
+=======
+public class Client {
+>>>>>>> bbe106db0c64140978bc4eacdf21b5f9da9b5a85
     String ServerAddress = "192.168.1.1";
     private String name;
     BufferedReader br = null;
     DatagramSocket socket = null;
     DatagramPacket packet = null;
-    byte[] buf = null;
+<<<<<<< HEAD
     MulticastCommunicator multicast=null;
-
-
-    public Client(String name) throws Exception {
+    public Client(String name){
         this.name=name;
-        //multicast=new MulticastCommunicator(name);
-        //multicast.start();
-        //multicast.packetQueue.addListener(this);
+        multicast=new MulticastCommunicator(name);
+        multicast.start();
+        multicast.packetQueue.addListener(this);
+    }
+    public static void main(String args[]) throws Exception {
+        String host = "192.168.1.1";
+=======
+
+    public Client() throws Exception {
         sendDetailsToNameServer();
+>>>>>>> bbe106db0c64140978bc4eacdf21b5f9da9b5a85
         try {
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
             ServerIntf stub = (ServerIntf) registry.lookup("ServerIntf");
@@ -59,16 +68,14 @@ public class Client implements QueueListener {
 
     private void sendDetailsToNameServer() throws IOException
     {
-        buf = new byte[2048];
         br = new BufferedReader(new InputStreamReader(System.in));
         // get a datagram socket
         socket = new DatagramSocket();
 
-        DatagramPacket packet = sendRequest();
+        sendRequest();
 
         // display response
-
-        String received = new String(packet.getData());
+        String received = new String(packet.getData(), 0, packet.getLength());
         if(received == "Name is already taken")
         {
             System.out.println("The node name already exists on the server please choose another one");
@@ -85,21 +92,20 @@ public class Client implements QueueListener {
 
         socket.close();
     }
-    private DatagramPacket sendRequest() throws IOException
+    private void sendRequest() throws IOException
     {
         // send request
-        System.out.println("Give your client a name");
+        System.out.print("Give your client a name");
         String name = br.readLine();
         byte[] buf = new byte[2048];
         buf = name.getBytes();
-        InetAddress address = InetAddress.getByName(ServerAddress);
+        InetAddress address = InetAddress.getByAddress(ServerAddress.getBytes());
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 6790);
         socket.send(packet);
 
         // get response
         packet = new DatagramPacket(buf, buf.length);
         socket.receive(packet);
-        return packet;
     }
 
     @Override

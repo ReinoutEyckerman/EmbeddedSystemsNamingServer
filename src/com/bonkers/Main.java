@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         if(args.length>0) {
             switch (args[0]) {
                 case "server":
@@ -24,7 +24,7 @@ public class Main {
                     if(args.length>1)
                     {
                         if (IsIP(args[1])) {
-                            Client client = new Client();
+                            Client client = new Client("Benito");
                         /*try {
                             client.run();
                         } catch (IOException e) {

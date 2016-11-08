@@ -36,14 +36,20 @@ public class Server implements ServerIntf {
             {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
+                System.out.println("packet received" + packet.getData());
                 InetAddress address = packet.getAddress();
+                //InetAddress address = InetAddress.getByName(Address);
+                System.out.println(address);
                 int port = packet.getPort();
                 Nodename = new String(packet.getData());
+                System.out.println(Nodename);
                 String resp = checkDoubles(Nodename, address);
+                System.out.println(resp);
                 buf = resp.getBytes();
                 packet = new DatagramPacket(buf, buf.length, address, port);
                 DatagramSocket socket = new DatagramSocket();
                 socket.send(packet);
+                System.out.println(new String(packet.getData()));
             }
         }
         catch (IOException e)
@@ -61,14 +67,14 @@ public class Server implements ServerIntf {
         {
             resp = "Name is already taken";
         }
-        else if (HT.htIp.containsValue(ip.toString()))
+        else if (HT.htIp.containsValue(ip))
         {
             resp = "IP already exists";
         }
         else
         {
             resp = "OK";
-            HT.CreateHashTable(Nodename, ip.toString());
+            HT.CreateHashTable(ip, Nodename);
         }
         return resp;
     }

@@ -6,6 +6,7 @@ import com.google.gson.stream.JsonReader;
 import jdk.nashorn.internal.parser.JSONParser;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -17,18 +18,19 @@ import java.util.Map;
  */
 public class HashTableCreator {
     public Map htIp = new HashMap();
-    public int createHash(String ip)
+    public int createHash(String name)
     {
-        int digest = Math.abs(ip.hashCode())%32768;
+        int digest = Math.abs(name.hashCode())%32768;
         return digest;
     }
 
-    public void CreateHashTable(String ip, String name)
+    public void CreateHashTable(InetAddress ip, String name)
     {
         int digest = createHash(name);
         htIp.put(digest, ip);
+        writeHashtable(htIp);
     }
-    public void writeHashtable(Hashtable htIp)
+    public void writeHashtable(Map htIp)
     {
         Gson gson = new Gson();
         String json = gson.toJson(htIp);
