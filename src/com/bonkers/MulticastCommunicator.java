@@ -28,7 +28,6 @@ public class MulticastCommunicator extends Thread {
             if(s!=null)
                 packetQueue.add(s);
         }
-
     }
 
     private void JoinGroup() {
@@ -37,7 +36,6 @@ public class MulticastCommunicator extends Thread {
             castSocket = new MulticastSocket(6789);
             castSocket.joinGroup(group);
         } catch (Exception e) {
-
         }
     }
 
@@ -46,22 +44,17 @@ public class MulticastCommunicator extends Thread {
             DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), group, 6789);
             castSocket.send(packet);
         } catch (Exception e) {
-
         }
     }
 
     public String ReceiveMulticast() {
-
         try {
-            byte[] buf = new byte[1000];
+            byte[] buf = new byte[1024];
             DatagramPacket recv = new DatagramPacket(buf, buf.length);
             castSocket.receive(recv);
-            //TODO: Process packet
-            String s="";
-            packetQueue.add(s);
+            String s=new String(buf,0,recv.getLength());
             return s;
         } catch (Exception e) {
-
         }
         return null;
     }
