@@ -25,9 +25,10 @@ public class Client implements QueueListener {
     BufferedReader br = null;
     DatagramSocket socket = null;
     DatagramPacket packet = null;
+    MulticastCommunicator multicast=null;
 
     public Client(String name) throws Exception {
-this.name=name;
+        this.name=name;
         multicast=new MulticastCommunicator(name);
         multicast.start();
         multicast.packetQueue.addListener(this);
@@ -94,5 +95,10 @@ this.name=name;
         // get response
         packet = new DatagramPacket(buf, buf.length);
         socket.receive(packet);
+    }
+
+    @Override
+    public void packetReceived() {
+
     }
 }
