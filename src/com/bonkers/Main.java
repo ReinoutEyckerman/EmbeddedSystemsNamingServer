@@ -21,16 +21,19 @@ public class Main {
 
                     break;
                 case "client":
-                    if (IsIP(args[1])) {
-                        Client client = new Client();
-                    /*try {
-                        client.run();
-                    } catch (IOException e) {
-                        System.out.println("Client "+e+"ge IOException caught. Exiting...");
-                        System.exit(1);
-                    }*/
-                    } else {
-                        System.out.println("Argument is not a valid IPv4 address");
+                    if(args.length>1)
+                    {
+                        if (IsIP(args[1])) {
+                            Client client = new Client();
+                        /*try {
+                            client.run();
+                        } catch (IOException e) {
+                            System.out.println("Client "+e+"ge IOException caught. Exiting...");
+                            System.exit(1);
+                        }*/
+                        } else {
+                            System.out.println("Argument is not a valid IPv4 address");
+                        }
                     }
                     break;
                 default:
