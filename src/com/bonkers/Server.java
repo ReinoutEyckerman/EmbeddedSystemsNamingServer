@@ -36,10 +36,13 @@ public class Server implements ServerIntf {
             {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
+                System.out.println("packet received" + packet);
                 InetAddress address = packet.getAddress();
                 int port = packet.getPort();
                 Nodename = new String(packet.getData());
+                System.out.println(Nodename);
                 String resp = checkDoubles(Nodename, address);
+                System.out.println(resp);
                 buf = resp.getBytes();
                 packet = new DatagramPacket(buf, buf.length, address, port);
                 DatagramSocket socket = new DatagramSocket();
