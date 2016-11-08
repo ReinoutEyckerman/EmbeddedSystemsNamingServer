@@ -40,6 +40,11 @@ public class Main {
                         System.out.println("No IP address given");
                     }
                     break;
+                case "rmiserver":
+                    System.out.println("Starting RMIServer");
+                    RMIServer RMIServer = new RMIServer();
+                    RMIServer.call();
+                    break;
                 default:
                     System.out.println("Unknown parameter: " + args[0]);
                     System.out.println("Exiting...");

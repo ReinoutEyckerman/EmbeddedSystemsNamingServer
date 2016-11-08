@@ -44,12 +44,12 @@ public class HashTableCreator {
             System.out.println(e);
         }
     }
-    public String readHashtable(int FileHash)
+    public String readHashtable(String FileHash)
     {
         String IP="";
 
         try {
-            JsonReader reader = new JsonReader(new FileReader("hashtable.txt"));
+            JsonReader reader = new JsonReader(new FileReader("hashtable.json"));
             reader.beginObject();
 
             while (reader.hasNext()){

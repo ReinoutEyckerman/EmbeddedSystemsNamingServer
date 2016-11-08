@@ -12,7 +12,7 @@ public class RMIServer implements Callable, ServerIntf {
 
     public String FindLocationFile(String FileName){
         HashTableCreator obj = new HashTableCreator();
-        int FileHash = obj.createHash(FileName);
+        String FileHash = FileName;//obj.createHash(FileName);
         String result = obj.readHashtable(FileHash);
 
         if (result != null)

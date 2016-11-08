@@ -19,8 +19,10 @@ import java.util.List;
 import com.bonkers.ServerIntf;
 import com.sun.org.apache.xpath.internal.operations.Mult;
 
+
 public class Client implements QueueListener,NodeIntf {
-    String ServerAddress = "192.168.1.1";
+    String ServerAddress = "192.168.1.230";
+
     private String name;
     BufferedReader br = null;
     DatagramSocket socket = null;
@@ -39,7 +41,8 @@ public class Client implements QueueListener,NodeIntf {
         try {
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
             ServerIntf stub = (ServerIntf) registry.lookup("ServerIntf");
-            String response = stub.FindLocationFile("Filename");
+            String response = stub.FindLocationFile("8814");
+            System.out.println("IP is");
             System.out.println(response);
 
 
@@ -70,18 +73,23 @@ public class Client implements QueueListener,NodeIntf {
         // display response
 
         String received = new String(packet.getData());
-        if(received == "Name is already taken")
+        System.out.println(received);
+        if(received.equals("201t"))
         {
             System.out.println("The node name already exists on the server please choose another one");
             sendRequest();
         }
-        else if (received == "IP already exists")
+        else if (received.equals("202t"))
         {
             System.out.println("You already exist in the name server");
         }
-        else
+        else if (received.equals("100t"))
         {
             System.out.println("No errors");
+        }
+        else
+        {
+            System.out.println("Unknown error");
         }
 
         socket.close();
