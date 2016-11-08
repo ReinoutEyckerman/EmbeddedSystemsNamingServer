@@ -19,13 +19,14 @@ import java.util.List;
 import com.bonkers.ServerIntf;
 import com.sun.org.apache.xpath.internal.operations.Mult;
 
-public class Client implements QueueListener {
+public class Client implements QueueListener,NodeIntf {
     String ServerAddress = "192.168.1.1";
     private String name;
     BufferedReader br = null;
     DatagramSocket socket = null;
     DatagramPacket packet = null;
     MulticastCommunicator multicast=null;
+    private int id, previd, nextid;
 
     public Client(String name) throws Exception {
         this.name=name;
@@ -96,9 +97,16 @@ public class Client implements QueueListener {
         packet = new DatagramPacket(buf, buf.length);
         socket.receive(packet);
     }
+    public void Shutdown(){
 
+    }
     @Override
     public void packetReceived() {
+
+    }
+
+    @Override
+    public void UpdateNextNeighbor(int nodeNumber) {
 
     }
 }
