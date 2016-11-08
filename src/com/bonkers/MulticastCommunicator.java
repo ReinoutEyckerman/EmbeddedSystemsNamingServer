@@ -18,7 +18,7 @@ public class MulticastCommunicator extends Thread {
         SendMulticast(name);
     }
 
-    public void run() {
+    public void run(){
 
     }
 
