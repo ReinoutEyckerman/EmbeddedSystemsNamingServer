@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        if(args!=null) {
+        if(args.length>0) {
             switch (args[0]) {
                 case "server":
                     System.out.println("Starting Server");
