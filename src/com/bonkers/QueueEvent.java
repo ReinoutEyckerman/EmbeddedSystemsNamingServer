@@ -1,10 +1,7 @@
 package com.bonkers;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * Created by reinout on 11/8/16.
@@ -15,7 +12,7 @@ interface QueueListener{
 public class QueueEvent<E> extends PriorityQueue<E> {
   private List<QueueListener> listeners = new ArrayList<QueueListener>();
   // usual methods for adding/removing listeners
-  private Queue<E> queue;
+  private Queue<E> queue=new LinkedList<E>();
   public boolean add(E item){
     NotifyPacketReceived();
     return queue.add(item);

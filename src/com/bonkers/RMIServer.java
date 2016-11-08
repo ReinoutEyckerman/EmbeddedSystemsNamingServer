@@ -21,6 +21,17 @@ public class RMIServer implements Callable, ServerIntf {
             return " File Not Found";
     }
 
+    @Override
+    public void NodeShutdown(Tuple node) {
+        //TODO: WHAT THE FUCK?
+    }
+
+    @Override
+    public Tuple<Tuple<Integer, String>, Tuple<Integer, String>> NodeFailure(Tuple node) {
+        //TODO: Zie NodeShutdown
+        return null;
+    }
+
     public RMIServer() {}
 
     public Integer call()

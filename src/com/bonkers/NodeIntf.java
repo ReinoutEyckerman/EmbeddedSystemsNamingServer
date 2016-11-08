@@ -6,5 +6,6 @@ import java.rmi.Remote;
  * Created by reinout on 11/8/16.
  */
 public interface NodeIntf extends Remote {
-    void UpdateNextNeighbor(int nodeNumber);
+    void UpdateNextNeighbor(Tuple node);
+    void UpdatePreviousNeighbor(Tuple node);
 }
