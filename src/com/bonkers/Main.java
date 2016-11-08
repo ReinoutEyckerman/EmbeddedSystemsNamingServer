@@ -24,7 +24,7 @@ public class Main {
                     if(args.length>1)
                     {
                         if (IsIP(args[1])) {
-                            Client client = new Client();
+                            Client client = new Client("Benito");
                         /*try {
                             client.run();
                         } catch (IOException e) {
