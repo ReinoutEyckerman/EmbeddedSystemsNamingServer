@@ -24,7 +24,7 @@ public class Client {
     DatagramSocket socket = null;
     DatagramPacket packet = null;
 
-    public Client() throws Exception {
+    public void Client() throws Exception {
         sendDetailsToNameServer();
         try {
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
