@@ -12,7 +12,8 @@ interface QueueListener{
 public class QueueEvent<E> extends PriorityQueue<E> {
   private List<QueueListener> listeners = new ArrayList<QueueListener>();
   // usual methods for adding/removing listeners
-  private Queue<E> queue=new LinkedList<E>();
+  //TODO DISABLE PUBLIC
+  public Queue<E> queue=new LinkedList<E>();
   public boolean add(E item){
     NotifyPacketReceived();
     return queue.add(item);

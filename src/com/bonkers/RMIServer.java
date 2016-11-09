@@ -10,7 +10,6 @@ import java.util.concurrent.Callable;
  * Created by Jente on 8/11/2016.
  */
 public class RMIServer implements Callable, ServerIntf {
-    Map hashmap=new HashMap();
     public String FindLocationFile(String FileName){
         HashTableCreator obj = new HashTableCreator();
         String FileHash = FileName;//obj.createHash(FileName);
@@ -24,7 +23,8 @@ public class RMIServer implements Callable, ServerIntf {
 
     @Override
     public void NodeShutdown(Tuple node) {
-        //TODO: WHOAT THE FUCK?
+        HashTableCreator table=new HashTableCreator();
+        Map hashmap=table.readHashtable();
         if(hashmap.containsKey(node.x)){
             hashmap.remove(node.x);
         }
@@ -33,6 +33,8 @@ public class RMIServer implements Callable, ServerIntf {
 
     @Override
     public Tuple<Tuple<Integer, String>, Tuple<Integer, String>> NodeFailure(Tuple node) {
+        HashTableCreator table=new HashTableCreator();
+        Map hashmap=table.readHashtable();
         List list=new ArrayList(hashmap.keySet());
         Collections.sort(list);
         int index=list.indexOf(node.x);
