@@ -45,7 +45,7 @@ public class RMIServer implements Callable, ServerIntf {
             Registry registry = LocateRegistry.createRegistry(1099);
             registry.bind("ServerIntf", stub);
 
-            System.err.println("Server ready");
+            System.out.println("Server ready");
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
