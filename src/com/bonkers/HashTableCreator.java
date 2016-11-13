@@ -12,25 +12,43 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
-
 /**
- * Created by Jente on 25/10/2016.
+ * Class that handles the writing and reading of hashmap.
+ * TODO: Potential singleton?
  */
 public class HashTableCreator {
+    /**
+     * Local hashmap for intermediate and outside use.
+     */
     public Map htIp = new HashMap();
+
+    /**
+     * Generates hash from string
+     * @param name Original hash code
+     * @return hash integer
+     */
     public int createHash(String name)
     {
         int digest = Math.abs(name.hashCode())%32768;
         return digest;
     }
 
+    /**
+     * Creates hash and writes it to the file.
+     * @param ip Ip address of the hash host
+     * @param name Name of the hash host of which the hash has to be calculated.
+     */
     public void CreateHashTable(InetAddress ip, String name)
     {
         int digest = createHash(name);
         htIp.put(digest, ip);
-        writeHashtable(htIp);
+        writeHashtable();
     }
-    public void writeHashtable(Map htIp)
+
+    /**
+     * Writes hash to gson file.
+     */
+    public void writeHashtable()
     {
         Gson gson = new Gson();
         String json = gson.toJson(htIp);
@@ -44,6 +62,11 @@ public class HashTableCreator {
             System.out.println(e);
         }
     }
+
+    /**
+     * Reads hashes from file.
+     * @return Hashtable map
+     */
     public Map readHashtable()
     {
         Map Hashtable = new HashMap();
@@ -65,6 +88,14 @@ public class HashTableCreator {
         }
         return Hashtable;
     }
+
+    /**
+     * Finds host connected to hash.
+     * @param mp Hashmap
+     * @param FileHash Filehash
+     * @return Connected host
+     */
+    //TODO (?)
     public String FindHost(Map mp, String FileHash)
     {
         String IP="";

@@ -1,19 +1,29 @@
 package com.bonkers;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Server {
+/**
+ * Server class that accepts client connections.
+ */
+public class Server implements QueueListener{
+    private HashTableCreator HT=null;
+    private MulticastCommunicator multicaster=null;
 
+    /**
+     * Main server object constructor, creates MulticastCommunicator and Hashtablecreator, and subscribes on the queueEvent object
+     * @throws IOException When IO fails (?)
+     * @throws InterruptedException TODO LOLWAT IS DIS
+     */
     public Server() throws IOException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(2);
 
         List<Callable<Double>> Callables = Arrays.asList(
-                new GetIPThread(),
                 new RMIServer()
         );
         executor.invokeAll(Callables).stream().map(future -> {
@@ -26,6 +36,42 @@ public class Server {
             }
         }).forEach(System.out::println);
         executor.shutdownNow();
+        HT=new HashTableCreator();
+        multicaster=new MulticastCommunicator();
+        multicaster.start();
+        multicaster.packetQueue.addListener(this);
+    }
+
+    @Override
+    public void packetReceived() {
+        Tuple<String, InetAddress> t=multicaster.packetQueue.poll();
+        checkDoubles(t.x, t.y);
+    }
+
+    /**
+     * TODO UNFINISHED CODE :^)
+     * @param name Name of the thing
+     * @param ip Ip address
+     * @return Returns error code
+     */
+    private String checkDoubles(String name, InetAddress ip)
+    {
+        String resp = null;
+        int hash = HT.createHash(name);
+        if(HT.htIp.containsKey(hash))
+        {
+            resp = "201";
+        }
+        else if (HT.htIp.containsValue(ip))
+        {
+            resp = "202";
+        }
+        else
+        {
+            resp = "100";
+            HT.CreateHashTable(ip, name);
+        }
+        return resp;
     }
 }
 
