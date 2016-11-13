@@ -9,24 +9,54 @@ import java.util.Queue;
 import java.util.concurrent.Callable;
 
 /**
- * Created by reinout on 11/3/16.
+ * Multicast communication Thread.
  */
 public class MulticastCommunicator extends Thread {
     //https://docs.oracle.com/javase/7/docs/api/java/net/MulticastSocket.html
+    /**
+     * Multicast address of the group to join.
+     */
     private final String castAdress = "234.5.6.7";
+
+    /**
+     *  InetAddress of the group.
+     */
     private InetAddress group = null;
+
+    /**
+     * Boolean of the finished thread.
+     */
     private Boolean IsFinished = false;
+    /**
+     * Multicastsocket of the thread.
+     */
     private MulticastSocket castSocket = null;
+    /**
+     * QueueEvent of packages that are received.
+     * You can subscribe to its events.
+     */
     public QueueEvent<Tuple<String, InetAddress>> packetQueue=new QueueEvent<Tuple<String,InetAddress>>();
 
+    /**
+     * Constructor meant for server that automatically joins the multicast group.
+     */
     public MulticastCommunicator() {
         JoinGroup();
     }
+
+    /**
+     * Constructor meant for client that automatically joins the multicast group and sends its info over multicast.
+     * @param name Name of the client.
+     */
     public MulticastCommunicator(String name) {
         JoinGroup();
         SendMulticast(name);
     }
 
+    /**
+     * Main server loop, runs and gets multicasts and adds them to the QueueEvent.
+     * No interaction required.
+     */
     public void run(){
         while(!IsFinished) {
             Tuple t = ReceiveMulticast();
@@ -35,6 +65,9 @@ public class MulticastCommunicator extends Thread {
         }
     }
 
+    /**
+     * Join group function. Connects to the multicast group.
+     */
     private void JoinGroup() {
         try {
             group = InetAddress.getByName(castAdress);
@@ -44,6 +77,10 @@ public class MulticastCommunicator extends Thread {
         }
     }
 
+    /**
+     * Sends a string over multicast.
+     * @param msg Message to send.
+     */
     public void SendMulticast(String msg) {
         try {
             DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), group, 6789);
@@ -52,6 +89,11 @@ public class MulticastCommunicator extends Thread {
         }
     }
 
+    /**
+     * Receives a multicast packet.
+     *
+     * @return returns a Tuple containing its information as string and its IP address as InetAddress
+     */
     public Tuple<String,InetAddress> ReceiveMulticast() {
         try {
             byte[] buf = new byte[2048];
@@ -70,6 +112,9 @@ public class MulticastCommunicator extends Thread {
         return null;
     }
 
+    /**
+     * Leave Multicast group.
+     */
     public void LeaveGroup() {
         try {
             castSocket.leaveGroup(group);
