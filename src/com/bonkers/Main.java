@@ -23,27 +23,13 @@ public class Main {
                 case "client":
                     if(args.length>1)
                     {
-                        if (IsIP(args[1])) {
-                            Client client = new Client("Benito");
-                        /*try {
-                            client.run();
-                        } catch (IOException e) {
-                            System.out.println("Client "+e+"ge IOException caught. Exiting...");
-                            System.exit(1);
-                        }*/
-                        } else {
-                            System.out.println("Argument is not a valid IPv4 address");
-                        }
+                            Client client = new Client(args[1]);
+
                     }
                     else
                     {
-                        System.out.println("No IP address given");
+                        System.out.println("No Name given");
                     }
-                    break;
-                case "rmiserver":
-                    System.out.println("Starting RMIServer");
-                    RMIServer RMIServer = new RMIServer();
-                    RMIServer.call();
                     break;
                 default:
                     System.out.println("Unknown parameter: " + args[0]);

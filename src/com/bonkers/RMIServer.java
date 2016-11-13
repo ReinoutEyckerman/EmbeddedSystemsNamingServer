@@ -1,5 +1,6 @@
 package com.bonkers;
 
+import java.io.File;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -9,16 +10,33 @@ import java.util.concurrent.Callable;
 /**
  * Created by Jente on 8/11/2016.
  */
-public class RMIServer implements Callable, ServerIntf {
-    public String FindLocationFile(String FileName){
+public class RMIServer implements  Callable,  ServerIntf {
+    public String FindLocationFile(String FileName)throws InterruptedException{
         HashTableCreator obj = new HashTableCreator();
-        String FileHash = FileName;//obj.createHash(FileName);
-        String result = obj.FindHost(obj.readHashtable(), FileHash);
 
-        if (result != null)
-            return result;
+        int Hash = obj.createHash(FileName);
+        Map hashmap=obj.readHashtable();
+        List list=new ArrayList(hashmap.keySet());
+        Collections.sort(list);
+        String previousNeighbor = null;
+        String lastNode=(String)hashmap.get(list.get(list.size()-1));
+
+        for (int i=0;(Integer.parseInt(list.get(i).toString())-Hash)>0;i++)
+        {
+            if(((Integer)list.get(i)-Hash)<0)
+            {
+                 previousNeighbor =(String)hashmap.get(list.get(i));
+            }
+        }
+
+        if (previousNeighbor != null)
+        {
+            return previousNeighbor;
+        }
         else
-            return " File Not Found";
+        {
+            return lastNode;
+       }
     }
 
     @Override
@@ -45,7 +63,7 @@ public class RMIServer implements Callable, ServerIntf {
 
     public RMIServer() {}
 
-    public Integer call()
+    public Integer call() throws Exception
     {
         System.out.println("RMI server started");
         try {

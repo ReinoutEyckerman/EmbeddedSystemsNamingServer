@@ -14,7 +14,7 @@ public class Server implements QueueListener{
     public Server() throws IOException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(2);
 
-        List<Callable<Double>> Callables = Arrays.asList(
+        List<Callable<Integer>> Callables = Arrays.asList(
                 new RMIServer()
         );
         executor.invokeAll(Callables).stream().map(future -> {

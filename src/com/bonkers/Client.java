@@ -40,19 +40,22 @@ public class Client implements QueueListener,NodeIntf {
         multicast.packetQueue.addListener(this);
         sendDetailsToNameServer();
         try {
+
+
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
 
             ServerIntf stub = (ServerIntf) registry.lookup("ServerIntf");
-            String response = stub.FindLocationFile("8814");
-            System.out.println("IP is");
-
+            String response = stub.FindLocationFile("filename");
+            System.out.println("IP is " + response);
+        }
+            /*
             server = (ServerIntf) registry.lookup("ServerIntf");
             String response1 = server.FindLocationFile("Filename");
 
             System.out.println(response);
+*/
 
-
-        } catch (Exception e) {
+         catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
         }
@@ -102,9 +105,8 @@ public class Client implements QueueListener,NodeIntf {
     }
     private DatagramPacket sendRequest() throws IOException
     {
+
         // send request
-        System.out.println("Give your client a name");
-        String name = br.readLine();
         byte[] buf = new byte[2048];
         buf = name.getBytes();
         InetAddress address = InetAddress.getByName(ServerAddress);
@@ -113,7 +115,7 @@ public class Client implements QueueListener,NodeIntf {
 
         // get response
         packet = new DatagramPacket(buf, buf.length);
-        socket.receive(packet);
+        //socket.receive(packet);
         return packet;
     }
     public void Shutdown(){

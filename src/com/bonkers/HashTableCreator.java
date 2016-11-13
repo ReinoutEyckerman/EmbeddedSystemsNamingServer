@@ -65,17 +65,6 @@ public class HashTableCreator {
         }
         return Hashtable;
     }
-    public String FindHost(Map mp, String FileHash)
-    {
-        String IP="";
-        Iterator it = mp.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            if (pair.getKey().equals(FileHash)) {
-                IP = pair.getValue().toString();
-            }
-        }
-        return IP;
-    }
+
 }
 
