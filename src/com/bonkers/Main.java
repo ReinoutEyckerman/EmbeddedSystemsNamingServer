@@ -4,8 +4,16 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Startup class
+ */
 public class Main {
-
+    /**
+     * Main function.
+     * Accepts client or server mode from args
+     * @param args startup arguments.
+     * @throws Exception Throws exception on fail
+     */
     public static void main(String[] args) throws Exception {
         if(args.length>0) {
             switch (args[0]) {
@@ -44,6 +52,12 @@ public class Main {
 
     }
 
+    /**
+     * Checks if entered IP is an actual legit IP.
+     * @param text Ip as string
+     * @return Boolean that returns true or false depending of the string is an IP.
+     * TODO: Replace this by an InetAddress function?
+     */
     public static boolean IsIP(String text) {
         Pattern p = Pattern.compile("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
         Matcher m = p.matcher(text);

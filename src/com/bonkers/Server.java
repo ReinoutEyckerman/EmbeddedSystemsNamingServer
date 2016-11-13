@@ -8,9 +8,18 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Server class that accepts client connections.
+ */
 public class Server implements QueueListener{
-    HashTableCreator HT=null;
-    MulticastCommunicator multicaster=null;
+    private HashTableCreator HT=null;
+    private MulticastCommunicator multicaster=null;
+
+    /**
+     * Main server object constructor, creates MulticastCommunicator and Hashtablecreator, and subscribes on the queueEvent object
+     * @throws IOException When IO fails (?)
+     * @throws InterruptedException TODO LOLWAT IS DIS
+     */
     public Server() throws IOException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(2);
 
@@ -38,6 +47,13 @@ public class Server implements QueueListener{
         Tuple<String, InetAddress> t=multicaster.packetQueue.poll();
         checkDoubles(t.x, t.y);
     }
+
+    /**
+     * TODO UNFINISHED CODE :^)
+     * @param name Name of the thing
+     * @param ip Ip address
+     * @return Returns error code
+     */
     private String checkDoubles(String name, InetAddress ip)
     {
         String resp = null;

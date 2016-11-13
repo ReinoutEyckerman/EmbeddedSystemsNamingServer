@@ -3,42 +3,54 @@ package com.bonkers;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bonkers.ServerIntf;
-import com.sun.org.apache.xpath.internal.operations.Mult;
-
-
+/**
+ * Client class to connect to server
+ */
 public class Client implements QueueListener,NodeIntf {
-    String ServerAddress = "192.168.1.230";
 
+    /**
+     * Address of the server to connect to.
+     * TODO( Necessary, since multicast?)
+     */
+    private String ServerAddress = "192.168.1.230";
+
+    /**
+     * Name of the client.
+     */
     private String name;
-    BufferedReader br = null;
-    DatagramSocket socket = null;
-    DatagramPacket packet = null;
-    byte[] buf = null;
-    MulticastCommunicator multicast=null;
+
+    /**
+     * Multicast Thread.
+     */
+    private MulticastCommunicator multicast=null;
+    /**
+     * Server RMI interface.
+     */
     private ServerIntf server;
+    /**
+     * Tuples with the hash and IPAddress from itself, previous and nextid.
+     */
     private Tuple<Integer, String> id, previd, nextid;
 
-
+    /**
+     * Client constructor.
+     * Starts MulticastCommunicator.
+     * @param name Name of the client
+     * @throws Exception Generic exception for when something fails TODO
+     */
     public Client(String name) throws Exception {
         this.name=name;
         multicast=new MulticastCommunicator(name);
         multicast.start();
         multicast.packetQueue.addListener(this);
-        sendDetailsToNameServer();
         try {
 
 
@@ -60,6 +72,12 @@ public class Client implements QueueListener,NodeIntf {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Returns list of files as strings in a specified folder.
+     * @param folder Folder File for where to search for files.
+     * @return List of strings of the filenames in the folder.
+     */
     private List<String> listFilesForFolder(final File folder) {
         List<String> files=new ArrayList<>();
         for (final File fileEntry : folder.listFiles()) {
@@ -70,9 +88,12 @@ public class Client implements QueueListener,NodeIntf {
         return files;
     }
 
+
     private void sendDetailsToNameServer() throws IOException
     {
-        buf = new byte[2048];
+        //TODO
+        /*
+        byte[] buf = new byte[2048];
         br = new BufferedReader(new InputStreamReader(System.in));
         // get a datagram socket
         socket = new DatagramSocket();
@@ -101,11 +122,13 @@ public class Client implements QueueListener,NodeIntf {
             System.out.println("Unknown error");
         }
 
-        socket.close();
+        socket.close();*/
     }
     private DatagramPacket sendRequest() throws IOException
     {
+        //TODO
 
+/*
         // send request
         byte[] buf = new byte[2048];
         buf = name.getBytes();
@@ -116,8 +139,14 @@ public class Client implements QueueListener,NodeIntf {
         // get response
         packet = new DatagramPacket(buf, buf.length);
         //socket.receive(packet);
-        return packet;
+        return packet;*/
+        return null;
     }
+    /**
+     * This function gets called on shutdown.
+     * It updates the neighbors so their connection can be established, and notifies the server of its shutdown.
+     */
+
     public void Shutdown(){
         try {
             Registry registry = LocateRegistry.getRegistry(previd.y);
@@ -133,6 +162,13 @@ public class Client implements QueueListener,NodeIntf {
             e.printStackTrace();
         }
     }
+
+    /**
+     * This function will get called after connection with a neighboring node fails.
+     * It updates the server that the note is down, and gets its neighboring nodes so they can make connection.
+     *
+     * @param id Integer id/hash of the failing node
+     */
     public void NodeFailure(int id){
         Tuple nodeFailed;
         if(id==previd.x)
@@ -156,6 +192,7 @@ public class Client implements QueueListener,NodeIntf {
             e.printStackTrace();
         }
     }
+
     @Override
     public void packetReceived() {
 
@@ -169,6 +206,5 @@ public class Client implements QueueListener,NodeIntf {
     @Override
     public void UpdatePreviousNeighbor(Tuple node) {
         this.previd=node;
-
     }
 }

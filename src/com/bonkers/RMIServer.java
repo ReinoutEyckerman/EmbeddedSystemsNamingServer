@@ -7,11 +7,19 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.Callable;
 
+
 /**
- * Created by Jente on 8/11/2016.
+ * Server subpart that handles RMI events.
  */
+<<<<<<< HEAD
 public class RMIServer implements  Callable,  ServerIntf {
     public String FindLocationFile(String FileName)throws InterruptedException{
+=======
+public class RMIServer implements Callable, ServerIntf {
+
+    @Override
+    public String FindLocationFile(String FileName){
+>>>>>>> d7da951f10f87eb2cc7a8c0ef0cabf0b9ca52f5f
         HashTableCreator obj = new HashTableCreator();
 
         int Hash = obj.createHash(FileName);
@@ -61,9 +69,17 @@ public class RMIServer implements  Callable,  ServerIntf {
         return new Tuple<>(previousNeighbor,nextNeighbor);
     }
 
+<<<<<<< HEAD
     public RMIServer() {}
 
     public Integer call() throws Exception
+=======
+    /**
+     * Server start function.
+     * @return returns error code.
+     */
+    public Integer call()
+>>>>>>> d7da951f10f87eb2cc7a8c0ef0cabf0b9ca52f5f
     {
         System.out.println("RMI server started");
         try {
