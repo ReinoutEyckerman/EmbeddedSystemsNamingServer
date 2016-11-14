@@ -44,25 +44,25 @@ public class RMIServer implements Callable, ServerIntf {
     }
 
     @Override
-    public void NodeShutdown(Tuple node) {
+    public void NodeShutdown(NodeInfo node) {
         HashTableCreator table=new HashTableCreator();
         Map hashmap=table.readHashtable();
-        if(hashmap.containsKey(node.x)){
-            hashmap.remove(node.x);
+        if(hashmap.containsKey(node.Hash)){
+            hashmap.remove(node.Hash);
         }
         else throw new IllegalArgumentException("Somehow, the node that shut down didn't exist");
     }
 
     @Override
-    public Tuple<Tuple<Integer, String>, Tuple<Integer, String>> NodeFailure(Tuple node) {
+    public NodeInfo[] NodeFailure(NodeInfo node) {
         HashTableCreator table=new HashTableCreator();
         Map hashmap=table.readHashtable();
         List list=new ArrayList(hashmap.keySet());
         Collections.sort(list);
-        int index=list.indexOf(node.x);
-        Tuple<Integer, String> previousNeighbor=new Tuple<Integer,String>((Integer)list.get(index-1),(String)hashmap.get(list.get(index-1)));
-        Tuple<Integer, String> nextNeighbor=new Tuple<Integer,String>((Integer)list.get(index+1),(String)hashmap.get(list.get(index+1)));
-        return new Tuple<>(previousNeighbor,nextNeighbor);
+        int index=list.indexOf(node.Hash);
+        NodeInfo previousNeighbor=new NodeInfo((Integer)list.get(index-1),(String)hashmap.get(list.get(index-1)));
+        NodeInfo nextNeighbor=new NodeInfo((Integer)list.get(index+1),(String)hashmap.get(list.get(index+1)));
+        return new NodeInfo[]{previousNeighbor,nextNeighbor};
     }
 
 

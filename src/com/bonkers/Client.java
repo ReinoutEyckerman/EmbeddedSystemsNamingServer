@@ -38,7 +38,7 @@ public class Client implements QueueListener,NodeIntf {
     /**
      * Tuples with the hash and IPAddress from itself, previous and nextid.
      */
-    private Tuple<Integer, String> id, previd, nextid;
+    private NodeInfo id, previd, nextid;
 
     /**
      * Client constructor.
@@ -149,10 +149,10 @@ public class Client implements QueueListener,NodeIntf {
 
     public void Shutdown(){
         try {
-            Registry registry = LocateRegistry.getRegistry(previd.y);
+            Registry registry = LocateRegistry.getRegistry(previd.Address);
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
             node.UpdateNextNeighbor(nextid);
-            registry=LocateRegistry.getRegistry(nextid.y);
+            registry=LocateRegistry.getRegistry(nextid.Address);
             node=(NodeIntf) registry.lookup("NodeIntf");
             node.UpdatePreviousNeighbor(previd);
             server.NodeShutdown(id);
@@ -170,22 +170,22 @@ public class Client implements QueueListener,NodeIntf {
      * @param id Integer id/hash of the failing node
      */
     public void NodeFailure(int id){
-        Tuple nodeFailed;
-        if(id==previd.x)
+        NodeInfo nodeFailed;
+        if(id==previd.Hash)
             nodeFailed=previd;
-        else if(id==nextid.x)
+        else if(id==nextid.Hash)
             nodeFailed=nextid;
         else {
             throw new IllegalArgumentException("What the actual fuck, this node isn't in my table yo");
         }
         try {
-            Tuple<Tuple<Integer,String>,Tuple<Integer,String>> neighbors=server.NodeFailure(nodeFailed);
-            Registry registry = LocateRegistry.getRegistry(neighbors.x.y);
+            NodeInfo[] neighbors=server.NodeFailure(nodeFailed);
+            Registry registry = LocateRegistry.getRegistry(neighbors[0].Address);
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
-            node.UpdateNextNeighbor(neighbors.y);
-            registry=LocateRegistry.getRegistry(neighbors.y.y);
+            node.UpdateNextNeighbor(neighbors[1]);
+            registry=LocateRegistry.getRegistry(neighbors[1].Address);
             node=(NodeIntf) registry.lookup("NodeIntf");
-            node.UpdatePreviousNeighbor(neighbors.x);
+            node.UpdatePreviousNeighbor(neighbors[0]);
             server.NodeShutdown(nodeFailed);
         }catch(Exception e){
             System.err.println("Client exception: " + e.toString());
@@ -199,12 +199,12 @@ public class Client implements QueueListener,NodeIntf {
     }
 
     @Override
-    public void UpdateNextNeighbor(Tuple node) {
+    public void UpdateNextNeighbor(NodeInfo node) {
         this.nextid=node;
     }
 
     @Override
-    public void UpdatePreviousNeighbor(Tuple node) {
+    public void UpdatePreviousNeighbor(NodeInfo node) {
         this.previd=node;
     }
 }

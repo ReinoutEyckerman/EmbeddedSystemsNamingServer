@@ -1,25 +1,27 @@
 package com.bonkers;
 
+import java.net.InetAddress;
+
 /**
  * Implementation of Node information.
  */
-public class Tuple<X,Y> {
+public class NodeInfo {
     /**
      * X value of the tuple
      */
-    public final X x ;
+    public int Hash ;
     /**
      * Y value of the tuple
      */
-    public final Y y;
+    public String Address;
 
     /**
      * Constructor that generates the tuple
      * @param x X value of the tuple
      * @param y Y value of the tuple
      */
-    public Tuple(X x, Y y){
-        this.x=x;
-        this.y=y;
+    public NodeInfo(int hash, String address){
+        this.Hash=hash;
+        this.Address=address;
     }
 }
