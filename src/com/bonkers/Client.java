@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
@@ -14,19 +15,17 @@ import java.util.List;
 /**
  * Client class to connect to server
  */
-public class Client implements QueueListener,NodeIntf {
+public class Client implements QueueListener,NodeIntf, ClientIntf {
 
     /**
      * Address of the server to connect to.
      * TODO( Necessary, since multicast?)
      */
-    private String ServerAddress = "192.168.1.230";
-
+    private String ServerAddress ;
     /**
      * Name of the client.
      */
     private String name;
-
     /**
      * Multicast Thread.
      */
@@ -48,31 +47,30 @@ public class Client implements QueueListener,NodeIntf {
      */
     public Client(String name) throws Exception {
         this.name=name;
+        BootStrap();
+    }
+
+
+    private void BootStrap(){
         multicast=new MulticastCommunicator(name);
         multicast.start();
         multicast.packetQueue.addListener(this);
         try {
-
-
-            Registry registry = LocateRegistry.getRegistry(ServerAddress);
-
-            ServerIntf stub = (ServerIntf) registry.lookup("ServerIntf");
-            String response = stub.FindLocationFile("filename");
-            System.out.println("IP is " + response);
-        }
-            /*
-            server = (ServerIntf) registry.lookup("ServerIntf");
-            String response1 = server.FindLocationFile("Filename");
-
-            System.out.println(response);
-*/
-
-         catch (Exception e) {
-            System.err.println("Client exception: " + e.toString());
+            int timeout = 10;//time in seconds
+            int count = 0;
+            while (ServerAddress == null) {
+                if (count > timeout) {
+                    multicast.SendMulticast(name);
+                    count = 0;
+                }
+                count++;
+                Thread.sleep(1000);
+            }
+        }catch (InterruptedException e){
             e.printStackTrace();
         }
+        System.out.println("Bootstrap complete");
     }
-
     /**
      * Returns list of files as strings in a specified folder.
      * @param folder Folder File for where to search for files.
@@ -206,5 +204,10 @@ public class Client implements QueueListener,NodeIntf {
     @Override
     public void UpdatePreviousNeighbor(Tuple node) {
         this.previd=node;
+    }
+
+    @Override
+    public void SetServerIp(String address) throws RemoteException {
+        this.ServerAddress=address;
     }
 }

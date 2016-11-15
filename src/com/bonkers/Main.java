@@ -1,6 +1,7 @@
 package com.bonkers;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +16,7 @@ public class Main {
      * @throws Exception Throws exception on fail
      */
     public static void main(String[] args) throws Exception {
+        System.out.print(InetAddress.getLocalHost().toString());
         if(args.length>0) {
             switch (args[0]) {
                 case "server":

@@ -2,6 +2,8 @@ package com.bonkers;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -45,7 +47,15 @@ public class Server implements QueueListener{
     @Override
     public void packetReceived() {
         Tuple<String, InetAddress> t=multicaster.packetQueue.poll();
-        checkDoubles(t.x, t.y);
+        //TODO ? checkDoubles(t.x, t.y);
+        try {
+            Registry registry = LocateRegistry.getRegistry(t.y.toString());
+
+            ClientIntf stub = (ClientIntf) registry.lookup("ClientIntf");
+            stub.SetServerIp(InetAddress.getLocalHost().toString());
+        } catch(Exception e){
+
+        }
     }
 
     /**
