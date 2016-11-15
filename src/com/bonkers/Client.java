@@ -21,7 +21,9 @@ public class Client implements QueueListener,NodeIntf, ClientIntf {
      * Address of the server to connect to.
      * TODO( Necessary, since multicast?)
      */
-    private String ServerAddress ;
+
+    private String ServerAddress = "192.168.1.1";
+
     /**
      * Name of the client.
      */
