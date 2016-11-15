@@ -58,6 +58,8 @@ public class Client implements QueueListener,NodeIntf {
 
             ServerIntf stub = (ServerIntf) registry.lookup("ServerIntf");
             String response = stub.FindLocationFile("filename");
+            String error = stub.Error();
+            CheckError(error);
             System.out.println("IP is " + response);
         }
             /*
@@ -89,31 +91,18 @@ public class Client implements QueueListener,NodeIntf {
     }
 
 
-    private void sendDetailsToNameServer() throws IOException
+    private void CheckError(String error) throws IOException
     {
-        //TODO
-        /*
-        byte[] buf = new byte[2048];
-        br = new BufferedReader(new InputStreamReader(System.in));
-        // get a datagram socket
-        socket = new DatagramSocket();
-
-        DatagramPacket packet = sendRequest();
-
-        // display response
-
-        String received = new String(packet.getData());
-        System.out.println(received);
-        if(received.equals("201t"))
+        if(error.equals("201"))
         {
             System.out.println("The node name already exists on the server please choose another one");
-            sendRequest();
+            //sendRequest();
         }
-        else if (received.equals("202t"))
+        else if (error.equals("202"))
         {
             System.out.println("You already exist in the name server");
         }
-        else if (received.equals("100t"))
+        else if (error.equals("100"))
         {
             System.out.println("No errors");
         }
@@ -121,8 +110,6 @@ public class Client implements QueueListener,NodeIntf {
         {
             System.out.println("Unknown error");
         }
-
-        socket.close();*/
     }
     private DatagramPacket sendRequest() throws IOException
     {

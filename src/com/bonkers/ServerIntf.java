@@ -14,6 +14,7 @@ public interface ServerIntf extends Remote {
      * @throws RemoteException Throws exception if RMI failed.
      */
     String FindLocationFile(String FileName) throws RemoteException;
+    String Error() throws RemoteException;
 
     /**
      * RMI function that removes a node from the hashtable when it shuts down.
