@@ -53,7 +53,7 @@ public class HashTableCreator {
         Gson gson = new Gson();
         String json = gson.toJson(htIp);
         try{
-            FileWriter fw = new FileWriter("hashtable.json");
+            FileWriter fw = new FileWriter("hashtable.json", true);
             fw.write(json);
             fw.close();
         }
