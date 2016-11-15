@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
@@ -14,12 +15,13 @@ import java.util.List;
 /**
  * Client class to connect to server
  */
-public class Client implements QueueListener,NodeIntf {
+public class Client implements QueueListener,NodeIntf, ClientIntf {
 
     /**
      * Address of the server to connect to.
      * TODO( Necessary, since multicast?)
      */
+
     private String ServerAddress = "192.168.1.1";
 
     /**
@@ -48,29 +50,26 @@ public class Client implements QueueListener,NodeIntf {
      */
     public Client(String name) throws Exception {
         this.name=name;
+        BootStrap();
+    }
+
+
+    private void BootStrap(){
         multicast=new MulticastCommunicator(name);
         multicast.start();
         multicast.packetQueue.addListener(this);
         try {
-
-
-            Registry registry = LocateRegistry.getRegistry(ServerAddress);
-
-            ServerIntf stub = (ServerIntf) registry.lookup("ServerIntf");
-            String response = stub.FindLocationFile("filename");
-            String error = stub.Error();
-            CheckError(error);
-            System.out.println("IP is " + response);
-        }
-            /*
-            server = (ServerIntf) registry.lookup("ServerIntf");
-            String response1 = server.FindLocationFile("Filename");
-
-            System.out.println(response);
-*/
-
-         catch (Exception e) {
-            System.err.println("Client exception: " + e.toString());
+            int timeout = 10;//time in seconds
+            int count = 0;
+            while (ServerAddress == null) {
+                if (count > timeout) {
+                    multicast.SendMulticast(name);
+                    count = 0;
+                }
+                count++;
+                Thread.sleep(1000);
+            }
+        }catch (InterruptedException e){
             e.printStackTrace();
         }
     }
@@ -91,18 +90,31 @@ public class Client implements QueueListener,NodeIntf {
     }
 
 
-    private void CheckError(String error) throws IOException
+    private void sendDetailsToNameServer() throws IOException
     {
-        if(error.equals("201"))
+        //TODO
+        /*
+        byte[] buf = new byte[2048];
+        br = new BufferedReader(new InputStreamReader(System.in));
+        // get a datagram socket
+        socket = new DatagramSocket();
+
+        DatagramPacket packet = sendRequest();
+
+        // display response
+
+        String received = new String(packet.getData());
+        System.out.println(received);
+        if(received.equals("201t"))
         {
             System.out.println("The node name already exists on the server please choose another one");
-            //sendRequest();
+            sendRequest();
         }
-        else if (error.equals("202"))
+        else if (received.equals("202t"))
         {
             System.out.println("You already exist in the name server");
         }
-        else if (error.equals("100"))
+        else if (received.equals("100t"))
         {
             System.out.println("No errors");
         }
@@ -110,6 +122,8 @@ public class Client implements QueueListener,NodeIntf {
         {
             System.out.println("Unknown error");
         }
+
+        socket.close();*/
     }
     private DatagramPacket sendRequest() throws IOException
     {
@@ -193,5 +207,10 @@ public class Client implements QueueListener,NodeIntf {
     @Override
     public void UpdatePreviousNeighbor(NodeInfo node) {
         this.previd=node;
+    }
+
+    @Override
+    public void SetServerIp(String address) throws RemoteException {
+        this.ServerAddress=address;
     }
 }
