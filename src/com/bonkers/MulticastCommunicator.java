@@ -35,7 +35,7 @@ public class MulticastCommunicator extends Thread {
      * QueueEvent of packages that are received.
      * You can subscribe to its events.
      */
-    public QueueEvent<Tuple<String, InetAddress>> packetQueue=new QueueEvent<Tuple<String,InetAddress>>();
+    public QueueEvent<Tuple<String,InetAddress>> packetQueue=new QueueEvent<Tuple<String,InetAddress>>();
 
     /**
      * Constructor meant for server that automatically joins the multicast group.
@@ -59,9 +59,9 @@ public class MulticastCommunicator extends Thread {
      */
     public void run(){
         while(!IsFinished) {
-            Tuple t = ReceiveMulticast();
-            if(t!=null)
-                packetQueue.add(t);
+            Tuple<String,InetAddress> info = ReceiveMulticast();
+            if(info!=null)
+                packetQueue.add(info);
         }
     }
 

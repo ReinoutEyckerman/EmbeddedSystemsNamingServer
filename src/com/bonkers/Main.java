@@ -1,5 +1,6 @@
 package com.bonkers;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.regex.Matcher;
@@ -21,6 +22,11 @@ public class Main {
             switch (args[0]) {
                 case "server":
                     System.out.println("Starting Server");
+                    File f = new File("hashtable.json");
+                    if (f.exists() && !f.isDirectory())
+                    {
+                        f.delete();
+                    }
                     Server server = new Server();
                 /* try{
                     //server.run();

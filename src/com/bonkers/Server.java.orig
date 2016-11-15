@@ -4,8 +4,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+<<<<<<< HEAD
+import java.util.Arrays;
+import java.util.List;
+=======
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+>>>>>>> 137926a8c22076cc0f26d7a34351f5fb43840de5
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,28 +29,45 @@ public class Server implements QueueListener, ServerIntf{
      * @throws InterruptedException TODO LOLWAT IS DIS
      */
     public Server() throws IOException, InterruptedException {
+
         HT=new HashTableCreator();
         multicaster=new MulticastCommunicator();
         multicaster.start();
         multicaster.packetQueue.addListener(this);
-    }
 
-    @Override
-    public void packetReceived() {
-        Tuple<String, InetAddress> t=multicaster.packetQueue.poll();
-        //TODO ? checkDoubles(t.x, t.y);
-        error = checkDoubles(t.x, t.y);
+        System.out.println("RMI server started");
         try {
-            Registry registry = LocateRegistry.getRegistry(t.y.toString());
+            Server obj = new Server();
+            ServerIntf stub = (ServerIntf) UnicastRemoteObject.exportObject(obj, 0);
 
-            ClientIntf stub = (ClientIntf) registry.lookup("ClientIntf");
-            stub.SetServerIp(InetAddress.getLocalHost().toString());
+            // Bind the remote object's stub in the registry
+            Registry registry = LocateRegistry.createRegistry(1099);
+            registry.bind("ServerIntf", stub);
+
+            System.out.println("Server ready");
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
         }
     }
 
+    @Override
+    public void packetReceived() {
+        Tuple<String, InetAddress> t=multicaster.packetQueue.poll();
+<<<<<<< HEAD
+        //TODO ? checkDoubles(t.x, t.y);
+        try {
+            Registry registry = LocateRegistry.getRegistry(t.y.toString());
+
+            ClientIntf stub = (ClientIntf) registry.lookup("ClientIntf");
+            stub.SetServerIp(InetAddress.getLocalHost().toString());
+        } catch(Exception e){
+
+        }
+=======
+        error = checkDoubles(t.x, t.y);
+>>>>>>> 137926a8c22076cc0f26d7a34351f5fb43840de5
+    }
 
     /**
      * TODO UNFINISHED CODE :^)
@@ -105,25 +127,25 @@ public class Server implements QueueListener, ServerIntf{
         return error;
     }
 
-    public void NodeShutdown(NodeInfo node) {
+    public void NodeShutdown(Tuple node) {
         HashTableCreator table=new HashTableCreator();
         Map hashmap=table.readHashtable();
-        if(hashmap.containsKey(node.Hash)){
-            hashmap.remove(node.Hash);
+        if(hashmap.containsKey(node.x)){
+            hashmap.remove(node.x);
         }
         else throw new IllegalArgumentException("Somehow, the node that shut down didn't exist");
     }
 
 
-    public NodeInfo[] NodeFailure(NodeInfo node) {
+    public Tuple<Tuple<Integer, String>, Tuple<Integer, String>> NodeFailure(Tuple node) {
         HashTableCreator table=new HashTableCreator();
         Map hashmap=table.readHashtable();
         List list=new ArrayList(hashmap.keySet());
         Collections.sort(list);
-        int index=list.indexOf(node.Hash);
-        NodeInfo previousNeighbor=new NodeInfo((Integer)list.get(index-1),(String)hashmap.get(list.get(index-1)));
-        NodeInfo nextNeighbor=new NodeInfo((Integer)list.get(index+1),(String)hashmap.get(list.get(index+1)));
-        return new NodeInfo[]{previousNeighbor,nextNeighbor};
+        int index=list.indexOf(node.x);
+        Tuple<Integer, String> previousNeighbor=new Tuple<Integer,String>((Integer)list.get(index-1),(String)hashmap.get(list.get(index-1)));
+        Tuple<Integer, String> nextNeighbor=new Tuple<Integer,String>((Integer)list.get(index+1),(String)hashmap.get(list.get(index+1)));
+        return new Tuple<>(previousNeighbor,nextNeighbor);
     }
 }
 
