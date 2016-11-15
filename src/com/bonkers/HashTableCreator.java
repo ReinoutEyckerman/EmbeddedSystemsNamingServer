@@ -25,7 +25,7 @@ public class HashTableCreator {
      * @param name Original hash code
      * @return hash integer
      */
-    public int createHash(String name)
+    public static int createHash(String name)
     {
         int digest = Math.abs(name.hashCode())%32768;
         return digest;

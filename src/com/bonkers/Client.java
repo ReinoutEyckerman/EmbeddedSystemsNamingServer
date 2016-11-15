@@ -51,7 +51,6 @@ public class Client implements QueueListener,NodeIntf, ClientIntf {
         BootStrap();
     }
 
-
     private void BootStrap(){
         multicast=new MulticastCommunicator(name);
         multicast.start();
@@ -70,6 +69,15 @@ public class Client implements QueueListener,NodeIntf, ClientIntf {
         }catch (InterruptedException e){
             e.printStackTrace();
         }
+        try {
+            Registry registry = LocateRegistry.getRegistry(ServerAddress);
+
+            server = (ServerIntf) registry.lookup("ServerIntf");
+            server.NodeNeighbors(new NodeInfo(HashTableCreator.createHash(name),InetAddress.getLocalHost().toString()));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        System.out.println("Bootstrap completed.");
     }
 
     /**
@@ -178,7 +186,7 @@ public class Client implements QueueListener,NodeIntf, ClientIntf {
             throw new IllegalArgumentException("What the actual fuck, this node isn't in my table yo");
         }
         try {
-            NodeInfo[] neighbors=server.NodeFailure(nodeFailed);
+            NodeInfo[] neighbors=server.NodeNeighbors(nodeFailed);
             Registry registry = LocateRegistry.getRegistry(neighbors[0].Address);
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
             node.UpdateNextNeighbor(neighbors[1]);

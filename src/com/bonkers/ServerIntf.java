@@ -30,5 +30,5 @@ public interface ServerIntf extends Remote {
      * @throws RemoteException Throws exception if RMI failed.
      */
 
-    NodeInfo[] NodeFailure(NodeInfo node)throws RemoteException;
+    NodeInfo[] NodeNeighbors(NodeInfo node)throws RemoteException;
 }

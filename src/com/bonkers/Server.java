@@ -115,7 +115,7 @@ public class Server implements QueueListener, ServerIntf{
     }
 
 
-    public NodeInfo[] NodeFailure(NodeInfo node) {
+    public NodeInfo[] NodeNeighbors(NodeInfo node) {
         HashTableCreator table=new HashTableCreator();
         Map hashmap=table.readHashtable();
         List list=new ArrayList(hashmap.keySet());
