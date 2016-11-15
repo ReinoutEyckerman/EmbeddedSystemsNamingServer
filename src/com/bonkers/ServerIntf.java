@@ -21,7 +21,7 @@ public interface ServerIntf extends Remote {
      * @param node node tuple containing hash and IP
      * @throws RemoteException Throws exception if RMI failed.
      */
-    void NodeShutdown(Tuple node)throws RemoteException;
+    void NodeShutdown(NodeInfo node)throws RemoteException;
 
     /**
      * RMI function that returns the neighbors of a failing node.
@@ -30,5 +30,5 @@ public interface ServerIntf extends Remote {
      * @throws RemoteException Throws exception if RMI failed.
      */
 
-    Tuple<Tuple<Integer,String>,Tuple<Integer,String>> NodeFailure(Tuple node)throws RemoteException;
+    NodeInfo[] NodeFailure(NodeInfo node)throws RemoteException;
 }
