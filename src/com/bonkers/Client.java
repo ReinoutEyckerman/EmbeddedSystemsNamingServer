@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +48,14 @@ public class Client implements NodeIntf, ClientIntf {
      * @throws Exception Generic exception for when something fails TODO
      */
     public Client(String name) throws Exception {
-        LocateRegistry.createRegistry(2021);
+         try {
+            Registry registry = LocateRegistry.createRegistry(2021);
+            ServerIntf stub = (ServerIntf) UnicastRemoteObject.exportObject(this, 0);
+            registry.bind("ClientIntf", stub);
+             registry.bind("NodeIntf",stub);
+        }catch(AlreadyBoundException e){
+            e.printStackTrace();
+        }
         this.name=name;
         this.id=new NodeInfo(HashTableCreator.createHash(name),InetAddress.getLocalHost().toString());
         bootStrap();
@@ -57,7 +66,6 @@ public class Client implements NodeIntf, ClientIntf {
      */
     private void bootStrap(){
         multicast=new MulticastCommunicator(name);
-        multicast.start();
         try {
             int timeout = 10;//time in seconds
             int count = 0;

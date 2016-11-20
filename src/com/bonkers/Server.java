@@ -2,8 +2,10 @@ package com.bonkers;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.rmi.AlreadyBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 /**
@@ -19,7 +21,13 @@ public class Server implements QueueListener, ServerIntf{
      * @throws IOException When IO fails (?)
      */
     public Server() throws IOException {
-        LocateRegistry.createRegistry(2020);
+        try {
+            Registry registry = LocateRegistry.createRegistry(2020);
+            ServerIntf stub = (ServerIntf) UnicastRemoteObject.exportObject(this, 0);
+            registry.bind("ServerIntf", stub);
+        }catch(AlreadyBoundException e){
+            e.printStackTrace();
+        }
         HT=new HashTableCreator();
         multicast =new MulticastCommunicator();
         multicast.start();
@@ -31,7 +39,7 @@ public class Server implements QueueListener, ServerIntf{
         Tuple<String, String> t= multicast.packetQueue.poll();
         error = checkDoubles(t.x, t.y);
         addNode(t);
-
+        System.out.println();
     }
     private void addNode(Tuple<String, String> t){
         try{
