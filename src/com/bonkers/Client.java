@@ -50,10 +50,10 @@ public class Client implements NodeIntf, ClientIntf {
      */
     public Client(String name) throws Exception {
         try {
-            Registry registry = LocateRegistry.createRegistry(2021);
+            Registry registry = LocateRegistry.createRegistry(1099);
             Remote remote =  UnicastRemoteObject.exportObject(this, 0);
-            registry.bind("ClientIntf", (ClientIntf)remote);
-            registry.bind("NodeIntf",(NodeIntf)remote);
+            registry.bind("ClientIntf", remote);
+            registry.bind("NodeIntf",remote);
         }catch(AlreadyBoundException e){
             e.printStackTrace();
         }

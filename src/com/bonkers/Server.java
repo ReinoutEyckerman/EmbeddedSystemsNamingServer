@@ -22,7 +22,7 @@ public class Server implements QueueListener, ServerIntf{
      */
     public Server() throws IOException {
         try {
-            Registry registry = LocateRegistry.createRegistry(2020);
+            Registry registry = LocateRegistry.createRegistry(1099);
             ServerIntf stub = (ServerIntf) UnicastRemoteObject.exportObject(this, 0);
             registry.bind("ServerIntf", stub);
         }catch(AlreadyBoundException e){
