@@ -6,6 +6,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -48,11 +49,11 @@ public class Client implements NodeIntf, ClientIntf {
      * @throws Exception Generic exception for when something fails TODO
      */
     public Client(String name) throws Exception {
-         try {
+        try {
             Registry registry = LocateRegistry.createRegistry(2021);
-            ServerIntf stub = (ServerIntf) UnicastRemoteObject.exportObject(this, 0);
-            registry.bind("ClientIntf", stub);
-             registry.bind("NodeIntf",stub);
+            Remote remote =  UnicastRemoteObject.exportObject(this, 0);
+            registry.bind("ClientIntf", (ClientIntf)remote);
+            registry.bind("NodeIntf",(NodeIntf)remote);
         }catch(AlreadyBoundException e){
             e.printStackTrace();
         }
@@ -227,22 +228,22 @@ public class Client implements NodeIntf, ClientIntf {
         }catch (NotBoundException e){
             e.printStackTrace();
         }
-       if(clientcount<1){
-           previd=nextid=id;
-       }
-       else{
-           try {
-               setNeighbors();
-               Registry registry = LocateRegistry.getRegistry(previd.Address);
-               NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
-               node.updateNextNeighbor(id);
-               registry = LocateRegistry.getRegistry(nextid.Address);
-               node = (NodeIntf) registry.lookup("NodeIntf");
-               node.updatePreviousNeighbor(id);
-           }catch(NotBoundException e){
-               e.printStackTrace();
-           }
-       }
+        if(clientcount<1){
+            previd=nextid=id;
+        }
+        else{
+            try {
+                setNeighbors();
+                Registry registry = LocateRegistry.getRegistry(previd.Address);
+                NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
+                node.updateNextNeighbor(id);
+                registry = LocateRegistry.getRegistry(nextid.Address);
+                node = (NodeIntf) registry.lookup("NodeIntf");
+                node.updatePreviousNeighbor(id);
+            }catch(NotBoundException e){
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
