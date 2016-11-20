@@ -20,6 +20,9 @@ public class HashTableCreator {
      */
     public Map htIp = new HashMap();
 
+    public int getNodeAmount(){
+        return htIp.size();
+    }
     /**
      * Generates hash from string
      * @param name Original hash code
@@ -36,7 +39,7 @@ public class HashTableCreator {
      * @param ip Ip address of the hash host
      * @param name Name of the hash host of which the hash has to be calculated.
      */
-    public void CreateHashTable(InetAddress ip, String name)
+    public void createHashTable(String ip, String name)
     {
         int digest = createHash(name);
         htIp.put(digest, ip);
@@ -95,7 +98,7 @@ public class HashTableCreator {
      * @return Connected host
      */
     //TODO (?)
-    public String FindHost(Map mp, String FileHash)
+    public String findHost(Map mp, String FileHash)
     {
         String IP="";
         Iterator it = mp.entrySet().iterator();

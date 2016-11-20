@@ -17,7 +17,7 @@ public class Main {
      * @throws Exception Throws exception on fail
      */
     public static void main(String[] args) throws Exception {
-        System.out.print(InetAddress.getLocalHost().toString());
+        System.out.println(InetAddress.getLocalHost().getHostAddress().toString());
         if(args.length>0) {
             switch (args[0]) {
                 case "server":
@@ -39,7 +39,7 @@ public class Main {
                 case "client":
                     if(args.length>1)
                     {
-                            Client client = new Client(args[1]);
+                       Client client = new Client(args[1]);
 
                     }
                     else
@@ -66,7 +66,7 @@ public class Main {
      * @return Boolean that returns true or false depending of the string is an IP.
      * TODO: Replace this by an InetAddress function?
      */
-    public static boolean IsIP(String text) {
+    public static boolean isIP(String text) {
         Pattern p = Pattern.compile("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
         Matcher m = p.matcher(text);
         return m.find();

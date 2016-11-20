@@ -13,15 +13,15 @@ public interface ServerIntf extends Remote {
      * @return Returns location of the file
      * @throws RemoteException Throws exception if RMI failed.
      */
-    String FindLocationFile(String FileName) throws RemoteException;
-    String Error() throws RemoteException;
+    String findLocationFile(String FileName) throws RemoteException;
+    String error() throws RemoteException;
 
     /**
      * RMI function that removes a node from the hashtable when it shuts down.
      * @param node node tuple containing hash and IP
      * @throws RemoteException Throws exception if RMI failed.
      */
-    void NodeShutdown(NodeInfo node)throws RemoteException;
+    void nodeShutdown(NodeInfo node)throws RemoteException;
 
     /**
      * RMI function that returns the neighbors of a failing node.
@@ -30,5 +30,5 @@ public interface ServerIntf extends Remote {
      * @throws RemoteException Throws exception if RMI failed.
      */
 
-    NodeInfo[] NodeNeighbors(NodeInfo node)throws RemoteException;
+    NodeInfo[] nodeNeighbors(NodeInfo node)throws RemoteException;
 }

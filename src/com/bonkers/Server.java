@@ -4,46 +4,45 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Server class that accepts client connections.
  */
 public class Server implements QueueListener, ServerIntf{
     private HashTableCreator HT=null;
-    private MulticastCommunicator multicaster=null;
+    private MulticastCommunicator multicast =null;
     public String error=null;
 
     /**
      * Main server object constructor, creates MulticastCommunicator and Hashtablecreator, and subscribes on the queueEvent object
      * @throws IOException When IO fails (?)
-     * @throws InterruptedException TODO LOLWAT IS DIS
      */
-    public Server() throws IOException, InterruptedException {
+    public Server() throws IOException {
+        LocateRegistry.createRegistry(2020);
         HT=new HashTableCreator();
-        multicaster=new MulticastCommunicator();
-        multicaster.start();
-        multicaster.packetQueue.addListener(this);
+        multicast =new MulticastCommunicator();
+        multicast.start();
+        multicast.packetQueue.addListener(this);
     }
 
     @Override
     public void packetReceived() {
-        Tuple<String, InetAddress> t=multicaster.packetQueue.poll();
-        //TODO ? checkDoubles(t.x, t.y);
+        Tuple<String, String> t= multicast.packetQueue.poll();
         error = checkDoubles(t.x, t.y);
-        try {
-            Registry registry = LocateRegistry.getRegistry(t.y.toString());
+        addNode(t);
 
-            ClientIntf stub = (ClientIntf) registry.lookup("ClientIntf");
-            stub.SetServerIp(InetAddress.getLocalHost().toString());
+    }
+    private void addNode(Tuple<String, String> t){
+        try{
+            Registry registry = LocateRegistry.getRegistry(t.y);
+            ClientIntf client = (ClientIntf) registry.lookup("ClientIntf");
+            client.setStartingInfo(InetAddress.getLocalHost().toString(),HT.getNodeAmount());
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
         }
+        HT.createHashTable(t.y, t.x);
     }
 
 
@@ -53,7 +52,7 @@ public class Server implements QueueListener, ServerIntf{
      * @param ip Ip address
      * @return Returns error code
      */
-    private String checkDoubles(String name, InetAddress ip)
+    private String checkDoubles(String name, String ip)
     {
         String resp = null;
         int hash = HT.createHash(name);
@@ -68,13 +67,13 @@ public class Server implements QueueListener, ServerIntf{
         else
         {
             resp = "100";
-            HT.CreateHashTable(ip, name);
+            HT.createHashTable(ip, name);
         }
         return resp;
     }
 
     @Override
-    public String FindLocationFile(String FileName){
+    public String findLocationFile(String FileName){
         HashTableCreator obj = new HashTableCreator();
 
         int Hash = obj.createHash(FileName);
@@ -101,11 +100,11 @@ public class Server implements QueueListener, ServerIntf{
             return lastNode;
         }
     }
-    public String Error(){
+    public String error(){
         return error;
     }
 
-    public void NodeShutdown(NodeInfo node) {
+    public void nodeShutdown(NodeInfo node) {
         HashTableCreator table=new HashTableCreator();
         Map hashmap=table.readHashtable();
         if(hashmap.containsKey(node.Hash)){
@@ -115,7 +114,7 @@ public class Server implements QueueListener, ServerIntf{
     }
 
 
-    public NodeInfo[] NodeNeighbors(NodeInfo node) {
+    public NodeInfo[] nodeNeighbors(NodeInfo node) {
         HashTableCreator table=new HashTableCreator();
         Map hashmap=table.readHashtable();
         List list=new ArrayList(hashmap.keySet());

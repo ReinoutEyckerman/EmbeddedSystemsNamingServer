@@ -16,9 +16,9 @@ public class NodeInfo {
     public String Address;
 
     /**
-     * Constructor that generates the tuple
-     * @param x X value of the tuple
-     * @param y Y value of the tuple
+     * Constructor of the Node
+     * @param hash Hash value of the node
+     * @param address IP address of the node
      */
     public NodeInfo(int hash, String address){
         this.Hash=hash;

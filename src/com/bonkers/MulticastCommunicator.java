@@ -27,6 +27,7 @@ public class MulticastCommunicator extends Thread {
      * Boolean of the finished thread.
      */
     private Boolean IsFinished = false;
+
     /**
      * Multicastsocket of the thread.
      */
@@ -35,13 +36,13 @@ public class MulticastCommunicator extends Thread {
      * QueueEvent of packages that are received.
      * You can subscribe to its events.
      */
-    public QueueEvent<Tuple<String,InetAddress>> packetQueue=new QueueEvent<Tuple<String,InetAddress>>();
+    public QueueEvent<Tuple<String,String>> packetQueue=new QueueEvent<Tuple<String,String>>();
 
     /**
      * Constructor meant for server that automatically joins the multicast group.
      */
     public MulticastCommunicator() {
-        JoinGroup();
+        joinGroup();
     }
 
     /**
@@ -49,8 +50,8 @@ public class MulticastCommunicator extends Thread {
      * @param name Name of the client.
      */
     public MulticastCommunicator(String name) {
-        JoinGroup();
-        SendMulticast(name);
+        joinGroup();
+        sendMulticast(name);
     }
 
     /**
@@ -59,7 +60,7 @@ public class MulticastCommunicator extends Thread {
      */
     public void run(){
         while(!IsFinished) {
-            Tuple<String,InetAddress> info = ReceiveMulticast();
+            Tuple<String,String> info = receiveMulticast();
             if(info!=null)
                 packetQueue.add(info);
         }
@@ -68,7 +69,7 @@ public class MulticastCommunicator extends Thread {
     /**
      * Join group function. Connects to the multicast group.
      */
-    private void JoinGroup() {
+    private void joinGroup() {
         try {
             group = InetAddress.getByName(castAdress);
             castSocket = new MulticastSocket(6789);
@@ -81,7 +82,7 @@ public class MulticastCommunicator extends Thread {
      * Sends a string over multicast.
      * @param msg Message to send.
      */
-    public void SendMulticast(String msg) {
+    public void sendMulticast(String msg) {
         try {
             DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), group, 6789);
             castSocket.send(packet);
@@ -94,17 +95,17 @@ public class MulticastCommunicator extends Thread {
      *
      * @return returns a Tuple containing its information as string and its IP address as InetAddress
      */
-    public Tuple<String,InetAddress> ReceiveMulticast() {
+    public Tuple<String,String> receiveMulticast() {
         try {
             byte[] buf = new byte[2048];
             DatagramPacket recv = new DatagramPacket(buf, buf.length);
             castSocket.receive(recv);
             System.out.println("packet received" + recv.getData());
-            InetAddress address=recv.getAddress();
+            String address=recv.getAddress().getHostAddress();
             System.out.println(address);
-            String Nodename=new String(recv.getData());
+            String Nodename=new String(buf,0,recv.getLength());
             System.out.println(Nodename);
-            return new Tuple<String,InetAddress>(Nodename,address);
+            return new Tuple<String,String>(Nodename,address);
         } catch (Exception e) {
             IsFinished=true;
             System.out.println(e);
@@ -115,7 +116,7 @@ public class MulticastCommunicator extends Thread {
     /**
      * Leave Multicast group.
      */
-    public void LeaveGroup() {
+    public void leaveGroup() {
         try {
             castSocket.leaveGroup(group);
         } catch (Exception e) {

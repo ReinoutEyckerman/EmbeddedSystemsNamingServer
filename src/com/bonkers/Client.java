@@ -1,11 +1,10 @@
 package com.bonkers;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -15,14 +14,13 @@ import java.util.List;
 /**
  * Client class to connect to server
  */
-public class Client implements QueueListener,NodeIntf, ClientIntf {
+public class Client implements NodeIntf, ClientIntf {
 
     /**
      * Address of the server to connect to.
-     * TODO( Necessary, since multicast?)
      */
 
-    private String ServerAddress = "192.168.1.1";
+    private String ServerAddress = null;
 
     /**
      * Name of the client.
@@ -41,28 +39,31 @@ public class Client implements QueueListener,NodeIntf, ClientIntf {
      * Tuples with the hash and IPAddress from itself, previous and nextid.
      */
     private NodeInfo id, previd, nextid;
-
     /**
      * Client constructor.
-     * Starts MulticastCommunicator.
+     * Initiates Bootstrap
      * @param name Name of the client
      * @throws Exception Generic exception for when something fails TODO
      */
     public Client(String name) throws Exception {
+        LocateRegistry.createRegistry(2021);
         this.name=name;
-        BootStrap();
+        this.id=new NodeInfo(HashTableCreator.createHash(name),InetAddress.getLocalHost().toString());
+        bootStrap();
     }
 
-    private void BootStrap(){
+    /**
+     * Starts Multicastcomms and distributes itself over the network
+     */
+    private void bootStrap(){
         multicast=new MulticastCommunicator(name);
         multicast.start();
-        multicast.packetQueue.addListener(this);
         try {
             int timeout = 10;//time in seconds
             int count = 0;
             while (ServerAddress == null) {
                 if (count > timeout) {
-                    multicast.SendMulticast(name);
+                    multicast.sendMulticast(name);
                     count = 0;
                 }
                 count++;
@@ -72,10 +73,6 @@ public class Client implements QueueListener,NodeIntf, ClientIntf {
             e.printStackTrace();
         }
         try {
-            Registry registry = LocateRegistry.getRegistry(ServerAddress);
-
-            server = (ServerIntf) registry.lookup("ServerIntf");
-            server.NodeNeighbors(new NodeInfo(HashTableCreator.createHash(name),InetAddress.getLocalHost().toString()));
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -156,15 +153,15 @@ public class Client implements QueueListener,NodeIntf, ClientIntf {
      * It updates the neighbors so their connection can be established, and notifies the server of its shutdown.
      */
 
-    public void Shutdown(){
+    public void shutdown(){
         try {
             Registry registry = LocateRegistry.getRegistry(previd.Address);
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
-            node.UpdateNextNeighbor(nextid);
+            node.updateNextNeighbor(nextid);
             registry=LocateRegistry.getRegistry(nextid.Address);
             node=(NodeIntf) registry.lookup("NodeIntf");
-            node.UpdatePreviousNeighbor(previd);
-            server.NodeShutdown(id);
+            node.updatePreviousNeighbor(previd);
+            server.nodeShutdown(id);
             System.exit(0);
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
@@ -178,7 +175,7 @@ public class Client implements QueueListener,NodeIntf, ClientIntf {
      *
      * @param id Integer id/hash of the failing node
      */
-    public void NodeFailure(int id){
+    public void nodeFailure(int id){
         NodeInfo nodeFailed;
         if(id==previd.Hash)
             nodeFailed=previd;
@@ -188,14 +185,14 @@ public class Client implements QueueListener,NodeIntf, ClientIntf {
             throw new IllegalArgumentException("What the actual fuck, this node isn't in my table yo");
         }
         try {
-            NodeInfo[] neighbors=server.NodeNeighbors(nodeFailed);
+            NodeInfo[] neighbors=server.nodeNeighbors(nodeFailed);
             Registry registry = LocateRegistry.getRegistry(neighbors[0].Address);
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
-            node.UpdateNextNeighbor(neighbors[1]);
+            node.updateNextNeighbor(neighbors[1]);
             registry=LocateRegistry.getRegistry(neighbors[1].Address);
             node=(NodeIntf) registry.lookup("NodeIntf");
-            node.UpdatePreviousNeighbor(neighbors[0]);
-            server.NodeShutdown(nodeFailed);
+            node.updatePreviousNeighbor(neighbors[0]);
+            server.nodeShutdown(nodeFailed);
         }catch(Exception e){
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
@@ -203,22 +200,61 @@ public class Client implements QueueListener,NodeIntf, ClientIntf {
     }
 
     @Override
-    public void packetReceived() {
-
-    }
-
-    @Override
-    public void UpdateNextNeighbor(NodeInfo node) {
+    public void updateNextNeighbor(NodeInfo node) {
         this.nextid=node;
     }
 
     @Override
-    public void UpdatePreviousNeighbor(NodeInfo node) {
+    public void updatePreviousNeighbor(NodeInfo node) {
         this.previd=node;
     }
 
     @Override
-    public void SetServerIp(String address) throws RemoteException {
+    public void setStartingInfo(String address, int clientcount) throws RemoteException {
         this.ServerAddress=address;
+        try {
+            Registry registry = LocateRegistry.getRegistry(ServerAddress);
+            server = (ServerIntf) registry.lookup("ServerIntf");
+
+        }catch (NotBoundException e){
+            e.printStackTrace();
+        }
+       if(clientcount<1){
+           previd=nextid=id;
+       }
+       else{
+           try {
+               setNeighbors();
+               Registry registry = LocateRegistry.getRegistry(previd.Address);
+               NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
+               node.updateNextNeighbor(id);
+               registry = LocateRegistry.getRegistry(nextid.Address);
+               node = (NodeIntf) registry.lookup("NodeIntf");
+               node.updatePreviousNeighbor(id);
+           }catch(NotBoundException e){
+               e.printStackTrace();
+           }
+       }
+    }
+
+    /**
+     * Sets neighbors of current node.
+     */
+    private void setNeighbors(){
+        try {
+            NodeInfo[] neighbors=server.nodeNeighbors(id);
+            if(neighbors[0]!=null)
+                previd=neighbors[0];
+            else if(neighbors[1]!=null)
+                nextid=neighbors[1];
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void setNameError() throws RemoteException {
+        System.out.println("Error: Name already taken.");
+        System.out.println("Exiting...");
+        System.exit(1);
     }
 }

@@ -12,12 +12,12 @@ public interface NodeIntf extends Remote {
      * @param node Next neighbor for that node
      * @throws RemoteException Thrown when RMI fails
      */
-    void UpdateNextNeighbor(NodeInfo node)throws RemoteException;
+    void updateNextNeighbor(NodeInfo node)throws RemoteException;
 
     /**
      * RMI function that updates the previous neighbor of the targeted node
      * @param node Previous neighbor for that node
      * @throws RemoteException Thrown when RMI fails
      */
-    void UpdatePreviousNeighbor(NodeInfo node)throws RemoteException;
+    void updatePreviousNeighbor(NodeInfo node)throws RemoteException;
 }
