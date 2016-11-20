@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/src/target/classes" />
+    <output-test url="file://$MODULE_DIR$/src/target/test-classes" />
     <content url="file://$MODULE_DIR$/src">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/src/test/java" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/src/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="com.google.code.gson:gson:2.7" level="project" />
+    <orderEntry type="library" name="com.google.code.gson:gson:2.8.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.0" level="project" />
   </component>
 </module>
