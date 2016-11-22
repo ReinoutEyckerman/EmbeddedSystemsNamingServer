@@ -44,8 +44,9 @@ public class Server implements QueueListener, ServerIntf{
     private void addNode(Tuple<String, String> t){
         try{
             Registry registry = LocateRegistry.getRegistry(t.y);
-            ClientIntf client = (ClientIntf) registry.lookup("ClientIntf");
-            client.setStartingInfo(InetAddress.getLocalHost().toString(),HT.getNodeAmount());
+            ClientIntf stub = (ClientIntf)registry.lookup("ClientIntf");
+            String[] host = InetAddress.getLocalHost().toString().split("/");
+            stub.setStartingInfo(host[1],HT.getNodeAmount(););
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
