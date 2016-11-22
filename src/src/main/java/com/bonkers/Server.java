@@ -39,8 +39,11 @@ public class Server implements QueueListener, ServerIntf{
     public void packetReceived() {
         Tuple<String, String> t= multicast.packetQueue.poll();
         error = checkDoubles(t.x, t.y);
-        addNode(t);
-        System.out.println();
+        if(error != "100")
+        {
+            addNode(t);
+            System.out.println();
+        }
     }
     private void addNode(Tuple<String, String> t){
         try{
@@ -52,7 +55,6 @@ public class Server implements QueueListener, ServerIntf{
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
         }
-        HT.createHashTable(t.y, t.x);
     }
 
 
