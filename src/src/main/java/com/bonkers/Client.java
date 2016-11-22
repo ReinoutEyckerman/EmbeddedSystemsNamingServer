@@ -49,6 +49,11 @@ public class Client implements NodeIntf, ClientIntf {
      * @throws Exception Generic exception for when something fails TODO
      */
     public Client(String name) throws Exception {
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+                shutdown();
+            }
+        }));
         try {
             Registry registry = LocateRegistry.createRegistry(1099);
             Remote remote =  UnicastRemoteObject.exportObject(this, 0);
