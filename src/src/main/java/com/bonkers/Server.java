@@ -47,7 +47,7 @@ public class Server implements QueueListener, ServerIntf{
             Registry registry = LocateRegistry.getRegistry(t.y);
             ClientIntf stub = (ClientIntf)registry.lookup("ClientIntf");
             String[] host = InetAddress.getLocalHost().toString().split("/");
-            stub.setStartingInfo(host[1],HT.getNodeAmount(););
+            stub.setStartingInfo(host[1],HT.getNodeAmount());
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
