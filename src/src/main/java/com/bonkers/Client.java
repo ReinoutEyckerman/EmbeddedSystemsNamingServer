@@ -208,6 +208,11 @@ public class Client implements NodeIntf, ClientIntf {
     }
 
     @Override
+    public void transferAgent(Agent agent) throws RemoteException {
+        
+    }
+
+    @Override
     public void setStartingInfo(String address, int clientcount) throws RemoteException, Exception {
         this.ServerAddress=address;
         try {
