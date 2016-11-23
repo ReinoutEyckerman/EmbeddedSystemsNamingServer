@@ -71,7 +71,7 @@ public class Client implements NodeIntf, ClientIntf {
      * Starts Multicastcomms and distributes itself over the network
      */
     private void bootStrap(){
-        multicast=new MulticastCommunicator(name);
+        multicast=new MulticastCommunicator();
         try {
             int timeout = 10;
             int count = 0;

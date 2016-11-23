@@ -39,19 +39,10 @@ public class MulticastCommunicator extends Thread {
     public QueueEvent<Tuple<String,String>> packetQueue=new QueueEvent<Tuple<String,String>>();
 
     /**
-     * Constructor meant for server that automatically joins the multicast group.
+     * Constructor that automatically joins the multicast group.
      */
     public MulticastCommunicator() {
         joinGroup();
-    }
-
-    /**
-     * Constructor meant for client that automatically joins the multicast group and sends its info over multicast.
-     * @param name Name of the client.
-     */
-    public MulticastCommunicator(String name) {
-        joinGroup();
-        sendMulticast(name);
     }
 
     /**
