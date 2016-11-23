@@ -1,5 +1,7 @@
 package com.bonkers;
 
+import com.sun.jndi.cosnaming.IiopUrl;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -153,18 +155,25 @@ public class Client implements NodeIntf, ClientIntf {
      */
 
     public void shutdown(){
-        try {
-            Registry registry = LocateRegistry.getRegistry(previd.Address);
-            NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
-            node.updateNextNeighbor(nextid);
-            registry=LocateRegistry.getRegistry(nextid.Address);
-            node=(NodeIntf) registry.lookup("NodeIntf");
-            node.updatePreviousNeighbor(previd);
-            server.nodeShutdown(id);
-            System.exit(0);
-        } catch (Exception e) {
-            System.err.println("Client exception: " + e.toString());
-            e.printStackTrace();
+        System.out.print("shutdown");
+        if (previd != null && nextid != null) {
+            System.out.println(previd.Address);
+            try {
+                String[] prevAddress = previd.Address.split("/");
+                Registry registry = LocateRegistry.getRegistry(prevAddress[1]);
+                NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
+                node.updateNextNeighbor(nextid);
+                String[] nextAddress = nextid.Address.split("/");
+                registry = LocateRegistry.getRegistry(nextAddress[1]);
+                node = (NodeIntf) registry.lookup("NodeIntf");
+
+                node.updatePreviousNeighbor(previd);
+                server.nodeShutdown(id);
+                System.exit(0);
+            } catch (Exception e) {
+                System.err.println("Client exception: " + e.toString());
+                e.printStackTrace();
+            }
         }
     }
 
@@ -206,6 +215,7 @@ public class Client implements NodeIntf, ClientIntf {
     @Override
     public void updatePreviousNeighbor(NodeInfo node) {
         this.previd=node;
+        System.out.println(node);
     }
 
     @Override
@@ -222,8 +232,8 @@ public class Client implements NodeIntf, ClientIntf {
             if (!CheckError(server.error()).equals("100")){
                 //TODO
             }
-            String IP = server.findLocationFile("test");
-            System.out.println("ip address is "+IP);
+           /* String IP = server.findLocationFile("test");
+            System.out.println("ip address is "+IP);*/
         }catch (NotBoundException e){
             e.printStackTrace();
         }
