@@ -20,4 +20,5 @@ public interface NodeIntf extends Remote {
      * @throws RemoteException Thrown when RMI fails
      */
     void updatePreviousNeighbor(NodeInfo node)throws RemoteException;
+    void transferAgent(Agent agent) throws RemoteException;
 }
