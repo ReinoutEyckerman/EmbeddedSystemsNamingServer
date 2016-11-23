@@ -76,7 +76,7 @@ public class Client implements NodeIntf, ClientIntf {
             int timeout = 10;
             int count = 0;
             while (ServerAddress == null) {
-                if (count > timeout) {
+                if (count < timeout) {
                     multicast.sendMulticast(name);
                     count = 0;
                 }
