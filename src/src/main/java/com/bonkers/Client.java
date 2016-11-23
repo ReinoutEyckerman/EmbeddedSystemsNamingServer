@@ -109,31 +109,17 @@ public class Client implements NodeIntf, ClientIntf {
     }
 
 
-    private void sendDetailsToNameServer() throws IOException
+    private void CheckError(String error) throws Exception
     {
-        //TODO
-        /*
-        byte[] buf = new byte[2048];
-        br = new BufferedReader(new InputStreamReader(System.in));
-        // get a datagram socket
-        socket = new DatagramSocket();
-
-        DatagramPacket packet = sendRequest();
-
-        // display response
-
-        String received = new String(packet.getData());
-        System.out.println(received);
-        if(received.equals("201t"))
+        if(error =="201")
         {
             System.out.println("The node name already exists on the server please choose another one");
-            sendRequest();
         }
-        else if (received.equals("202t"))
+        else if (error =="202")
         {
             System.out.println("You already exist in the name server");
         }
-        else if (received.equals("100t"))
+        else if (error =="100")
         {
             System.out.println("No errors");
         }
@@ -141,8 +127,6 @@ public class Client implements NodeIntf, ClientIntf {
         {
             System.out.println("Unknown error");
         }
-
-        socket.close();*/
     }
     private DatagramPacket sendRequest() throws IOException
     {
@@ -224,12 +208,12 @@ public class Client implements NodeIntf, ClientIntf {
     }
 
     @Override
-    public void setStartingInfo(String address, int clientcount) throws RemoteException {
+    public void setStartingInfo(String address, int clientcount) throws RemoteException, Exception {
         this.ServerAddress=address;
         try {
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
             server = (ServerIntf) registry.lookup("ServerIntf");
-
+            CheckError(server.error());
         }catch (NotBoundException e){
             e.printStackTrace();
         }

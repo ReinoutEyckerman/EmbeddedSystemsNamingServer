@@ -3,6 +3,7 @@ package com.bonkers;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -38,19 +39,22 @@ public class Server implements QueueListener, ServerIntf{
     public void packetReceived() {
         Tuple<String, String> t= multicast.packetQueue.poll();
         error = checkDoubles(t.x, t.y);
-        addNode(t);
-        System.out.println();
+        if(error != "100")
+        {
+            addNode(t);
+            System.out.println();
+        }
     }
     private void addNode(Tuple<String, String> t){
         try{
             Registry registry = LocateRegistry.getRegistry(t.y);
-            ClientIntf client = (ClientIntf) registry.lookup("ClientIntf");
-            client.setStartingInfo(InetAddress.getLocalHost().toString(),HT.getNodeAmount());
+            ClientIntf stub = (ClientIntf)registry.lookup("ClientIntf");
+            String[] host = InetAddress.getLocalHost().toString().split("/");
+            stub.setStartingInfo(host[1],HT.getNodeAmount());
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
         }
-        HT.createHashTable(t.y, t.x);
     }
 
 
@@ -108,7 +112,7 @@ public class Server implements QueueListener, ServerIntf{
             return lastNode;
         }
     }
-    public String error(){
+    public String error() throws RemoteException{
         return error;
     }
 
