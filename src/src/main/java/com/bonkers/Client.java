@@ -13,6 +13,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Client class to connect to server
@@ -205,7 +206,40 @@ public class Client implements NodeIntf, ClientIntf {
 
     @Override
     public void transferAgent(Agent agent) throws RemoteException {
-        
+        Thread agentThread=new Thread(agent);
+        agentThread.start();
+        try {
+            agentThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Registry registry = LocateRegistry.getRegistry(nextid.Address);
+        try {
+            NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
+            neighbor.transferAgent(agent);
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void transferDoubleAgent(DoubleAgent agent) throws RemoteException {
+        Thread agentThread=new Thread(agent);
+        agentThread.start();
+        try {
+            agentThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(!agent.startingNode.Address.equals(id.Address)){
+            Registry registry = LocateRegistry.getRegistry(nextid.Address);
+            try {
+                NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
+                neighbor.transferDoubleAgent(agent);
+            } catch (NotBoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
