@@ -42,6 +42,7 @@ public class HashTableCreator {
     public void createHashTable(String ip, String name)
     {
         int digest = createHash(name);
+        htIp.clear();
         htIp.put(digest, ip);
         writeHashtable();
     }
