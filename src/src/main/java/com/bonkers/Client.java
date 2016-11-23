@@ -73,7 +73,7 @@ public class Client implements NodeIntf, ClientIntf {
     private void bootStrap(){
         multicast=new MulticastCommunicator();
         try {
-            int timeout = 10;
+            int timeout = 5;
             int count = 0;
             while (ServerAddress == null) {
                 if (count < timeout) {
@@ -81,7 +81,7 @@ public class Client implements NodeIntf, ClientIntf {
                     count = 0;
                 }
                 count++;
-                Thread.sleep(10000);
+                Thread.sleep(1000);
             }
         }catch (InterruptedException e){
             e.printStackTrace();
