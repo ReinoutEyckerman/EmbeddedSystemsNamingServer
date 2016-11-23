@@ -222,6 +222,8 @@ public class Client implements NodeIntf, ClientIntf {
             if (!CheckError(server.error()).equals("100")){
                 //TODO
             }
+            String IP = server.findLocationFile("test");
+            System.out.println("ip address is "+IP);
         }catch (NotBoundException e){
             e.printStackTrace();
         }
