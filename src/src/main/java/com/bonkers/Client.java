@@ -86,10 +86,6 @@ public class Client implements NodeIntf, ClientIntf {
         }catch (InterruptedException e){
             e.printStackTrace();
         }
-        try {
-        }catch(Exception e){
-            e.printStackTrace();
-        }
         System.out.println("Bootstrap completed.");
     }
 
