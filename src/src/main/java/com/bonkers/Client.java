@@ -68,7 +68,7 @@ public class Client implements NodeIntf, ClientIntf {
     private void bootStrap(){
         multicast=new MulticastCommunicator(name);
         try {
-            int timeout = 10;//time in seconds
+            int timeout = 10;
             int count = 0;
             while (ServerAddress == null) {
                 if (count > timeout) {
@@ -76,7 +76,7 @@ public class Client implements NodeIntf, ClientIntf {
                     count = 0;
                 }
                 count++;
-                Thread.sleep(1000);
+                Thread.sleep(10000);
             }
         }catch (InterruptedException e){
             e.printStackTrace();
@@ -106,15 +106,15 @@ public class Client implements NodeIntf, ClientIntf {
 
     private void CheckError(String error) throws Exception
     {
-        if(error =="201")
+        if(error.equals("201"))
         {
             System.out.println("The node name already exists on the server please choose another one");
         }
-        else if (error =="202")
+        else if (error.equals("202"))
         {
             System.out.println("You already exist in the name server");
         }
-        else if (error =="100")
+        else if (error.equals("100"))
         {
             System.out.println("No errors");
         }
@@ -212,7 +212,7 @@ public class Client implements NodeIntf, ClientIntf {
         }catch (NotBoundException e){
             e.printStackTrace();
         }
-        if(clientcount<1){
+        if(clientcount<=1){
             previd=nextid=id;
         }
         else{
