@@ -39,7 +39,7 @@ public class Server implements QueueListener, ServerIntf{
     public void packetReceived() {
         Tuple<String, String> t= multicast.packetQueue.poll();
         error = checkDoubles(t.x, t.y);
-        if(error != "100")
+        if(error.equals("100"))
         {
             addNode(t);
             System.out.println();
