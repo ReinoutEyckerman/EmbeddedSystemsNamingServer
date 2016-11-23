@@ -1,5 +1,7 @@
 package com.bonkers;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -11,9 +13,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Client class to connect to server
@@ -43,6 +43,7 @@ public class Client implements NodeIntf, ClientIntf {
      * Tuples with the hash and IPAddress from itself, previous and nextid.
      */
     private NodeInfo id, previd, nextid;
+    public Map<String,Boolean> FileMap=new HashMap<>();
     /**
      * Client constructor.
      * Initiates Bootstrap
