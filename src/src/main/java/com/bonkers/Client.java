@@ -64,6 +64,7 @@ public class Client implements NodeIntf, ClientIntf {
         }
         this.name=name;
         this.id=new NodeInfo(HashTableCreator.createHash(name),InetAddress.getLocalHost().toString());
+        multicast=new MulticastCommunicator();
         bootStrap();
     }
 
@@ -71,19 +72,18 @@ public class Client implements NodeIntf, ClientIntf {
      * Starts Multicastcomms and distributes itself over the network
      */
     private void bootStrap(){
-        multicast=new MulticastCommunicator();
         try {
             int timeout = 5;
             int count = 0;
-            while (ServerAddress == null) {
-                if (count < timeout) {
+
+
+                //if (count < timeout) {
                     multicast.sendMulticast(name);
-                    count = 0;
-                }
-                count++;
-                Thread.sleep(1000);
-            }
-        }catch (InterruptedException e){
+                    //count = 0;
+                //}
+                //count++;
+                //Thread.sleep(1000);
+        }catch (Exception e){//InterruptedException e){
             e.printStackTrace();
         }
         System.out.println("Bootstrap completed.");
@@ -105,24 +105,29 @@ public class Client implements NodeIntf, ClientIntf {
     }
 
 
-    private void CheckError(String error) throws Exception
+    private String CheckError(String error) throws Exception
     {
+        String errorNr=null;
         if(error.equals("201"))
         {
             System.out.println("The node name already exists on the server please choose another one");
+            errorNr = "201";
         }
         else if (error.equals("202"))
         {
             System.out.println("You already exist in the name server");
+            errorNr = "202";
         }
         else if (error.equals("100"))
         {
             System.out.println("No errors");
+            errorNr ="100";
         }
         else
         {
             System.out.println("Unknown error");
         }
+        return errorNr;
     }
     private DatagramPacket sendRequest() throws IOException
     {
@@ -214,7 +219,9 @@ public class Client implements NodeIntf, ClientIntf {
         try {
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
             server = (ServerIntf) registry.lookup("ServerIntf");
-            CheckError(server.error());
+            if (!CheckError(server.error()).equals("100")){
+                //TODO
+            }
         }catch (NotBoundException e){
             e.printStackTrace();
         }
