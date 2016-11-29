@@ -4,10 +4,10 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ReceiveFiles {
+public class TCPReceiver {
     static long size;
     static ArrayList<Long> lijst = new ArrayList();
-    public void ReceiveFiles(){
+    public void TCPReceiver(){
         Socket socket = null;
         try {
             socket = new Socket("192.168.1.1", 2589);
