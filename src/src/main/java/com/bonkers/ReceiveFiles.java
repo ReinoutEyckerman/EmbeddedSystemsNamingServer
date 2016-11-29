@@ -9,14 +9,11 @@ public class ReceiveFiles {
     static ArrayList<Long> lijst = new ArrayList();
     public void ReceiveFiles(){
         Socket socket = null;
-
         try {
             socket = new Socket("192.168.1.1", 2589);
         } catch (IOException ex) {
             // Do exception handling
         }
-
-
         try {
             DataInputStream dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
             DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
@@ -48,7 +45,6 @@ public class ReceiveFiles {
                 fos.close();
                 System.out.println("Finished with file");
             }
-
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
