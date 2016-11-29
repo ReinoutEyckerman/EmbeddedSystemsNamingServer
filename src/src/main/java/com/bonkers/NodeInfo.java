@@ -1,11 +1,12 @@
 package com.bonkers;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 
 /**
  * Implementation of Node information.
  */
-public class NodeInfo {
+public class NodeInfo implements Serializable{
     /**
      * X value of the tuple
      */
