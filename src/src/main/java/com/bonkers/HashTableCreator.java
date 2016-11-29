@@ -77,7 +77,7 @@ public class HashTableCreator {
             reader.beginObject();
 
             while (reader.hasNext()){
-                Hashtable.put(reader.nextName(), reader.nextString());
+                Hashtable.put(Integer.valueOf(reader.nextName()), reader.nextString());
             }
             reader.endObject();
             reader.close();
