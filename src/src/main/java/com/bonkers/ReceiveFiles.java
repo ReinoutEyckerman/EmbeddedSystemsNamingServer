@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class ReceiveFiles {
     static long size;
     static ArrayList<Long> lijst = new ArrayList();
-    public static void Main(String[] args) {
+    public void ReceiveFiles(){
         Socket socket = null;
 
         try {
