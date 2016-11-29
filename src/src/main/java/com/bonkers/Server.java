@@ -117,11 +117,10 @@ public class Server implements QueueListener, ServerIntf{
     }
 
     public void nodeShutdown(NodeInfo node) {
-        HashTableCreator table=new HashTableCreator();
-        table.htIp=table.readHashtable();
-        if(table.htIp.containsKey(node.Hash)){
-            table.htIp.remove(node.Hash);
-            table.writeHashtable();
+        HT.htIp=HT.readHashtable();
+        if(HT.htIp.containsKey(node.Hash)){
+            HT.htIp.remove(node.Hash);
+            HT.writeHashtable();
         }
         else throw new IllegalArgumentException("Somehow, the node that shut down didn't exist");
     }

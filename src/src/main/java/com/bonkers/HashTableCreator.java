@@ -54,7 +54,11 @@ public class HashTableCreator {
     {
         Gson gson = new Gson();
         String json = gson.toJson(htIp);
-        try{
+        try{File f = new File("hashtable.json");
+            if (f.exists() && !f.isDirectory())
+            {
+                f.delete();
+            }
             FileWriter fw = new FileWriter("hashtable.json", true);
             fw.write(json);
             fw.close();
@@ -64,7 +68,6 @@ public class HashTableCreator {
             System.out.println(e);
         }
     }
-
     /**
      * Reads hashes from file.
      * @return Hashtable map
