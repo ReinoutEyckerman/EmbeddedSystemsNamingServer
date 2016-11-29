@@ -158,7 +158,7 @@ public class Client implements NodeIntf, ClientIntf {
      */
 
     public void shutdown(){
-        System.out.print("shutdown");
+        System.out.print("shutdown\n");
         if (previd != null && !Objects.equals(previd.Address, id.Address) && nextid != null) {
             System.out.println(previd.Address);
             try {
@@ -182,7 +182,13 @@ public class Client implements NodeIntf, ClientIntf {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        System.out.println("Successful shutdown");
         System.exit(0);
+        System.exit(1);
+        System.exit(-1);
+        System.exit(35);
+
+
     }
 
     /**
@@ -304,7 +310,7 @@ public class Client implements NodeIntf, ClientIntf {
             NodeInfo[] neighbors=server.nodeNeighbors(id);
             if(neighbors[0]!=null)
                 previd=neighbors[0];
-            else if(neighbors[1]!=null)
+            if(neighbors[1]!=null)
                 nextid=neighbors[1];
         } catch (RemoteException e) {
             e.printStackTrace();
