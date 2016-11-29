@@ -159,9 +159,10 @@ public class Client implements NodeIntf, ClientIntf {
 
     public void shutdown(){
         System.out.print("shutdown");
-        if (previd != null && nextid != null) {
+        if (previd != null && !Objects.equals(previd.Address, id.Address) && nextid != null) {
             System.out.println(previd.Address);
             try {
+
                 String[] prevAddress = previd.Address.split("/");
                 Registry registry = LocateRegistry.getRegistry(prevAddress[1]);
                 NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
@@ -169,15 +170,19 @@ public class Client implements NodeIntf, ClientIntf {
                 String[] nextAddress = nextid.Address.split("/");
                 registry = LocateRegistry.getRegistry(nextAddress[1]);
                 node = (NodeIntf) registry.lookup("NodeIntf");
-
                 node.updatePreviousNeighbor(previd);
-                server.nodeShutdown(id);
-                System.exit(0);
+
             } catch (Exception e) {
                 System.err.println("Client exception: " + e.toString());
                 e.printStackTrace();
             }
         }
+        try {
+            server.nodeShutdown(id);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        System.exit(0);
     }
 
     /**

@@ -118,9 +118,10 @@ public class Server implements QueueListener, ServerIntf{
 
     public void nodeShutdown(NodeInfo node) {
         HashTableCreator table=new HashTableCreator();
-        Map hashmap=table.readHashtable();
-        if(hashmap.containsKey(node.Hash)){
-            hashmap.remove(node.Hash);
+        table.htIp=table.readHashtable();
+        if(table.htIp.containsKey(node.Hash)){
+            table.htIp.remove(node.Hash);
+            table.writeHashtable();
         }
         else throw new IllegalArgumentException("Somehow, the node that shut down didn't exist");
     }
