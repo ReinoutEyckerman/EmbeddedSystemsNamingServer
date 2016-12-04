@@ -1,5 +1,11 @@
 package com.bonkers;
 
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -9,7 +15,15 @@ import java.util.regex.Pattern;
 /**
  * Startup class
  */
-public class Main {
+public class Main extends Application {
+
+    @Override
+    public void start(Stage primaryStage) throws Exception{
+        Parent root = FXMLLoader.load(getClass().getResource("/View/HomePage.fxml"));
+        primaryStage.setTitle("Airport Management");
+        primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.show();
+    }
     /**
      * Main function.
      * Accepts client or server mode from args
@@ -57,7 +71,7 @@ public class Main {
             System.out.println("Please enter a parameter");
             System.out.println("Exiting...");
         }
-
+        launch(args);
     }
 
     /**
