@@ -18,6 +18,7 @@ public class Main {
      */
     public static void main(String[] args) throws Exception {
         System.out.println(InetAddress.getLocalHost().getHostAddress().toString());
+        new File(System.getProperty("user.dir") + "/tmp").mkdirs();
         if(args.length>0) {
             switch (args[0]) {
                 case "server":
@@ -39,7 +40,7 @@ public class Main {
                 case "client":
                     if(args.length>1)
                     {
-                       Client client = new Client(args[1]);
+                        Client client = new Client(args[1]);
 
                     }
                     else
