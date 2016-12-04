@@ -304,7 +304,7 @@ public class Client implements NodeIntf, ClientIntf {
             NodeInfo[] neighbors=server.nodeNeighbors(id);
             if(neighbors[0]!=null)
                 previd=neighbors[0];
-            else if(neighbors[1]!=null)
+             if(neighbors[1]!=null)
                 nextid=neighbors[1];
         } catch (RemoteException e) {
             e.printStackTrace();
