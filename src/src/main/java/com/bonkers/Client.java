@@ -68,7 +68,8 @@ public class Client implements NodeIntf, ClientIntf {
             e.printStackTrace();
         }
         this.name=name;
-        this.id=new NodeInfo(HashTableCreator.createHash(name),InetAddress.getLocalHost().toString());
+        String ip=InetAddress.getLocalHost().toString().split("/")[1];
+        this.id=new NodeInfo(HashTableCreator.createHash(name),ip);
         multicast=new MulticastCommunicator();
         bootStrap();
     }
@@ -158,17 +159,15 @@ public class Client implements NodeIntf, ClientIntf {
      */
 
     public void shutdown(){
-        System.out.print("shutdown");
+        System.out.println("shutdown");
         if (previd != null && !Objects.equals(previd.Address, id.Address) && nextid != null) {
             System.out.println(previd.Address);
             try {
 
-                String[] prevAddress = previd.Address.split("/");
-                Registry registry = LocateRegistry.getRegistry(prevAddress[1]);
+                Registry registry = LocateRegistry.getRegistry(previd.Address);
                 NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
                 node.updateNextNeighbor(nextid);
-                String[] nextAddress = nextid.Address.split("/");
-                registry = LocateRegistry.getRegistry(nextAddress[1]);
+                registry = LocateRegistry.getRegistry(nextid.Address);
                 node = (NodeIntf) registry.lookup("NodeIntf");
                 node.updatePreviousNeighbor(previd);
 
@@ -218,12 +217,13 @@ public class Client implements NodeIntf, ClientIntf {
     @Override
     public void updateNextNeighbor(NodeInfo node) {
         this.nextid=node;
+        System.out.println("Next:" +node.Address);
     }
 
     @Override
     public void updatePreviousNeighbor(NodeInfo node) {
         this.previd=node;
-        System.out.println(node);
+        System.out.println("Previous:" +node.Address);
     }
 
     @Override
