@@ -17,10 +17,15 @@ import java.util.regex.Pattern;
  */
 public class Main extends Application {
 
+    /**
+     * Function to start JavaFX UI
+     * @param primaryStage Canvas to write UI on
+     * @throws Exception
+     */
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("/View/HomePage.fxml"));
-        primaryStage.setTitle("Airport Management");
+        primaryStage.setTitle("SystemY");
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
     }

@@ -12,18 +12,18 @@ import java.util.ResourceBundle;
  */
 public class HomePageCtrl implements Initializable {
     @FXML
-    private Button btnBuyTicket;
+    private Button openBtn;
     @FXML
-    private Button btnCheckIn;
+    private Button deleteBtn;
     @FXML
-    private Button btnDetails;
+    private Button deleteLocalBtn;
 
 
     @Override
     public void initialize(URL fxmlFileLocation, ResourceBundle resources){
-        assert btnBuyTicket != null : "fx:id=\"BtnBuyTicket\" was not injected: check your FXML file 'simple.fxml'.";
-        assert btnCheckIn != null : "fx:id=\"BtnCheckIn\" was not injected: check your FXML file 'simple.fxml'.";
-        assert btnDetails != null : "fx:id=\"BtnDetails\" was not injected: check your FXML file 'simple.fxml'.";
+        assert openBtn != null : "fx:id=\"openBtn\" was not injected: check your FXML file 'simple.fxml'.";
+        assert deleteBtn != null : "fx:id=\"deleteBtn\" was not injected: check your FXML file 'simple.fxml'.";
+        assert deleteLocalBtn != null : "fx:id=\"deleteLocalBtn\" was not injected: check your FXML file 'simple.fxml'.";
     }
 
 }
