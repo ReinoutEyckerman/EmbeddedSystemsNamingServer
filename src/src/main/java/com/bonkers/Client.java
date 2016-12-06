@@ -43,13 +43,22 @@ public class Client implements NodeIntf, ClientIntf {
      */
     private NodeInfo id, previd, nextid;
     public Map<String,Boolean> FileMap=new HashMap<>();
+
+    private File file;
+    private FileManager fm = null;
+
+    /**
+     * Files The client is owner off
+     */
+    private List<String> OwnerOfFiles = null;
     /**
      * Client constructor.
      * Initiates Bootstrap
      * @param name Name of the client
      * @throws Exception Generic exception for when something fails TODO
      */
-    public Client(String name) throws Exception {
+    public Client(String name, File file) throws Exception {
+        this.file = file;
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
                 shutdown();
@@ -75,37 +84,14 @@ public class Client implements NodeIntf, ClientIntf {
      */
     private void bootStrap(){
         try {
-            int timeout = 5;
-            int count = 0;
-
-
-                //if (count < timeout) {
-                    multicast.sendMulticast(name);
-                    //count = 0;
-                //}
-                //count++;
-                //Thread.sleep(1000);
-        }catch (Exception e){//InterruptedException e){
+            multicast.sendMulticast(name);
+            fm = new FileManager(file);
+            fm.CheckIfOwner(this.id, this.previd,this.nextid);
+        }catch (Exception e){
             e.printStackTrace();
         }
         System.out.println("Bootstrap completed.");
     }
-
-    /**
-     * Returns list of files as strings in a specified folder.
-     * @param folder Folder File for where to search for files.
-     * @return List of strings of the filenames in the folder.
-     */
-    private List<String> listFilesForFolder(final File folder) {
-        List<String> files=new ArrayList<>();
-        for (final File fileEntry : folder.listFiles()) {
-            if (!fileEntry.isDirectory()) {
-                files.add(fileEntry.getName());
-            }
-        }
-        return files;
-    }
-
 
     private String CheckError(String error) throws Exception
     {

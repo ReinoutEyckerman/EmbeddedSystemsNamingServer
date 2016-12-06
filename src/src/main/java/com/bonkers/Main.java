@@ -37,7 +37,8 @@ public class Main extends Application {
      */
     public static void main(String[] args) throws Exception {
         System.out.println(InetAddress.getLocalHost().getHostAddress().toString());
-        new File(System.getProperty("user.dir") + "/tmp").mkdirs();
+        File file = new File(System.getProperty("user.dir") + "/tmp");
+        file.mkdirs();
         if(args.length>0) {
             switch (args[0]) {
                 case "server":
@@ -59,7 +60,7 @@ public class Main extends Application {
                 case "client":
                     if(args.length>1)
                     {
-                        Client client = new Client(args[1]);
+                        Client client = new Client(args[1], file);
 
                     }
                     else
