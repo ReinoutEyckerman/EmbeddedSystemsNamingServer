@@ -1,10 +1,6 @@
 package com.bonkers;
 
 
-import com.sun.jndi.cosnaming.IiopUrl;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
-
 import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -227,8 +223,8 @@ public class Client implements NodeIntf, ClientIntf {
     }
 
     @Override
-    public void transferAgent(Agent agent) throws RemoteException {
-        Thread agentThread=new Thread(agent);
+    public void transferAgent(AgentFileList agentFileList) throws RemoteException {
+        Thread agentThread=new Thread(agentFileList);
         agentThread.start();
         try {
             agentThread.join();
@@ -238,14 +234,14 @@ public class Client implements NodeIntf, ClientIntf {
         Registry registry = LocateRegistry.getRegistry(nextid.Address);
         try {
             NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
-            neighbor.transferAgent(agent);
+            neighbor.transferAgent(agentFileList);
         } catch (NotBoundException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void transferDoubleAgent(DoubleAgent agent) throws RemoteException {
+    public void transferDoubleAgent(AgentFailure agent) throws RemoteException {
         Thread agentThread=new Thread(agent);
         agentThread.start();
         try {
