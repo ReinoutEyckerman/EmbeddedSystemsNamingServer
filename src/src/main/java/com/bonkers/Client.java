@@ -81,14 +81,7 @@ public class Client implements NodeIntf, ClientIntf {
         try {
             int timeout = 5;
             int count = 0;
-
-
-                //if (count < timeout) {
-                    multicast.sendMulticast(name);
-                    //count = 0;
-                //}
-                //count++;
-                //Thread.sleep(1000);
+            multicast.sendMulticast(name);
         }catch (Exception e){//InterruptedException e){
             e.printStackTrace();
         }
