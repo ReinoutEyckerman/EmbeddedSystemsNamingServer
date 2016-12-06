@@ -127,14 +127,19 @@ public class Server implements QueueListener, ServerIntf{
 
 
     public NodeInfo[] nodeNeighbors(NodeInfo node) {
-        HashTableCreator table=new HashTableCreator();
-        Map hashmap=table.readHashtable();
+        Map hashmap=HT.readHashtable();
         List list=new ArrayList(hashmap.keySet());
         Collections.sort(list);
         int index=list.indexOf(node.Hash);
-        NodeInfo previousNeighbor=new NodeInfo((Integer)list.get(index-1),(String)hashmap.get(list.get(index-1)));
-        NodeInfo nextNeighbor=new NodeInfo((Integer)list.get(index+1),(String)hashmap.get(list.get(index+1)));
-        return new NodeInfo[]{previousNeighbor,nextNeighbor};
+        if(hashmap.size()>2) {
+            NodeInfo previousNeighbor = new NodeInfo((Integer) list.get(index - 1), (String) hashmap.get(list.get(index - 1)));
+            NodeInfo nextNeighbor = new NodeInfo((Integer) list.get(index + 1), (String) hashmap.get(list.get(index + 1)));
+            return new NodeInfo[]{previousNeighbor, nextNeighbor};
+        }
+        else{
+            NodeInfo neighbor=new NodeInfo((Integer) list.get(1-index), (String) hashmap.get(list.get(1-index)));
+            return new NodeInfo[]{neighbor,neighbor};
+        }
     }
 }
 
