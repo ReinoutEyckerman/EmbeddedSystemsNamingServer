@@ -11,7 +11,7 @@ interface QueueListener{
     /**
      * "Event" when there is a packet received.
      */
-    void packetReceived();
+    void queueFilled();
 }
 
 /**
@@ -56,6 +56,6 @@ public class QueueEvent<E> extends PriorityQueue<E> {
      * "Event" That notifies all subscribers.
      */
     public void notifyPacketReceived(){
-        listeners.forEach(QueueListener::packetReceived);
+        listeners.forEach(QueueListener::queueFilled);
     }
 }

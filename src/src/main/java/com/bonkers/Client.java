@@ -1,13 +1,7 @@
 package com.bonkers;
 
 
-import com.sun.jndi.cosnaming.IiopUrl;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
-
 import java.io.File;
-import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -47,13 +41,22 @@ public class Client implements NodeIntf, ClientIntf {
      */
     private NodeInfo id, previd, nextid;
     public Map<String,Boolean> FileMap=new HashMap<>();
+
+    private File file;
+    private FileManager fm = null;
+
+    /**
+     * Files The client is owner off
+     */
+    private List<String> OwnerOfFiles = null;
     /**
      * Client constructor.
      * Initiates Bootstrap
      * @param name Name of the client
      * @throws Exception Generic exception for when something fails TODO
      */
-    public Client(String name) throws Exception {
+    public Client(String name, File file) throws Exception {
+        this.file = file;
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
                 shutdown();
@@ -72,6 +75,8 @@ public class Client implements NodeIntf, ClientIntf {
         this.id=new NodeInfo(HashTableCreator.createHash(name),ip);
         multicast=new MulticastCommunicator();
         bootStrap();
+        Thread t=new Thread(new TCPServer(""));//TODO empty string
+        t.start();
     }
 
     /**
@@ -79,37 +84,14 @@ public class Client implements NodeIntf, ClientIntf {
      */
     private void bootStrap(){
         try {
-            int timeout = 5;
-            int count = 0;
-
-
-                //if (count < timeout) {
-                    multicast.sendMulticast(name);
-                    //count = 0;
-                //}
-                //count++;
-                //Thread.sleep(1000);
-        }catch (Exception e){//InterruptedException e){
+            multicast.sendMulticast(name);
+            fm = new FileManager(file);
+            fm.CheckIfOwner(this.id, this.previd,this.nextid);
+        }catch (Exception e){
             e.printStackTrace();
         }
         System.out.println("Bootstrap completed.");
     }
-
-    /**
-     * Returns list of files as strings in a specified folder.
-     * @param folder Folder File for where to search for files.
-     * @return List of strings of the filenames in the folder.
-     */
-    private List<String> listFilesForFolder(final File folder) {
-        List<String> files=new ArrayList<>();
-        for (final File fileEntry : folder.listFiles()) {
-            if (!fileEntry.isDirectory()) {
-                files.add(fileEntry.getName());
-            }
-        }
-        return files;
-    }
-
 
     private String CheckError(String error) throws Exception
     {
@@ -134,24 +116,6 @@ public class Client implements NodeIntf, ClientIntf {
             System.out.println("Unknown error");
         }
         return errorNr;
-    }
-    private DatagramPacket sendRequest() throws IOException
-    {
-        //TODO
-
-/*
-        // send request
-        byte[] buf = new byte[2048];
-        buf = name.getBytes();
-        InetAddress address = InetAddress.getByName(ServerAddress);
-        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 6790);
-        socket.send(packet);
-
-        // get response
-        packet = new DatagramPacket(buf, buf.length);
-        //socket.receive(packet);
-        return packet;*/
-        return null;
     }
     /**
      * This function gets called on shutdown.
@@ -235,8 +199,8 @@ public class Client implements NodeIntf, ClientIntf {
     }
 
     @Override
-    public void transferAgent(Agent agent) throws RemoteException {
-        Thread agentThread=new Thread(agent);
+    public void transferAgent(AgentFileList agentFileList) throws RemoteException {
+        Thread agentThread=new Thread(agentFileList);
         agentThread.start();
         try {
             agentThread.join();
@@ -246,14 +210,14 @@ public class Client implements NodeIntf, ClientIntf {
         Registry registry = LocateRegistry.getRegistry(nextid.Address);
         try {
             NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
-            neighbor.transferAgent(agent);
+            neighbor.transferAgent(agentFileList);
         } catch (NotBoundException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void transferDoubleAgent(DoubleAgent agent) throws RemoteException {
+    public void transferDoubleAgent(AgentFailure agent) throws RemoteException {
         Thread agentThread=new Thread(agent);
         agentThread.start();
         try {

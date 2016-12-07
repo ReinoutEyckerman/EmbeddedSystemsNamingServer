@@ -2,18 +2,29 @@ package com.bonkers;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by reinout on 11/22/16.
  */
-public class Agent implements Runnable, Serializable {
+public class AgentFailure implements Runnable, Serializable {
     List<Tuple<String, Boolean>> FileList;
+
+    NodeInfo failingNode, startingNode;
+    public AgentFailure(NodeInfo failingNode, NodeInfo startingNode){
+        this.failingNode=failingNode;
+        this.startingNode=startingNode;
+    }
+
     @Override
     public void run() {
-        getAndUpdateCurrentNodeFiles();
-        checkLockRequests();
-        checkUnlock();
+        searchFailingNode();
+    }
+    private void searchFailingNode(){
+        //TODO Get current files something something
+        List<String> s=null;
+        for(String search:s) {
+            int hash = HashTableCreator.createHash(search);
+        }
     }
     private void getAndUpdateCurrentNodeFiles(){
         //TODO Get current files something something
@@ -37,6 +48,6 @@ public class Agent implements Runnable, Serializable {
         //TODO
     }
     private void checkUnlock(){
-
+        
     }
 }

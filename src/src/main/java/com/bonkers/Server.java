@@ -36,7 +36,7 @@ public class Server implements QueueListener, ServerIntf{
     }
 
     @Override
-    public void packetReceived() {
+    public void queueFilled() {
         Tuple<String, String> t= multicast.packetQueue.poll();
         error = checkDoubles(t.x, t.y);
         //(error.equals("100"))
@@ -59,7 +59,6 @@ public class Server implements QueueListener, ServerIntf{
 
 
         /**
-         * TODO UNFINISHED CODE :^)
          * @param name Name of the thing
          * @param ip Ip address
          * @return Returns error code
