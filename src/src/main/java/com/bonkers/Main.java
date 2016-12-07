@@ -28,12 +28,12 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("/View/HomePage.fxml"));
+/*        Parent root = FXMLLoader.load(getClass().getResource("/View/HomePage.fxml"));
         primaryStage.setTitle("SystemY");
         primaryStage.setScene(new Scene(root, 800, 600));
-        primaryStage.show();
+        primaryStage.show();*/
 
-        primaryStage.setOnCloseRequest(event -> closeProgram());
+        //primaryStage.setOnCloseRequest(event -> closeProgram());
     }
 
     @SuppressWarnings("restriction")
