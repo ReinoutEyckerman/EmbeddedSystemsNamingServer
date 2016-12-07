@@ -45,10 +45,12 @@ public class Client implements NodeIntf, ClientIntf {
 
     private FileManager fm = null;
 
+    public AgentFileList agentFileList = null;
+
     /**
      * Files The client is owner off
      */
-    private List<String> OwnerOfFiles = null;
+    public static List<String> ownerOfFilesList = null;
     /**
      * Client constructor.
      * Initiates Bootstrap
