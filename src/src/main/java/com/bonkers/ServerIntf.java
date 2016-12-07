@@ -14,6 +14,7 @@ public interface ServerIntf extends Remote {
      * @throws RemoteException Throws exception if RMI failed.
      */
     String findLocationFile(String FileName) throws RemoteException;
+    String findLocationHash(int hash) throws RemoteException;
     String error() throws RemoteException;
 
     /**
