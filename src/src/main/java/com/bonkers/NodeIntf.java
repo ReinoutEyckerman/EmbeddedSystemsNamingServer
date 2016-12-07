@@ -2,6 +2,7 @@ package com.bonkers;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * RMI interface that defines inter-node-communication.
@@ -20,6 +21,7 @@ public interface NodeIntf extends Remote {
      * @throws RemoteException Thrown when RMI fails
      */
     void updatePreviousNeighbor(NodeInfo node)throws RemoteException;
+    void enqueueDownload(List<String> list) throws RemoteException;
     void transferAgent(Agent agent) throws RemoteException;
     void transferDoubleAgent(DoubleAgent agent) throws RemoteException;
 }

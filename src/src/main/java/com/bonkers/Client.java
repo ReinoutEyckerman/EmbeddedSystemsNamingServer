@@ -72,6 +72,8 @@ public class Client implements NodeIntf, ClientIntf {
         this.id=new NodeInfo(HashTableCreator.createHash(name),ip);
         multicast=new MulticastCommunicator();
         bootStrap();
+        Thread t=new Thread(new TCPServer(""));//TODO empty string
+        t.start();
     }
 
     /**
@@ -93,6 +95,11 @@ public class Client implements NodeIntf, ClientIntf {
             e.printStackTrace();
         }
         System.out.println("Bootstrap completed.");
+    }
+   @Override
+    public void enqueueDownload(List<String> list){
+
+
     }
 
     /**
@@ -134,24 +141,6 @@ public class Client implements NodeIntf, ClientIntf {
             System.out.println("Unknown error");
         }
         return errorNr;
-    }
-    private DatagramPacket sendRequest() throws IOException
-    {
-        //TODO
-
-/*
-        // send request
-        byte[] buf = new byte[2048];
-        buf = name.getBytes();
-        InetAddress address = InetAddress.getByName(ServerAddress);
-        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 6790);
-        socket.send(packet);
-
-        // get response
-        packet = new DatagramPacket(buf, buf.length);
-        //socket.receive(packet);
-        return packet;*/
-        return null;
     }
     /**
      * This function gets called on shutdown.

@@ -6,56 +6,37 @@ package com.bonkers;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Objects;
 import java.util.Scanner;
 
-public class TCPClient {
-    public final static int SOCKET_PORT = 12345;      // Port over which the program will connect
+public class TCPClient implements Runnable{
+    public final static int SOCKET_PORT = 12346;      // Port over which the program will connect
     public String Server;  // IP Address of the server
     private Socket serverSocket=null;
     private DataOutputStream os = null;
     private FileOutputStream fos = null;
     private BufferedOutputStream bos = null;
     private DataInputStream is = null;
-
-    public TCPClient(String ip){
+    private final String downloadFileLocation;
+    private final String remoteFileLocation;
+    public TCPClient(String ip, String downloadFileLocation, String remoteFileLocation){
         Server=ip;
+        this.downloadFileLocation = downloadFileLocation; //TODO
+        this.remoteFileLocation = remoteFileLocation; //TODO
     }
 
-    public void run() throws IOException {
-        Scanner s = new Scanner(System.in);
+    public void run() {
         System.out.println("Connecting...");
-        serverSocket = new Socket(Server, SOCKET_PORT);
-        os=new DataOutputStream(serverSocket.getOutputStream());
-        is=new DataInputStream(serverSocket.getInputStream());
-        printFiles();
-        boolean exit=false;
-        while (!exit) {
-            System.out.println("Please select which to get, list or exit");
-            String cmd = s.nextLine();
-            String[] args = new String[3]; //Potential bug
-            if (cmd.contains(" "))
-                args = cmd.split(" ");
-            else args[0] = cmd;
-            if (Objects.equals(args[0] , "list")) {
-                printFiles();
-            } else if (Objects.equals(args[0], "get")) {
-                os.writeBytes(cmd+'\n');
-                getFile(args[2]);
-            } else if (Objects.equals(args[0] , "exit")) {
-                os.writeBytes(cmd+'\n');
-                exit();
-                exit = true;
-            }
-        }
-    }
-    private void printFiles() throws IOException{
-        os.writeBytes("list\n");
-        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
-        System.out.println("Available Files");
-        String inputLine;
-        while (!Objects.equals(inputLine = inFromServer.readLine(),"")) {
-            System.out.println(inputLine);
+        try {
+            serverSocket = new Socket(Server, SOCKET_PORT);
+            os = new DataOutputStream(serverSocket.getOutputStream());
+            is = new DataInputStream(serverSocket.getInputStream());
+
+            os.writeBytes(remoteFileLocation + '\n');
+            getFile(downloadFileLocation);
+            exit();
+        }catch (IOException e){
+            System.out.println("IO exception caught while downloading file.");
+            e.printStackTrace();
         }
     }
 
@@ -70,7 +51,6 @@ public class TCPClient {
 
     private void getFile(String destinyFilePath) throws IOException{
         int bytesRead;
-
         // receive file
         byte [] buffer  = new byte [1024];
         fos = new FileOutputStream(destinyFilePath);
