@@ -2,8 +2,6 @@ package com.bonkers;
 
 
 import java.io.File;
-import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -93,11 +91,6 @@ public class Client implements NodeIntf, ClientIntf {
             e.printStackTrace();
         }
         System.out.println("Bootstrap completed.");
-    }
-   @Override
-    public void enqueueDownload(List<String> list){
-
-
     }
 
     private String CheckError(String error) throws Exception
