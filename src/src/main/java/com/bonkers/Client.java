@@ -22,7 +22,7 @@ public class Client implements NodeIntf, ClientIntf {
      */
 
     private String ServerAddress = null;
-
+    private boolean finishedBootstrap=false;
     /**
      * Name of the client.
      */
@@ -77,6 +77,11 @@ public class Client implements NodeIntf, ClientIntf {
         this.id=new NodeInfo(HashTableCreator.createHash(name),ip);
         multicast=new MulticastCommunicator();
         bootStrap();
+        //TODO Check local files here
+        while(!finishedBootstrap){
+        }
+        fm = new FileManager(file);
+        fm.CheckIfOwner(this.id, this.previd,this.nextid);
         Thread t=new Thread(new TCPServer(""));//TODO empty string
         t.start();
     }
@@ -87,8 +92,7 @@ public class Client implements NodeIntf, ClientIntf {
     private void bootStrap(){
         try {
             multicast.sendMulticast(name);
-            fm = new FileManager(file);
-            ownerOfFilesList = fm.CheckIfOwner(this.id, this.previd,this.nextid);
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -268,6 +272,7 @@ public class Client implements NodeIntf, ClientIntf {
                 e.printStackTrace();
             }
         }
+        finishedBootstrap=true;
     }
 
     /**
