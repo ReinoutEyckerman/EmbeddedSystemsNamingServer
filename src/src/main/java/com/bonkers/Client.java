@@ -206,6 +206,7 @@ public class Client implements NodeIntf, ClientIntf {
 
     @Override
     public void transferAgent(AgentFileList agentFileList) throws RemoteException {
+        agentFileList.started = true;
         Thread agentThread=new Thread(agentFileList);
         agentThread.start();
         try {
@@ -213,12 +214,19 @@ public class Client implements NodeIntf, ClientIntf {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Registry registry = LocateRegistry.getRegistry(nextid.Address);
-        try {
-            NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
-            neighbor.transferAgent(agentFileList);
-        } catch (NotBoundException e) {
-            e.printStackTrace();
+        if(!(nextid.Address.equals(id.Address)))
+        {
+            Registry registry = LocateRegistry.getRegistry(nextid.Address);
+            try {
+                NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
+                neighbor.transferAgent(agentFileList);
+            } catch (NotBoundException e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            agentFileList.started = false;
         }
     }
 
@@ -270,6 +278,12 @@ public class Client implements NodeIntf, ClientIntf {
                 node.updatePreviousNeighbor(id);
             }catch(NotBoundException e){
                 e.printStackTrace();
+            }
+            if(clientcount == 2)
+            {
+                agentFileList = AgentFileList.getInstance();
+                agentFileList.started = true;
+                transferAgent(agentFileList);
             }
         }
         finishedBootstrap=true;

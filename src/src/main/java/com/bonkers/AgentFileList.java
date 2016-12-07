@@ -9,6 +9,24 @@ import java.util.Map;
  */
 public class AgentFileList implements Runnable, Serializable {
     List<Tuple<String, Boolean>> FileList;
+
+    public Boolean started = false;
+
+    private static AgentFileList instance = null;
+
+    protected AgentFileList() {}
+
+    /**
+     * Singleton make instance if none exists else make one
+     * @return instance
+     */
+    public static AgentFileList getInstance() {
+        if(instance == null) {
+            instance = new AgentFileList();
+        }
+        return instance;
+    }
+
     @Override
     public void run() {
         getAndUpdateCurrentNodeFiles();
