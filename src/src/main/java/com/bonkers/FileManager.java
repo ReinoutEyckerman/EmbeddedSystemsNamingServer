@@ -21,7 +21,9 @@ public class FileManager implements QueueListener{
         this.folderLocation=folderLocation;
         downloadQueue.addListener(this);
     }
-
+    public void StartupReplication(){
+        
+    }
     @Override
     public void queueFilled() {
         new Thread(new TCPClient("","","")).start();//TODO
@@ -41,6 +43,7 @@ public class FileManager implements QueueListener{
         }
         return files;
     }
+
 public List<String> CheckIfOwner(NodeInfo currNode, NodeInfo prevNode, NodeInfo nextNode)
     {
         List<String> OwnerOfList = new ArrayList<>();
@@ -56,5 +59,5 @@ public List<String> CheckIfOwner(NodeInfo currNode, NodeInfo prevNode, NodeInfo 
             }
         });
         return OwnerOfList;
-}
+    }
 }

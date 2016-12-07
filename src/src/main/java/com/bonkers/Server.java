@@ -85,32 +85,19 @@ public class Server implements QueueListener, ServerIntf{
         }
 
         @Override
-        public String findLocationFile(String FileName){
-            HashTableCreator obj = new HashTableCreator();
-
-            int Hash = obj.createHash(FileName);
-            Map hashmap=obj.readHashtable();
-            List list=new ArrayList(hashmap.keySet());
+        public String findLocationFile(String file){
+            return findLocationHash(HT.createHash(file));
+        }
+        @Override
+        public String findLocationHash(int hash){
+            List list=new ArrayList(HT.htIp.keySet());
             Collections.sort(list);
-            String previousNeighbor = null;
-            String lastNode=(String)hashmap.get(list.get(list.size()-1));
-
-            for (int i=0;(Integer.parseInt(list.get(i).toString())-Hash)>0;i++)
-            {
-                if(((Integer)list.get(i)-Hash)<0)
-                {
-                    previousNeighbor =(String)hashmap.get(list.get(i));
-                }
-            }
-
+            String previousNeighbor = HT.findHost(Integer.toString(hash));
+            String lastNode=(String)HT.htIp.get(list.get(list.size()-1));
             if (previousNeighbor != null)
-            {
                 return previousNeighbor;
-            }
             else
-            {
                 return lastNode;
-            }
         }
         public String error() throws RemoteException{
             return error;

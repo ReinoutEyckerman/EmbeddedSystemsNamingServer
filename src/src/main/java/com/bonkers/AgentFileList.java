@@ -16,6 +16,10 @@ public class AgentFileList implements Runnable, Serializable {
         checkUnlock();
     }
     private void getAndUpdateCurrentNodeFiles(){
+
+        for (String fileName: Client.ownerOfFilesList) {
+            FileList.add(new Tuple<String, Boolean>(fileName, false));
+        }
         //TODO Get current files something something
         List<String> s=null;
         boolean found;

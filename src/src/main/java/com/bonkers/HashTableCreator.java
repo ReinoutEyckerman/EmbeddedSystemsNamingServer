@@ -97,15 +97,14 @@ public class HashTableCreator {
 
     /**
      * Finds host connected to hash.
-     * @param mp Hashmap
      * @param FileHash Filehash
      * @return Connected host
      */
     //TODO (?)
-    public String findHost(Map mp, String FileHash)
+    public String findHost(String FileHash)
     {
         String IP="";
-        Iterator it = mp.entrySet().iterator();
+        Iterator it = htIp.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
             if (pair.getKey().equals(FileHash)) {
