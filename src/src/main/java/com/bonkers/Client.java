@@ -45,10 +45,12 @@ public class Client implements NodeIntf, ClientIntf {
     private File file;
     private FileManager fm = null;
 
+    public AgentFileList agentFileList = null;
+
     /**
      * Files The client is owner off
      */
-    private List<String> OwnerOfFiles = null;
+    public static List<String> ownerOfFilesList = null;
     /**
      * Client constructor.
      * Initiates Bootstrap
@@ -86,7 +88,7 @@ public class Client implements NodeIntf, ClientIntf {
         try {
             multicast.sendMulticast(name);
             fm = new FileManager(file);
-            fm.CheckIfOwner(this.id, this.previd,this.nextid);
+            ownerOfFilesList = fm.CheckIfOwner(this.id, this.previd,this.nextid);
         }catch (Exception e){
             e.printStackTrace();
         }

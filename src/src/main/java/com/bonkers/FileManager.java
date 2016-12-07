@@ -56,5 +56,5 @@ public List<String> CheckIfOwner(NodeInfo currNode, NodeInfo prevNode, NodeInfo 
             }
         });
         return OwnerOfList;
-}
+    }
 }
