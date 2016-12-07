@@ -1,11 +1,15 @@
 package com.bonkers;
 
+import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -28,7 +32,18 @@ public class Main extends Application {
         primaryStage.setTitle("SystemY");
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
+
+        primaryStage.setOnCloseRequest(event -> closeProgram());
     }
+
+    @SuppressWarnings("restriction")
+    private void closeProgram() {
+        com.sun.javafx.application.PlatformImpl.tkExit();
+
+        Platform.exit();
+        System.exit(0);
+    }
+
     /**
      * Main function.
      * Accepts client or server mode from args
