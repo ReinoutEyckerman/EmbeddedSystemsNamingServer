@@ -59,7 +59,6 @@ public class Server implements QueueListener, ServerIntf{
 
 
         /**
-         * TODO UNFINISHED CODE :^)
          * @param name Name of the thing
          * @param ip Ip address
          * @return Returns error code
