@@ -16,11 +16,11 @@ public class TCPClient implements Runnable{
     private FileOutputStream fos = null;
     private BufferedOutputStream bos = null;
     private DataInputStream is = null;
-    private final String downloadFileLocation;
+    private final File downloadLocation;
     private final String remoteFileLocation;
-    public TCPClient(String ip, String downloadFileLocation, String remoteFileLocation){
+    public TCPClient(String ip, String remoteFileLocation, File downloadLocation){
         Server=ip;
-        this.downloadFileLocation = downloadFileLocation; //TODO
+        this.downloadLocation = downloadLocation; //TODO
         this.remoteFileLocation = remoteFileLocation; //TODO
     }
 
@@ -32,7 +32,7 @@ public class TCPClient implements Runnable{
             is = new DataInputStream(serverSocket.getInputStream());
 
             os.writeBytes(remoteFileLocation + '\n');
-            getFile(downloadFileLocation);
+            getFile(downloadLocation.getPath());
             exit();
         }catch (IOException e){
             System.out.println("IO exception caught while downloading file.");
