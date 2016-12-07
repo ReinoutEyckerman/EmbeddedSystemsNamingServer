@@ -1,7 +1,9 @@
 package com.bonkers;
 
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.net.InetAddress;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -44,6 +46,8 @@ public class Client implements NodeIntf, ClientIntf {
 
     private File file;
     private FileManager fm = null;
+    private FileWriter fw = null;
+    private BufferedWriter bw = null;
 
     public AgentFileList agentFileList = null;
 
@@ -58,6 +62,9 @@ public class Client implements NodeIntf, ClientIntf {
      * @throws Exception Generic exception for when something fails TODO
      */
     public Client(String name, File file) throws Exception {
+        Logger log = new Logger();
+        log.log("Testje");
+        log.log("dubbel testje");
         this.file = file;
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
