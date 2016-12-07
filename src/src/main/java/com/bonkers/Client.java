@@ -23,6 +23,7 @@ public class Client implements NodeIntf, ClientIntf {
 
     private String ServerAddress = null;
     private boolean finishedBootstrap=false;
+    private final File downloadFolder;
     /**
      * Name of the client.
      */
@@ -42,7 +43,6 @@ public class Client implements NodeIntf, ClientIntf {
     private NodeInfo id, previd, nextid;
     public Map<String,Boolean> FileMap=new HashMap<>();
 
-    private File file;
     private FileManager fm = null;
 
     /**
@@ -55,8 +55,8 @@ public class Client implements NodeIntf, ClientIntf {
      * @param name Name of the client
      * @throws Exception Generic exception for when something fails TODO
      */
-    public Client(String name, File file) throws Exception {
-        this.file = file;
+    public Client(String name, File downloadFolder) throws Exception {
+        this.downloadFolder=downloadFolder;
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
                 shutdown();
@@ -78,8 +78,9 @@ public class Client implements NodeIntf, ClientIntf {
         //TODO Check local files here
         while(!finishedBootstrap){
         }
-        fm = new FileManager(file);
-        fm.CheckIfOwner(this.id, this.previd,this.nextid);
+        fm = new FileManager(downloadFolder,id);
+        fm.CheckIfOwner(this.id, this.previd,this.nextid);//TODO Still necessary?
+        fm.StartupReplication(server, previd);
         Thread t=new Thread(new TCPServer(""));//TODO empty string
         t.start();
     }
@@ -194,6 +195,7 @@ public class Client implements NodeIntf, ClientIntf {
     public void updateNextNeighbor(NodeInfo node) {
         this.nextid=node;
         System.out.println("Next:" +node.Address);
+        fm.RecheckOwnership(node);
     }
 
     @Override
@@ -238,6 +240,11 @@ public class Client implements NodeIntf, ClientIntf {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void requestDownload(NodeInfo node, String file) throws RemoteException {
+       fm.downloadQueue.add(new Tuple<>(node.Address,file ));
     }
 
     @Override
