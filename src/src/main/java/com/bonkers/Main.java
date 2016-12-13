@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 /**
  * Startup class
+ * Todo public check because ?
  */
 public class Main extends Application {
     static Client client;

@@ -25,7 +25,7 @@ public class Server implements QueueListener, ServerIntf{
     /**
      * Error string
      */
-    public String error=null;
+    public int error;
 
     /**
      * Main server object constructor, creates MulticastCommunicator and Hashtablecreator, and subscribes on the queueEvent object
@@ -87,21 +87,21 @@ public class Server implements QueueListener, ServerIntf{
          * @param ip Ip address
          * @return Returns error code
          */
-        private String checkDoubles(String name, String ip)
+        private int checkDoubles(String name, String ip)
         {
-            String resp = null;
+            int resp;
             int hash = HT.createHash(name);
             if(HT.htIp.containsKey(hash))
             {
-                resp = "201";
+                resp = 201;
             }
             else if (HT.htIp.containsValue(ip))
             {
-                resp = "202";
+                resp = 202;
             }
             else
             {
-                resp = "100";
+                resp = 100;
                 HT.createHashTable(ip, name);
             }
             return resp;
@@ -123,7 +123,7 @@ public class Server implements QueueListener, ServerIntf{
                 return lastNode;
         }
         @Override
-        public String error() throws RemoteException{
+        public int error() throws RemoteException{
             return error;
         }
 

@@ -6,10 +6,25 @@ package com.bonkers;
 import java.io.*;
 import java.net.Socket;
 
+/***
+ * The actual and technical downloading of a file. Well, more uploading, this is the thread that a tcpserver uses to connect a client node with
+ */
 public class DownloadConnection implements Runnable{
+    /**
+     * The socket to connect with
+     */
     private final Socket sock;
+    /**
+     * File input stream read from
+     */
     private FileInputStream fis = null;
+    /**
+     * The buffer for the fileinputstream
+     */
     private BufferedInputStream bis = null;
+    /**
+     * The outputstream to write to, also known as the tcp connection
+     */
     private DataOutputStream os = null;
     private final String folderPath;
 
@@ -32,6 +47,11 @@ public class DownloadConnection implements Runnable{
         }
     }
 
+    /**
+     * The sending of a file
+     * @param filepath The location of the file
+     * @throws IOException If the file isnt found or w/e
+     */
     private void sendFile(String filepath) throws IOException {
         os  = new DataOutputStream(sock.getOutputStream());
         System.out.println("Waiting...");
@@ -48,6 +68,11 @@ public class DownloadConnection implements Runnable{
         os.flush();
         System.out.println("File sent.");
     }
+
+    /**
+     * Clear all the open streams
+     * @throws IOException
+     */
     private void exit() throws IOException{
         if (fis!=null) fis.close();
         if (bis != null) bis.close();

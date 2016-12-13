@@ -5,9 +5,22 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
- * Created by reinout on 11/15/16.
+ * Remote Client Interface for Client-Server Connection
  */
 public interface ClientIntf extends Remote {
-    void setStartingInfo(String address, int clientcount) throws RemoteException, Exception;
+    /**
+     * Sets starting info for the node so it can function properly
+      * @param address The server's IP address
+     * @param clientcount Amount of clients/nodes currently connected
+     * @throws RemoteException
+     * @throws Exception
+     */
+    void setStartingInfo(String address, int clientcount) throws RemoteException;
+
+    /**
+     * This is created, but not used for it's purpose
+     * TODO Joris Jente?
+     * @throws RemoteException
+     */
     void setNameError()throws RemoteException;
 }

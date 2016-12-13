@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by reinout on 11/22/16.
+ * TODO Jente
  */
 public class AgentFileList implements Runnable, Serializable {
     List<Tuple<String, Boolean>> FileList;

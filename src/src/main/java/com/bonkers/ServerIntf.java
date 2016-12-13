@@ -28,7 +28,7 @@ public interface ServerIntf extends Remote {
      * @return Error string
      * @throws RemoteException Throws exception if RMI failed.
      */
-    String error() throws RemoteException;
+    int error() throws RemoteException;
 
     /**
      * RMI function that removes a node from the hashtable when it shuts down.

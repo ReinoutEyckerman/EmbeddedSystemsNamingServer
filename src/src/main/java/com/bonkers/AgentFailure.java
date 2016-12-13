@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by reinout on 11/22/16.
+ * TODO Jente
  */
 public class AgentFailure implements Runnable, Serializable {
     List<Tuple<String, Boolean>> FileList;

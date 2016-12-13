@@ -22,10 +22,18 @@ public class Client implements NodeIntf, ClientIntf {
     /**
      * Address of the server to connect to.
      */
-
     private String ServerAddress = null;
+    /**
+     * Boolean that checks if the bootstrap has completed, essential for knowing if the node is connected properly
+     */
     private boolean finishedBootstrap=false;
+    /**
+     * Error code TODO Jente
+     */
     public boolean Error = true;
+    /**
+     * The download location TODO might be removed?
+     */
     private final File downloadFolder;
     /**
      * Name of the client.
@@ -44,12 +52,13 @@ public class Client implements NodeIntf, ClientIntf {
      * Tuples with the hash and IPAddress from itself, previous and nextid.
      */
     private NodeInfo id, previd, nextid;
-    public Map<String,Boolean> FileMap=new HashMap<>();
-
+    /**
+     * File manager, handles file operations for the current node
+     */
     private FileManager fm = null;
-    private FileWriter fw = null;
-    private BufferedWriter bw = null;
-
+    /**
+     * TODO Jente
+     */
     public AgentFileList agentFileList = null;
 
     /**
@@ -58,8 +67,9 @@ public class Client implements NodeIntf, ClientIntf {
     public static List<String> ownerOfFilesList = null;
     /**
      * Client constructor.
-     * Initiates Bootstrap
+     * Initiates Bootstrap and the filemanager, does all essential bootup stuff
      * @param name Name of the client
+     * @param downloadFolder The folder to download files to
      * @throws Exception Generic exception for when something fails TODO
      */
     public Client(String name, File downloadFolder) throws Exception {
@@ -84,14 +94,11 @@ public class Client implements NodeIntf, ClientIntf {
         bootStrap();
         while(!finishedBootstrap){
         }
-/*
         fm = new FileManager(downloadFolder,server,id,previd);
-        fm.CheckIfOwner(this.id, this.nextid); //TODO Still necessary?
+        fm.CheckIfOwner(this.nextid);
         fm.StartupReplication(previd);
-
-        Thread t=new Thread(new TCPServer());//TODO empty string
-        t.start();*/
-
+        Thread t=new Thread(new TCPServer());//Todo check why constructor dissapeared
+        t.start();
     }
 
     /**
@@ -107,35 +114,35 @@ public class Client implements NodeIntf, ClientIntf {
         System.out.println("Bootstrap completed.");
     }
 
-    public String CheckError(String error) throws Exception
+    /**
+     * Returns errors if there IF THERE WHAT JORIS? Todo joris
+     * @param error
+     * @return
+     * @throws Exception
+     */
+    public int CheckError(int error)
     {
-        String errorNr=null;
-        if(error.equals("201"))
-        {
+        switch (error){
+            case 201:
             System.out.println("The node name already exists on the server please choose another one");
-            errorNr = "201";
-        }
-        else if (error.equals("202"))
-        {
+                break;
+            case 202:
             System.out.println("You already exist in the name server");
-            errorNr = "202";
-        }
-        else if (error.equals("100"))
-        {
+                break;
+            case 100:
             System.out.println("No errors");
-            errorNr ="100";
+                break;
+            default:
+                System.out.println("Unknown error");
+                break;
         }
-        else
-        {
-            System.out.println("Unknown error");
-        }
-        return errorNr;
+        return error;
     }
     /**
      * This function gets called on shutdown.
      * It updates the neighbors so their connection can be established, and notifies the server of its shutdown.
+     * TODO Replication
      */
-
     public void shutdown(){
 
         System.out.print("shutdown\n");
@@ -168,7 +175,7 @@ public class Client implements NodeIntf, ClientIntf {
     /**
      * This function will get called after connection with a neighboring node fails.
      * It updates the server that the note is down, and gets its neighboring nodes so they can make connection.
-     *
+     * TODO unconnected & Untested
      * @param id Integer id/hash of the failing node
      */
     public void nodeFailure(int id){
@@ -266,18 +273,15 @@ public class Client implements NodeIntf, ClientIntf {
 
 
     @Override
-    public void setStartingInfo(String address, int clientcount) throws RemoteException, Exception {
+    public void setStartingInfo(String address, int clientcount) throws RemoteException {
         this.ServerAddress=address;
         try {
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
             server = (ServerIntf) registry.lookup("ServerIntf");
-            if (!CheckError(server.error()).equals("100")){
-                //TODO
+            if (CheckError(server.error())!=100){
+                //TODO Joris Gooi grafische error en vraag dan nog is, die grafische error mag ook in dien checkerror geplaatst worde, dan kan deze if weg en heeft die functie tenminste nut
                 Error=false;
-
             }
-           /* String IP = server.findLocationFile("test");
-            System.out.println("ip address is "+IP);*/
         }catch (NotBoundException e){
             e.printStackTrace();
         }

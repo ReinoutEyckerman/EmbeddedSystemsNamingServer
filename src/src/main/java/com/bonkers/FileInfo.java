@@ -3,9 +3,15 @@ package com.bonkers;
 import java.util.List;
 
 /**
- * Created by reinout on 12/7/16.
+ * Information object about a file, only the fileowner has this object.
  */
 public class FileInfo {
+    /**
+     * The filename related
+     */
     public String fileName;
+    /**
+     * List of nodes who also have this file
+     */
     public List<NodeInfo> fileOwners;
 }

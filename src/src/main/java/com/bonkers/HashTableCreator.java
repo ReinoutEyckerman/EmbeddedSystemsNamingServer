@@ -15,6 +15,7 @@ import java.util.TreeMap;
 /**
  * Class that handles the writing and reading of hashmap.
  * TODO: Potential singleton?
+ * TODO: Jente check javadoc comments
  */
 public class HashTableCreator {
     /**

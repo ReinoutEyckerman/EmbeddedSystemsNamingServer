@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.nio.Buffer;
 
 /**
- * Created by Kenny on 7/12/16.
+ * Todo Kenny multithread support?(maybe set a buffer one can write to (QueueEvent)) and javadoc
  */
 public class Logger{
     public BufferedWriter bw = null;
