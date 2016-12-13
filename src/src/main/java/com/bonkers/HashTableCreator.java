@@ -6,8 +6,8 @@ import com.google.gson.stream.JsonReader;
 
 import java.io.*;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -19,6 +19,8 @@ public class HashTableCreator {
      * Local hashmap for intermediate and outside use.
      */
     public Map htIp = new HashMap();
+
+    public InetAddress IP = null;
 
     public int getNodeAmount(){
         return htIp.size();
@@ -101,16 +103,18 @@ public class HashTableCreator {
      * @return Connected host
      */
     //TODO (?)
-    public String findHost(String FileHash)
+    public InetAddress findHost(String FileHash)
     {
-        String IP="";
-        Iterator it = htIp.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            if (pair.getKey().equals(FileHash)) {
-                IP = pair.getValue().toString();
+        htIp.forEach((key, value) ->{
+            if(key.equals(FileHash))
+            {
+                try {
+                    IP = InetAddress.getByName(String.valueOf(value));
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
             }
-        }
+        });
         return IP;
     }
 }

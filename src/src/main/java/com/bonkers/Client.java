@@ -87,7 +87,7 @@ public class Client implements NodeIntf, ClientIntf {
         fm = new FileManager(downloadFolder,id);
         fm.CheckIfOwner(this.id, this.previd,this.nextid);//TODO Still necessary?
         fm.StartupReplication(server, previd);
-        Thread t=new Thread(new TCPServer(""));//TODO empty string
+        Thread t=new Thread(new TCPServer());//TODO empty string
         t.start();
     }
 
