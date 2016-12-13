@@ -25,6 +25,7 @@ public class Client implements NodeIntf, ClientIntf {
 
     private String ServerAddress = null;
     private boolean finishedBootstrap=false;
+    public boolean Error = true;
     private final File downloadFolder;
     /**
      * Name of the client.
@@ -84,11 +85,11 @@ public class Client implements NodeIntf, ClientIntf {
         //TODO Check local files here
         while(!finishedBootstrap){
         }
-        fm = new FileManager(downloadFolder,id);
+       /* fm = new FileManager(downloadFolder,id);
         fm.CheckIfOwner(this.id, this.previd,this.nextid);//TODO Still necessary?
         fm.StartupReplication(server, previd);
         Thread t=new Thread(new TCPServer());//TODO empty string
-        t.start();
+        t.start();*/
 
     }
 
@@ -105,7 +106,7 @@ public class Client implements NodeIntf, ClientIntf {
         System.out.println("Bootstrap completed.");
     }
 
-    private String CheckError(String error) throws Exception
+    public String CheckError(String error) throws Exception
     {
         String errorNr=null;
         if(error.equals("201"))
@@ -270,6 +271,8 @@ public class Client implements NodeIntf, ClientIntf {
             server = (ServerIntf) registry.lookup("ServerIntf");
             if (!CheckError(server.error()).equals("100")){
                 //TODO
+                Error=false;
+
             }
            /* String IP = server.findLocationFile("test");
             System.out.println("ip address is "+IP);*/

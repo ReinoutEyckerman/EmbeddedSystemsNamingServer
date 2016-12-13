@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
  * Startup class
  */
 public class Main extends Application {
+    static Client client;
 
     /**
      * Function to start JavaFX UI
@@ -38,7 +39,9 @@ public class Main extends Application {
 
     @SuppressWarnings("restriction")
     private void closeProgram() {
+
         System.out.println("sluiten");
+        client.shutdown();
     }
 
     /**
@@ -74,15 +77,17 @@ public class Main extends Application {
                     if(args.length>1)
                     {
 
-                        Client client = new Client(args[1], file);
-
+                        client = new Client(args[1], file);
+                        if (client.Error == false) {
+                            launch(args);
+                        }
 
                     }
                     else
                     {
                         System.out.println("No Name given");
                     }
-                    launch(args);
+
                     break;
                 default:
                     System.out.println("Unknown parameter: " + args[0]);
