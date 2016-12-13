@@ -7,8 +7,10 @@ import com.google.gson.stream.JsonReader;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Class that handles the writing and reading of hashmap.
@@ -18,7 +20,7 @@ public class HashTableCreator {
     /**
      * Local hashmap for intermediate and outside use.
      */
-    public Map htIp = new HashMap();
+    public TreeMap<Integer, String> htIp = new TreeMap<>();
 
     public InetAddress IP = null;
 
@@ -74,9 +76,9 @@ public class HashTableCreator {
      * Reads hashes from file.
      * @return Hashtable map
      */
-    public Map readHashtable()
+    public TreeMap<Integer, String> readHashtable()
     {
-        Map Hashtable = new HashMap();
+        TreeMap<Integer, String> Hashtable = new TreeMap<>();
         try {
             JsonReader reader = new JsonReader(new FileReader("hashtable.json"));
             reader.beginObject();
@@ -103,10 +105,10 @@ public class HashTableCreator {
      * @return Connected host
      */
     //TODO (?)
-    public InetAddress findHost(String FileHash)
+    public InetAddress findHost(int FileHash)
     {
         htIp.forEach((key, value) ->{
-            if(key.equals(FileHash))
+            if(key <= FileHash)
             {
                 try {
                     IP = InetAddress.getByName(String.valueOf(value));
