@@ -8,11 +8,11 @@ import java.net.InetAddress;
  */
 public class NodeInfo implements Serializable{
     /**
-     * X value of the tuple
+     * Node Hash
      */
     public int Hash ;
     /**
-     * Y value of the tuple
+     *  Node IP address
      */
     public String Address;
 
@@ -25,9 +25,4 @@ public class NodeInfo implements Serializable{
         this.Hash=hash;
         this.Address=address;
     }
-
-    /*@Override
-    public String toString(){
-        return this.Hash+" "+this.Address;
-    }*/
 }

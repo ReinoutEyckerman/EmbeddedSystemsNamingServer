@@ -2,6 +2,7 @@ package com.bonkers;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -13,20 +14,32 @@ import java.util.*;
  * Server class that accepts client connections.
  */
 public class Server implements QueueListener, ServerIntf{
+    /**
+     * The hash table, essential to its functionality
+     */
     private HashTableCreator HT=null;
+    /**
+     * The multicast listener, listens to multicast clients wanting to joing
+     */
     private MulticastCommunicator multicast =null;
+    /**
+     * Error string
+     */
     public String error=null;
 
     /**
      * Main server object constructor, creates MulticastCommunicator and Hashtablecreator, and subscribes on the queueEvent object
-     * @throws IOException When IO fails (?)
      */
-    public Server() throws IOException {
+    public Server()  {
         try {
             Registry registry = LocateRegistry.createRegistry(1099);
             ServerIntf stub = (ServerIntf) UnicastRemoteObject.exportObject(this, 0);
             registry.bind("ServerIntf", stub);
         }catch(AlreadyBoundException e){
+            e.printStackTrace();
+        } catch (AccessException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
         HT=new HashTableCreator();
@@ -35,6 +48,10 @@ public class Server implements QueueListener, ServerIntf{
         multicast.packetQueue.addListener(this);
     }
 
+    /**
+     * Subscriptor of the queueEvent
+     * Gets run when a multicast packet is received, then checks for double entries and then adds the node
+     */
     @Override
     public void queueFilled() {
         Tuple<String, String> t= multicast.packetQueue.poll();
@@ -45,6 +62,11 @@ public class Server implements QueueListener, ServerIntf{
             System.out.println();
         //}
     }
+
+    /**
+     * Sets the starting info at the new node. //TODO better naming? Node gets added at checkdoubles
+     * @param t
+     */
     private void addNode(Tuple<String, String> t){
         try{
             Registry registry = LocateRegistry.getRegistry(t.y);
@@ -59,7 +81,8 @@ public class Server implements QueueListener, ServerIntf{
 
 
         /**
-         * @param name Name of the thing
+         * This checks for duplicates and adds them to the hashtable if not duplicate.
+         * @param name Name of the device
          * @param ip Ip address
          * @return Returns error code
          */
@@ -98,10 +121,12 @@ public class Server implements QueueListener, ServerIntf{
             else
                 return lastNode;
         }
+        @Override
         public String error() throws RemoteException{
             return error;
         }
 
+        @Override
         public void nodeShutdown(NodeInfo node) {
             HT.htIp=HT.readHashtable();
             if(HT.htIp.containsKey(node.Hash)){
@@ -111,7 +136,7 @@ public class Server implements QueueListener, ServerIntf{
             else throw new IllegalArgumentException("Somehow, the node that shut down didn't exist");
         }
 
-
+        @Override
         public NodeInfo[] nodeNeighbors(NodeInfo node) {
             Map hashmap=HT.readHashtable();
             List list=new ArrayList(hashmap.keySet());

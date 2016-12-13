@@ -14,7 +14,20 @@ public interface ServerIntf extends Remote {
      * @throws RemoteException Throws exception if RMI failed.
      */
     String findLocationFile(String FileName) throws RemoteException;
+    /**
+     * TODO does this even work?
+     * Finds location of file on the server using its hash.
+     * @param hash Name of the file
+     * @return Returns location of the file
+     * @throws RemoteException Throws exception if RMI failed.
+     */
     String findLocationHash(int hash) throws RemoteException;
+
+    /**
+     * Gets the current error of the server
+     * @return Error string
+     * @throws RemoteException Throws exception if RMI failed.
+     */
     String error() throws RemoteException;
 
     /**
@@ -27,7 +40,7 @@ public interface ServerIntf extends Remote {
     /**
      * RMI function that returns the neighbors of a failing node.
      * @param node Tuple of the node that failed.
-     * @return Returns Tuple of 2 Tuples, first tuple contains hash and ip from previous neighbor, second one contains from the next neighbor.
+     * @return Returns array of 2 Tuples, first tuple contains hash and ip from previous neighbor, second one contains from the next neighbor.
      * @throws RemoteException Throws exception if RMI failed.
      */
 

@@ -9,7 +9,7 @@ import java.util.*;
  */
 interface QueueListener{
     /**
-     * "Event" when there is a packet received.
+     * "Event" when there is an item added to the queue.
      */
     void queueFilled();
 }

@@ -23,5 +23,12 @@ public interface NodeIntf extends Remote {
     void updatePreviousNeighbor(NodeInfo node)throws RemoteException;
     void transferAgent(AgentFileList agentFileList) throws RemoteException;
     void transferDoubleAgent(AgentFailure agent) throws RemoteException;
+
+    /**
+     * Sends a download request to the node to download the specified file
+     * @param node Node that should download the file
+     * @param file file to download
+     * @throws RemoteException
+     */
     void requestDownload(NodeInfo node, String file) throws RemoteException;
 }

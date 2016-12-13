@@ -1,7 +1,7 @@
 package com.bonkers;
 
 /**
- * Implementation of Node information.
+ * Implementation of a 2-value Tuple.
  */
 public class Tuple<X,Y> {
     /**
