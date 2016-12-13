@@ -1,0 +1,67 @@
+OPSTARTEN
+Nieuw node:
+1. Na bootstrap en discovery controleert de nieuwe node zijn lokale bestanden (bepaalde map op harde
+schijf) --DONE
+2. Per bestand wordt via de hash van de bestandsnaam de node opgevraagd aan de nameserver waar dit
+bestand moet gerepliceerd worden. --Done
+3. Indien de node die de nameserver teruggeeft waar het bestand moet gerepliceerd worden gelijk is aan
+de node die het bestand lokaal heeft, wordt het bestand naar de vorige node gerepliceerd. (Figuur 1:
+Trailer.mp4 op node 5, wordt gerepliceerd naar node 28) --Done
+4. Via een TCP socket wordt ieder bestand gerepliceerd naar de juiste node --Done
+5. Deze node wordt eigenaar (of in geval Punt 3: de node die het bestand lokaal heeft) van het bestand
+en houdt volgende gegevens bij (=bestandsfiche): --Done
+ Op welke nodes het bestand beschikbaar is (maak onderscheid tussen node die het bestand
+lokaal heeft en gedownload heeft)
+
+vorige node=
+1. Na discovery van de node, controleert deze node alle bestanden waarvan hij eigenaar is via de hash
+van het bestand en de hash van nieuwe node of het bestand moet gerepliceerd worden naar de
+nieuwe node (Figuur 1: Foto.jpg, song.mp3 en Uitgaven.xls moet van node 12 naar node 14
+gerepliceerd worden)--Done
+2. De bestanden die gerepliceerd moeten worden, moeten via een TCP socket gekopieerd worden naar
+de nieuwe node--Done
+3. De bestandfiche van iedere bestand dat gerepliceerd moet worden, wordt doorgegeven naar de
+nieuwe node + geüpdatet, deze node wordt eigenaar van het bestand (nameserver verwijst naar deze
+node bij het vertalen van een bestandsnaam in nodenaam)--Done
+ Vorige eigenaar wordt een downloadlocatie van het bestand--Done
+
+UPDATE
+Wanneer er lokaal nieuwe bestanden worden toegevoegd, moeten deze bestanden gerepliceerd worden in
+het netwerk op dezelfde methode als bij de opstart fase van een nieuwe node
+Hiervoor dient er een thread gestart te worden die om een bepaalde tijd de map controleert op nieuwe
+bestanden die de lokale bestanden bevat. --Done
+
+SHUTDOWN
+Gerepliceerde bestanden
+1. Wanneer een node wordt afgesloten, moeten de bestanden die bij deze node gerepliceerd staan,
+verplaatst worden naar zijn vorige node, deze node wordt de nieuwe eigenaar.//Todo
+a. Wanneer een bestand dat bij deze node gerepliceerd is, lokaal aanwezig is bij zijn vorige node,
+moet het naar de vorige node van zijn vorige node verplaatst worden (Figuur 1: Als node 28
+zou stoppen, moet loon.pdf naar node 12 verplaatst worden)
+3. De bestandsfiches worden doorgegeven naar de node die eigenaar wordt + geüpdatet
+Lokale bestanden
+1. De eigenaar van het bestand verwittigen
+Eigenaar van bestand:
+2. Indien het bestand nooit gedownload is geweest  bestand verwijderen bij hem en de eigenaar
+3. Anders downloadlocaties updaten in bestandsfiche
+3/3
+Figuur: nieuwe node, met ID = 14 nestelt zich tussen node ID 12 en ID 17
+Verklaring figuur:
+Volgens het basis algoritme zullen in node ID=12 de lokale bestanden:
+1. bestand readme.txt, na Hashing (=27) gerepliceerd worden naar node ID=17
+2. analoog: nfsw.exe, na Hashing (=9) gerepliceerd worden naar node ID=5
+3. analoog: download.rar, na Hashing (1) gerepliceerd worden naar node ID=28
+Bij toevoeging van de nieuwe node ID=14
+4. zullen de lokale bestanden more.txt (=3) en myfoto (=22) gerepliceerd worden naar respectievelijk
+node ID=28 en node ID=17
+5. en zullen de gerepliceerde bestanden op node ID=12: foto.jpg, Song.mp3 en Uitgaven.xls verplaatst
+worden naar node ID=14.
+
+Testen
+Maak testen voor volgende situaties:
+ Voeg een node toe met een aantal lokale bestanden, en ga achteraf na via de hash of de bestanden op
+de juiste node staan.
+ Voeg nieuwe bestanden toe op node.
+ Voeg een bestand toe waarvan replicatie locatie mapped op de node die het bestand lokaal heeft.
+ Verwijder een node en controleer of alle gerepliceerde bestanden naar de juist node gaan. En de
+lokale bestanden al dan niet verwijderd worden uit het netwerk (manueel downloadlijst invullen)

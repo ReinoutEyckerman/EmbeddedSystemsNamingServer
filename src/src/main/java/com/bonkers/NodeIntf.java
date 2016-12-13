@@ -31,4 +31,5 @@ public interface NodeIntf extends Remote {
      * @throws RemoteException
      */
     void requestDownload(NodeInfo node, String file) throws RemoteException;
+     void setOwnerFile(FileInfo file) throws RemoteException;
 }
