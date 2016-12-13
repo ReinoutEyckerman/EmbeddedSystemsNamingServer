@@ -115,7 +115,7 @@ public class Server implements QueueListener, ServerIntf{
         public String findLocationHash(int hash){
             List list=new ArrayList(HT.htIp.keySet());
             Collections.sort(list);
-            String previousNeighbor = HT.findHost(Integer.toString(hash));
+            String previousNeighbor = String.valueOf(HT.findHost(hash).getAddress());
             String lastNode=(String)HT.htIp.get(list.get(list.size()-1));
             if (previousNeighbor != null)
                 return previousNeighbor;
