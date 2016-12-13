@@ -1,7 +1,9 @@
 package com.bonkers;
 
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.net.InetAddress;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -23,6 +25,7 @@ public class Client implements NodeIntf, ClientIntf {
 
     private String ServerAddress = null;
     private boolean finishedBootstrap=false;
+    private final File downloadFolder;
     /**
      * Name of the client.
      */
@@ -42,8 +45,9 @@ public class Client implements NodeIntf, ClientIntf {
     private NodeInfo id, previd, nextid;
     public Map<String,Boolean> FileMap=new HashMap<>();
 
-    private File file;
     private FileManager fm = null;
+    private FileWriter fw = null;
+    private BufferedWriter bw = null;
 
     public AgentFileList agentFileList = null;
 
@@ -57,8 +61,8 @@ public class Client implements NodeIntf, ClientIntf {
      * @param name Name of the client
      * @throws Exception Generic exception for when something fails TODO
      */
-    public Client(String name, File file) throws Exception {
-        this.file = file;
+    public Client(String name, File downloadFolder) throws Exception {
+        this.downloadFolder=downloadFolder;
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
                 shutdown();
@@ -80,8 +84,9 @@ public class Client implements NodeIntf, ClientIntf {
         //TODO Check local files here
         while(!finishedBootstrap){
         }
-        fm = new FileManager(file);
-        fm.CheckIfOwner(this.id, this.previd,this.nextid);
+        fm = new FileManager(downloadFolder,id);
+        fm.CheckIfOwner(this.id, this.previd,this.nextid);//TODO Still necessary?
+        fm.StartupReplication(server, previd);
         Thread t=new Thread(new TCPServer(""));//TODO empty string
         t.start();
     }
@@ -196,6 +201,7 @@ public class Client implements NodeIntf, ClientIntf {
     public void updateNextNeighbor(NodeInfo node) {
         this.nextid=node;
         System.out.println("Next:" +node.Address);
+        fm.RecheckOwnership(node);
     }
 
     @Override
@@ -206,6 +212,7 @@ public class Client implements NodeIntf, ClientIntf {
 
     @Override
     public void transferAgent(AgentFileList agentFileList) throws RemoteException {
+        agentFileList.started = true;
         Thread agentThread=new Thread(agentFileList);
         agentThread.start();
         try {
@@ -213,12 +220,19 @@ public class Client implements NodeIntf, ClientIntf {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Registry registry = LocateRegistry.getRegistry(nextid.Address);
-        try {
-            NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
-            neighbor.transferAgent(agentFileList);
-        } catch (NotBoundException e) {
-            e.printStackTrace();
+        if(!(nextid.Address.equals(id.Address)))
+        {
+            Registry registry = LocateRegistry.getRegistry(nextid.Address);
+            try {
+                NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
+                neighbor.transferAgent(agentFileList);
+            } catch (NotBoundException e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            agentFileList.started = false;
         }
     }
 
@@ -240,6 +254,11 @@ public class Client implements NodeIntf, ClientIntf {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void requestDownload(NodeInfo node, String file) throws RemoteException {
+       fm.downloadQueue.add(new Tuple<>(node.Address,file ));
     }
 
     @Override
@@ -270,6 +289,12 @@ public class Client implements NodeIntf, ClientIntf {
                 node.updatePreviousNeighbor(id);
             }catch(NotBoundException e){
                 e.printStackTrace();
+            }
+            if(clientcount == 2)
+            {
+                agentFileList = AgentFileList.getInstance();
+                agentFileList.started = true;
+                transferAgent(agentFileList);
             }
         }
         finishedBootstrap=true;
