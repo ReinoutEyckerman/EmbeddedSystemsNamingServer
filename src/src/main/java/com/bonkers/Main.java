@@ -78,7 +78,7 @@ public class Main extends Application {
             System.out.println("Please enter a parameter");
             System.out.println("Exiting...");
         }
-        launch(args);
+        //launch(args);
     }
 
     /**

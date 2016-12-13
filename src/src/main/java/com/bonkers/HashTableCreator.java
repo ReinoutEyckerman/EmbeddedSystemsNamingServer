@@ -108,7 +108,7 @@ public class HashTableCreator {
     public InetAddress findHost(int FileHash)
     {
         htIp.forEach((key, value) ->{
-            if(key <= FileHash)
+            if(key <= FileHash && htIp.lowerEntry(key).getKey() > FileHash)
             {
                 try {
                     IP = InetAddress.getByName(String.valueOf(value));
