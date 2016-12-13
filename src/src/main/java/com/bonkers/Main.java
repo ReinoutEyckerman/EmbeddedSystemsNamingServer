@@ -28,20 +28,17 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception{
-/*        Parent root = FXMLLoader.load(getClass().getResource("/View/HomePage.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/View/HomePage.fxml"));
         primaryStage.setTitle("SystemY");
         primaryStage.setScene(new Scene(root, 800, 600));
-        primaryStage.show();*/
+        primaryStage.show();
 
-        //primaryStage.setOnCloseRequest(event -> closeProgram());
+        primaryStage.setOnCloseRequest(event -> closeProgram());
     }
 
     @SuppressWarnings("restriction")
     private void closeProgram() {
-        com.sun.javafx.application.PlatformImpl.tkExit();
-
-        Platform.exit();
-        System.exit(0);
+        System.out.println("sluiten");
     }
 
     /**
@@ -51,6 +48,7 @@ public class Main extends Application {
      * @throws Exception Throws exception on fail
      */
     public static void main(String[] args) throws Exception {
+
         System.out.println(InetAddress.getLocalHost().getHostAddress().toString());
         File file = new File(System.getProperty("user.dir") + "/tmp");
         file.mkdirs();
@@ -75,13 +73,16 @@ public class Main extends Application {
                 case "client":
                     if(args.length>1)
                     {
+
                         Client client = new Client(args[1], file);
+
 
                     }
                     else
                     {
                         System.out.println("No Name given");
                     }
+                    launch(args);
                     break;
                 default:
                     System.out.println("Unknown parameter: " + args[0]);
@@ -93,7 +94,7 @@ public class Main extends Application {
             System.out.println("Please enter a parameter");
             System.out.println("Exiting...");
         }
-        launch(args);
+
     }
 
     /**
