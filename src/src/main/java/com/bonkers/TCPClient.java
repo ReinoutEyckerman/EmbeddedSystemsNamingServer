@@ -57,8 +57,8 @@ public class TCPClient implements Runnable{
      */
     public TCPClient(String ip, String remoteFileLocation, File downloadLocation){
         Server=ip;
-        this.downloadLocation = downloadLocation; //TODO
-        this.remoteFileLocation = remoteFileLocation; //TODO
+        this.downloadLocation = downloadLocation;
+        this.remoteFileLocation = remoteFileLocation;
     }
 
     /**

@@ -9,7 +9,7 @@ de node die het bestand lokaal heeft, wordt het bestand naar de vorige node gere
 Trailer.mp4 op node 5, wordt gerepliceerd naar node 28) --Done
 4. Via een TCP socket wordt ieder bestand gerepliceerd naar de juiste node --Done
 5. Deze node wordt eigenaar (of in geval Punt 3: de node die het bestand lokaal heeft) van het bestand
-en houdt volgende gegevens bij (=bestandsfiche): //TODO
+en houdt volgende gegevens bij (=bestandsfiche): --Done
  Op welke nodes het bestand beschikbaar is (maak onderscheid tussen node die het bestand
 lokaal heeft en gedownload heeft)
 
@@ -22,8 +22,8 @@ gerepliceerd worden)--Done
 de nieuwe node--Done
 3. De bestandfiche van iedere bestand dat gerepliceerd moet worden, wordt doorgegeven naar de
 nieuwe node + geüpdatet, deze node wordt eigenaar van het bestand (nameserver verwijst naar deze
-node bij het vertalen van een bestandsnaam in nodenaam)//Todo
- Vorige eigenaar wordt een downloadlocatie van het bestand//todo
+node bij het vertalen van een bestandsnaam in nodenaam)--Done
+ Vorige eigenaar wordt een downloadlocatie van het bestand--Done
 
 UPDATE
 Wanneer er lokaal nieuwe bestanden worden toegevoegd, moeten deze bestanden gerepliceerd worden in
@@ -56,6 +56,7 @@ Bij toevoeging van de nieuwe node ID=14
 node ID=28 en node ID=17
 5. en zullen de gerepliceerde bestanden op node ID=12: foto.jpg, Song.mp3 en Uitgaven.xls verplaatst
 worden naar node ID=14.
+
 Testen
 Maak testen voor volgende situaties:
  Voeg een node toe met een aantal lokale bestanden, en ga achteraf na via de hash of de bestanden op

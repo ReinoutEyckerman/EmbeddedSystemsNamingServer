@@ -2,7 +2,9 @@ package com.bonkers;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by reinout on 12/7/16.
@@ -15,22 +17,21 @@ public class FileChecker {
         this.folderLocation=folderLocation;
     }
 
-    public List checkFiles(){
-        List<String> files=new ArrayList<>();
+    public Map checkFiles(NodeInfo id){
+        Map<String,NodeInfo> files=new HashMap<>();
         for (final File fileEntry : folderLocation.listFiles()) {
             if (!fileEntry.isDirectory()) {
-                files.add(fileEntry.getName());
+                files.put(fileEntry.getName(),id);
             }
         }
         return files;
-
     }
 
-    public List checkFiles(List existingFiles){
-        List<String> files=new ArrayList<>();
+    public Map checkFiles(NodeInfo id,Map existingFiles){
+        Map<String, NodeInfo> files=new HashMap<>();
         for (final File fileEntry : folderLocation.listFiles()) {
-            if (!fileEntry.isDirectory() && !existingFiles.contains(fileEntry)) {
-                files.add(fileEntry.getName());
+            if (!fileEntry.isDirectory() && !existingFiles.containsKey(fileEntry.getName())) {
+                files.put(fileEntry.getName(),id);
             }
         }
         return files;

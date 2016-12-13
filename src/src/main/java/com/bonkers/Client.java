@@ -83,9 +83,9 @@ public class Client implements NodeIntf, ClientIntf {
         bootStrap();
         while(!finishedBootstrap){
         }
-        fm = new FileManager(downloadFolder,id);
+        fm = new FileManager(downloadFolder,server,id,previd);
         fm.CheckIfOwner(this.id, this.nextid);
-        fm.StartupReplication(server, previd);
+        fm.StartupReplication(previd);
         Thread t=new Thread(new TCPServer());//TODO empty string
         t.start();
     }
@@ -159,11 +159,6 @@ public class Client implements NodeIntf, ClientIntf {
         }
         System.out.println("Successful shutdown");
         System.exit(0);
-        System.exit(1);
-        System.exit(-1);
-        System.exit(35);
-
-
     }
 
     /**
@@ -259,6 +254,12 @@ public class Client implements NodeIntf, ClientIntf {
     public void requestDownload(NodeInfo node, String file) throws RemoteException {
        fm.downloadQueue.add(new Tuple<>(node.Address,file ));
     }
+
+    @Override
+    public void setOwnerFile( FileInfo file) throws RemoteException {
+        fm.setOwnerFile(file);
+    }
+
 
     @Override
     public void setStartingInfo(String address, int clientcount) throws RemoteException, Exception {
