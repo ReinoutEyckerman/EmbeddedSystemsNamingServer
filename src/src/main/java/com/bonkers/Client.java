@@ -81,13 +81,12 @@ public class Client implements NodeIntf, ClientIntf {
         this.id=new NodeInfo(HashTableCreator.createHash(name),ip);
         multicast=new MulticastCommunicator();
         bootStrap();
-        //TODO Check local files here
         while(!finishedBootstrap){
         }
         fm = new FileManager(downloadFolder,id);
-        fm.CheckIfOwner(this.id, this.previd,this.nextid);//TODO Still necessary?
+        fm.CheckIfOwner(this.id, this.nextid);
         fm.StartupReplication(server, previd);
-        Thread t=new Thread(new TCPServer(""));//TODO empty string
+        Thread t=new Thread(new TCPServer());//TODO empty string
         t.start();
     }
 

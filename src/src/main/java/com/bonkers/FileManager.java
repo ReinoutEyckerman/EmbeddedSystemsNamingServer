@@ -8,34 +8,58 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by reinout on 12/4/16.
  */
 public class FileManager implements QueueListener{
     private final File downloadLocation;
-    public QueueEvent<Tuple<String,String>> downloadQueue=new QueueEvent<>();
+    public QueueEvent<Tuple<String,String>> downloadQueue;
     private List<String> localFiles;
     private NodeInfo id;
-    public FileManager(File downloadLocation, NodeInfo id){
+    private FileChecker fileChecker;
+    private ServerIntf server;
+    public FileManager(File downloadLocation, ServerIntf server, NodeInfo id, NodeInfo prevId){
         this.downloadLocation =downloadLocation;
-        downloadQueue.addListener(this);
-        localFiles=listFilesForFolder(downloadLocation);
         this.id=id;
-    }
-    public void StartupReplication(ServerIntf server,  NodeInfo prevId){ //TODO: This nodeinfo passing is ugly
-        for(int i=0; i<localFiles.size(); i++){
-            try {
-                String ip = server.findLocationFile(localFiles.get(i));
-                if (Objects.equals(id.Address, ip))
-                    RequestDownload(prevId.Address, localFiles.get(i));
-                else {
-                    RequestDownload(ip, localFiles.get(i));
+        this.server=server;
+        downloadQueue=new QueueEvent<>();
+        downloadQueue.addListener(this);
+        fileChecker=new FileChecker(downloadLocation);
+        localFiles=fileChecker.checkFiles();
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                List<String> l=fileChecker.checkFiles(localFiles);
+                for(String file: l){
+                    if(!localFiles.contains(file)){
+                       Replicate(file,prevId);
+                    }
                 }
-            } catch (RemoteException e) {
-                e.printStackTrace();
             }
+        }, 0, 30, TimeUnit.SECONDS);
+    }
+    public void StartupReplication(  NodeInfo prevId){ //TODO: This nodeinfo passing is ugly
+        for(int i=0; i<localFiles.size(); i++){
+            Replicate(localFiles.get(i),prevId);
         }
+    }
+    private void Replicate(String filename,NodeInfo prevId){
+        try {
+            String ip = server.findLocationFile(filename);
+            if (Objects.equals(id.Address, ip))
+                RequestDownload(prevId.Address, filename);
+            else {
+                RequestDownload(ip, filename);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
     }
     public void RecheckOwnership(NodeInfo next){
         for(int i=0; i<localFiles.size(); i++){
@@ -65,27 +89,12 @@ public class FileManager implements QueueListener{
     public void queueFilled() {
         Tuple<String,String> data=downloadQueue.poll();
         new Thread(new TCPClient(data.x,data.y,downloadLocation)).start();//TODO
-
-    }
-    /**
-     * Returns list of files as strings in a specified folder.
-     * @param folderLocation Folder File for where to search for files.
-     * @return List of strings of the filenames in the folder.
-     */
-    private List<String> listFilesForFolder(File folderLocation) {
-        List<String> files=new ArrayList<>();
-        for (final File fileEntry : folderLocation.listFiles()) {
-            if (!fileEntry.isDirectory()) {
-                files.add(fileEntry.getName());
-            }
-        }
-        return files;
     }
 
-    public List<String> CheckIfOwner(NodeInfo currNode, NodeInfo prevNode, NodeInfo nextNode)
+    public List<String> CheckIfOwner(NodeInfo currNode, NodeInfo nextNode)
     {
         List<String> OwnerOfList = new ArrayList<>();
-        List<String> fileList = listFilesForFolder(downloadLocation);
+        List<String> fileList = fileChecker.checkFiles(localFiles);
         fileList.listIterator().forEachRemaining((file)->{
             int fileHash = HashTableCreator.createHash(file);
             if(fileHash > currNode.Hash)
