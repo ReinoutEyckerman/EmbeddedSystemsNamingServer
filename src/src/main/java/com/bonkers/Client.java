@@ -59,6 +59,8 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     public Queue<File> UnlockQueue = new LinkedList<>();
     public QueueEvent<File> FailedLocks = new QueueEvent();
 
+    public List<FileInfo> OwnedFiles;
+
     /**
      * Client constructor.
      * Initiates Bootstrap and the filemanager, does all essential bootup stuff
@@ -91,6 +93,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         fm = new FileManager(downloadFolder,server,id,previd);
         fm.CheckIfOwner(this.nextid);
         fm.StartupReplication(previd);
+        OwnedFiles = fm.ownedFiles;
         Thread t=new Thread(new TCPServer(downloadFolder));//Todo check why constructor dissapeared
         t.start();
     }
@@ -304,9 +307,10 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
             }
             if(clientcount == 2)
             {
-            /*    agentFileList = AgentFileList.getInstance();
+                agentFileList = AgentFileList.getInstance();
                 agentFileList.started = true;
-                transferAgent(agentFileList);*/
+                transferAgent(agentFileList);
+                System.out.println("Agent started");
             }
         }
         finishedBootstrap=true;
