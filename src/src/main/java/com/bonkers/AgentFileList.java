@@ -3,6 +3,7 @@ package com.bonkers;
 import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * TODO Jente
@@ -48,8 +49,7 @@ public class AgentFileList implements Runnable, Serializable {
      * Get the files of the node the agent runs on and check if files already exist or not
      */
     private void getAndUpdateCurrentNodeFiles(){
-
-        client.fm.ownedFiles.forEach((fileInfo) -> {
+        client.fm.ownedFiles.forEach((fileInfo) ->{
             FileList.putIfAbsent(new File(fileInfo.fileName), false);
         });
     }
