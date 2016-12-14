@@ -42,18 +42,16 @@ public class FileManager implements QueueListener, FileManagerIntf{
     /**
      * Server connection interface
      */
-    private ServerIntf server;
+    public ServerIntf server;
     private Timer timer;
     /**
      * The constructor, sets up the basic file list
      * @param downloadLocation The location of the files
-     * @param server The server interface
      * @param id The id of this node
      */
-    public FileManager(File downloadLocation, ServerIntf server, NodeInfo id){
+    public FileManager(File downloadLocation, NodeInfo id){
         this.downloadLocation =downloadLocation;
         this.id=id;
-        this.server=server;
         downloadQueue=new QueueEvent<>();
         downloadQueue.addListener(this);
         fileChecker=new FileChecker(downloadLocation);
