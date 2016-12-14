@@ -43,6 +43,10 @@ public class AgentFileList implements Runnable, Serializable {
         getAndUpdateCurrentNodeFiles();
         checkLockRequests();
         checkUnlock();
+        if(Thread.interrupted())
+        {
+            return;
+        }
     }
 
     /**
@@ -52,6 +56,7 @@ public class AgentFileList implements Runnable, Serializable {
         client.fm.ownedFiles.forEach((fileInfo) ->{
             FileList.putIfAbsent(new File(fileInfo.fileName), false);
         });
+        System.out.println(client.fm.ownedFiles.size() + " " + FileList.size());
     }
     private void checkLockRequests(){
         client.LockQueue.forEach((fileName) -> {
