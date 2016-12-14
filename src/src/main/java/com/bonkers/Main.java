@@ -40,7 +40,6 @@ public class Main extends Application {
 
     @SuppressWarnings("restriction")
     private void closeProgram() {
-
         System.out.println("sluiten");
         client.shutdown();
     }
