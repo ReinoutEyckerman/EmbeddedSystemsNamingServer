@@ -121,7 +121,7 @@ public class Server implements QueueListener, ServerIntf{
             if (previousNeighbor != null)
                 return new NodeInfo(HashTableCreator.createHash(previousNeighbor), previousNeighbor);
             else
-                return new NodeInfo(HashTableCreator.createHash(previousNeighbor), previousNeighbor);
+                return new NodeInfo(HashTableCreator.createHash(lastNode), lastNode);
         }
         @Override
         public int error() throws RemoteException{

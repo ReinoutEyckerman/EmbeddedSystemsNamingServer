@@ -104,7 +104,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
             fm.StartupReplication(previd);
         if(setStartAgent)
         {
-            agentStarter();
+          //  agentStarter();
         }
     }
 
