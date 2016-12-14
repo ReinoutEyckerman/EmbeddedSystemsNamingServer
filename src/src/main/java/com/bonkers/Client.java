@@ -84,6 +84,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         String ip=InetAddress.getLocalHost().toString().split("/")[1];
         this.id=new NodeInfo(HashTableCreator.createHash(name),ip);
         multicast=new MulticastCommunicator();
+        fm = new FileManager(downloadFolder,server,id);
         bootStrap();
         while(!finishedBootstrap){
             Thread.sleep(100);
@@ -91,7 +92,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         System.out.println("Finished bootstrap");
         FailedLocks.addListener(this);
         System.out.println("Added listener");
-        fm = new FileManager(downloadFolder,server,id,previd);
+        fm.startFileChecker(previd);
         System.out.println("Started up FM.");
         if(!Objects.equals(previd.Address, id.Address))
             fm.StartupReplication(previd);

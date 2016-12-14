@@ -49,9 +49,8 @@ public class FileManager implements QueueListener, FileManagerIntf{
      * @param downloadLocation The location of the files
      * @param server The server interface
      * @param id The id of this node
-     * @param prevId The id of the previous node, used for replication purposes. NOTE THAT THIS ISNT CONNECTED PERMANENTLY. That is because the prevId might change, and I'm too lazy for an addition interface
      */
-    public FileManager(File downloadLocation, ServerIntf server, NodeInfo id, NodeInfo prevId){
+    public FileManager(File downloadLocation, ServerIntf server, NodeInfo id){
         this.downloadLocation =downloadLocation;
         this.id=id;
         this.server=server;
@@ -66,7 +65,9 @@ public class FileManager implements QueueListener, FileManagerIntf{
             f.fileOwners=new ArrayList<>();
             f.fileOwners.add(file.getValue());
         }
-        timer=new Timer();
+    }
+    public void startFileChecker(NodeInfo prevId){
+           timer=new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -80,8 +81,8 @@ public class FileManager implements QueueListener, FileManagerIntf{
                 }
             }
         },0,5000);
-    }
 
+    }
     /**
      * First replication when the node starts
      * @param prevId Previous node id
