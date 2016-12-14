@@ -57,13 +57,7 @@ public class StartPageCtrl implements Initializable, Runnable {
     }
     @Override
     public void run() {
-        try {
-            client = new Client(nameTxt.getText(), file);
-        }
-        catch (Exception e){
-            System.out.println("Cannot start client");
-            e.printStackTrace();
-        }
+
     }
     public void checkRole(){
         if(roleTxt.getText().toLowerCase().equals("client")) {
@@ -96,10 +90,18 @@ public class StartPageCtrl implements Initializable, Runnable {
                 stage.setScene(scene);
                 stage.show();
 
-                //Start new client
-                //client = new Client(nameTxt.getText(), file);
 
-                (new Thread(new StartPageCtrl())).start();
+                //Start new client;
+                new Thread(() -> {
+                    try {
+                        client = new Client(nameTxt.getText(), file);
+                    }
+                    catch (Exception e){
+                        System.out.println("Cannot start client");
+                        e.printStackTrace();
+                    }
+                }).start();
+
             }
         }
         else if (roleTxt.getText().toLowerCase().equals("server"))
