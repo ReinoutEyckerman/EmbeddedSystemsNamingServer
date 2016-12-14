@@ -70,9 +70,9 @@ public class FileManager implements QueueListener, FileManagerIntf{
             @Override
             public void run() {
                 System.out.println("Yo whadup");
-                Map<NodeInfo,String> l=fileChecker.checkFiles(id, localFiles);
+                Map<String, NodeInfo> l=fileChecker.checkFiles(id, localFiles);
 
-                for(String file: l.values()){
+                for(String file: l.keySet()){
                     if(!localFiles.containsKey(file)){
                        Replicate(file,prevId);
                     }
