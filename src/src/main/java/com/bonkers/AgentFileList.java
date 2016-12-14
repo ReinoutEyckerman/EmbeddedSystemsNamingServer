@@ -49,15 +49,9 @@ public class AgentFileList implements Runnable, Serializable {
      * Get the files of the node the agent runs on and check if files already exist or not
      */
     private void getAndUpdateCurrentNodeFiles(){
-        List<FileInfo> fileInfos = null;
-        while (Client.OwnedFiles == null){
-            fileInfos = Client.OwnedFiles;
-        }
-
-        for(FileInfo fi: fileInfos)
-        {
-            FileList.putIfAbsent(new File(fi.fileName), false);
-        }
+        client.fm.ownedFiles.forEach((fileInfo) ->{
+            FileList.putIfAbsent(new File(fileInfo.fileName), false);
+        });
     }
     private void checkLockRequests(){
         client.LockQueue.forEach((fileName) -> {

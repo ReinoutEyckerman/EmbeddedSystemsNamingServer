@@ -60,7 +60,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     public Queue<File> UnlockQueue = new LinkedList<>();
     public QueueEvent<File> FailedLocks = new QueueEvent();
 
-    public static List<FileInfo> OwnedFiles;
+    public Boolean setStartAgent = false;
 
     /**
      * Client constructor.
@@ -102,6 +102,10 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
             fm.StartupReplication(previd);
         Thread t=new Thread(new TCPServer(downloadFolder));
         t.start();
+        if(setStartAgent)
+        {
+            //agentStarter();
+        }
     }
 
     /**
@@ -314,9 +318,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
             }
             if(clientcount == 2)
             {
-            /*    agentFileList = AgentFileList.getInstance();
-                agentFileList.started = true;
-                transferAgent(agentFileList);*/
+                setStartAgent = true;
             }
         }
         finishedBootstrap=true;
@@ -349,5 +351,12 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     public void queueFilled()
     {
 
+    }
+
+    public void agentStarter() throws RemoteException
+    {
+        agentFileList = AgentFileList.getInstance();
+        agentFileList.started = true;
+        transferAgent(agentFileList);
     }
 }
