@@ -55,7 +55,7 @@ public class Main extends Application {
         System.out.println(InetAddress.getLocalHost().getHostAddress().toString());
         File file = new File(System.getProperty("user.dir") + "/tmp");
         file.mkdirs();
-        launch(args);
+
         if(args.length>0) {
             switch (args[0]) {
                 case "server":
@@ -77,12 +77,7 @@ public class Main extends Application {
                 case "client":
                     if(args.length>1)
                     {
-
                         client = new Client(args[1], file);
-                        if (client.Error == false) {
-
-                        }
-
                     }
                     else
                     {
@@ -94,7 +89,9 @@ public class Main extends Application {
                     System.out.println("Unknown parameter: " + args[0]);
                     System.out.println("Exiting...");
             }
+            launch(args);
         }
+
         else
         {
             System.out.println("Please enter a parameter");
