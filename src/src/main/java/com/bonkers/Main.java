@@ -52,11 +52,9 @@ public class Main extends Application {
      * @throws Exception Throws exception on fail
      */
     public static void main(String[] args) throws Exception {
-
         System.out.println(InetAddress.getLocalHost().getHostAddress().toString());
         File file = new File(System.getProperty("user.dir") + "/tmp");
         file.mkdirs();
-        launch(args);
         if(args.length>0) {
             switch (args[0]) {
                 case "server":
@@ -81,7 +79,7 @@ public class Main extends Application {
 
                         client = new Client(args[1], file);
                         if (client.Error == false) {
-
+                            launch(args);
                         }
 
                     }
