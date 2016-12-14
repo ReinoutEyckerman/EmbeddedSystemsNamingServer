@@ -1,6 +1,7 @@
 package com.bonkers;
 
 import com.sun.media.jfxmedia.logging.Logger;
+import sun.rmi.runtime.Log;
 
 import java.io.File;
 import java.net.InetAddress;
@@ -71,6 +72,7 @@ public class FileManager implements QueueListener, FileManagerIntf{
             ownedFiles.add(f);
         }
     }
+
     public void startFileChecker(NodeInfo prevId){
         timer=new Timer();
         timer.schedule(new TimerTask() {
@@ -112,8 +114,10 @@ public class FileManager implements QueueListener, FileManagerIntf{
         try {
             NodeInfo node = server.findLocationFile(filename);
             if (Objects.equals(id.Address, node.Address)) {
-                if (!Objects.equals(prevId.Address, id.Address))
+                if (!Objects.equals(prevId.Address, id.Address)) {
                     RequestDownload(prevId, filename);
+                    LOGGER.info("Sending "+filename+" with hash"+HashTableCreator.createHash(filename)+" to the previous neighbor.");
+                }
             }
             else {
                 MoveFileAndChangeOwner(node, filename);
@@ -173,6 +177,7 @@ public class FileManager implements QueueListener, FileManagerIntf{
     private void RequestDownload(NodeInfo nodeInfo, String file){
         try {
             Registry registry = LocateRegistry.getRegistry(nodeInfo.Address);
+            LOGGER.info("Sending "+file+" with hash "+HashTableCreator.createHash(file)+" to node "+nodeInfo.Address);
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
             node.requestDownload(id, file);
             for (FileInfo f:ownedFiles) {
