@@ -98,6 +98,7 @@ public class StartPageCtrl implements Initializable, Runnable {
 
                 //Start new client
                 //client = new Client(nameTxt.getText(), file);
+
                 (new Thread(new StartPageCtrl())).start();
             }
         }
