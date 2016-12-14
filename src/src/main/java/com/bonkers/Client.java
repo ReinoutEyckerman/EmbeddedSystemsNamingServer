@@ -234,12 +234,12 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         Thread agentThread=new Thread(agentFileList);
         agentFileList.setClient(this);
         agentThread.start();
-        /*try {
+        try {
             agentThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }*/
-        agentThread.interrupt();
+        }
+        agentThread.stop();
         if(!(nextid.Address.equals(id.Address)))
         {
             agentFileList.setClient(null);
