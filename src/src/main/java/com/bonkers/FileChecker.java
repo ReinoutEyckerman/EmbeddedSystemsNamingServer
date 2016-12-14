@@ -50,6 +50,7 @@ public class FileChecker {
                 files.put(fileEntry.getName(),id);
             }
         }
+        System.out.println(files.toString());
         return files;
 
     }

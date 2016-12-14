@@ -62,16 +62,16 @@ public class FileManager implements QueueListener, FileManagerIntf{
             f.fileName=file.getKey();
             f.fileOwners=new ArrayList<>();
             f.fileOwners.add(file.getValue());
+            ownedFiles.add(f);
         }
     }
     public void startFileChecker(NodeInfo prevId){
-           timer=new Timer();
+        timer=new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 System.out.println("Yo whadup");
                 Map<String, NodeInfo> l=fileChecker.checkFiles(id, localFiles);
-
                 for(String file: l.keySet()){
                     if(!localFiles.containsKey(file)){
                        Replicate(file,prevId);
