@@ -145,8 +145,16 @@ public class Server implements QueueListener, ServerIntf{
             Collections.sort(list);
             int index=list.indexOf(node.Hash);
             if(hashmap.size()>2) {
-                NodeInfo previousNeighbor = new NodeInfo((Integer) list.get(index - 1), (String) hashmap.get(list.get(index - 1)));
-                NodeInfo nextNeighbor = new NodeInfo((Integer) list.get(index + 1), (String) hashmap.get(list.get(index + 1)));
+                int x=index;
+                if(index==0)
+                    x=list.size();
+                NodeInfo previousNeighbor = new NodeInfo((Integer) list.get(x), (String) hashmap.get(list.get(x)));
+                if(index==list.size())
+                    x=0;
+                else
+                    x=index;
+
+                NodeInfo nextNeighbor = new NodeInfo((Integer) list.get(x), (String) hashmap.get(list.get(x)));
                 return new NodeInfo[]{previousNeighbor, nextNeighbor};
             }
             else{
