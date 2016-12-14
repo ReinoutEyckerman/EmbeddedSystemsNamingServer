@@ -99,9 +99,10 @@ public class FileManager implements QueueListener, FileManagerIntf{
     private void Replicate(String filename,NodeInfo prevId){
         try {
             String ip = server.findLocationFile(filename);
-            if (Objects.equals(id.Address, ip))
-                if(!Objects.equals(prevId.Address, id.Address))
+            if (Objects.equals(id.Address, ip)) {
+                if (!Objects.equals(prevId.Address, id.Address))
                     RequestDownload(prevId.Address, filename);
+            }
             else {
                 RequestDownload(ip, filename);
                 for (FileInfo file:ownedFiles) {//Todo this can be optimized
