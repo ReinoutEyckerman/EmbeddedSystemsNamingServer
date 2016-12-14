@@ -1,11 +1,12 @@
 package com.bonkers;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Information object about a file, only the fileowner has this object.
  */
-public class FileInfo {
+public class FileInfo implements Serializable{
     /**
      * The filename related
      */
