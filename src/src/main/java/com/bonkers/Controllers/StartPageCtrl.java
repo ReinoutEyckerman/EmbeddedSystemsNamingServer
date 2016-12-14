@@ -56,6 +56,11 @@ public class StartPageCtrl implements Initializable, Runnable {
         file.mkdirs();
 
 
+
+    }
+    @FXML
+    public void exitApplication(ActionEvent event) {
+        System.out.println("Close from controller");
     }
     @Override
     public void run() {
@@ -127,6 +132,7 @@ public class StartPageCtrl implements Initializable, Runnable {
                 f.delete();
             }
             Server server = new Server();
+            ServerCtrl.PrintErrors();
         }
         else
         {
@@ -140,5 +146,8 @@ public class StartPageCtrl implements Initializable, Runnable {
         alert.setHeaderText(headerMessage);
         alert.setContentText(infoMessage);
         alert.showAndWait();
+    }
+    public static void Shutdown(){
+        client.shutdown();
     }
 }

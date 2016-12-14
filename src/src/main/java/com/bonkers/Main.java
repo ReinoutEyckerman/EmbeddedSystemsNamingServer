@@ -36,7 +36,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("/View/StartPage.fxml"));
         primaryStage.setTitle("SystemY");
-        primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.setScene(new Scene(root, 300, 200));
         primaryStage.show();
 
         primaryStage.setOnCloseRequest(event -> closeProgram());
@@ -45,6 +45,8 @@ public class Main extends Application {
     @SuppressWarnings("restriction")
     private void closeProgram() {
         LOGGER.info("Closed GUI");
+        StartPageCtrl.Shutdown();
+        //StartPageCtrl.client.shutdown();
         //client.shutdown();
         //Todo shutdown
     }
