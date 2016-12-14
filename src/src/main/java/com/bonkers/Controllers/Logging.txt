@@ -1,2 +1,0 @@
-dec 14, 2016 6:48:14 PM com.bonkers.Main main
-INFO: Client Ip: 127.0.0.1

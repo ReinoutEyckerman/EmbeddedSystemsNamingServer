@@ -45,6 +45,7 @@ public class Main extends Application {
     @SuppressWarnings("restriction")
     private void closeProgram() {
         LOGGER.info("Closed GUI");
+        Platform.exit();
         StartPageCtrl.Shutdown();
         //StartPageCtrl.client.shutdown();
         //client.shutdown();
@@ -59,7 +60,7 @@ public class Main extends Application {
      */
     public static void main(String[] args)  throws Exception  {
         StartLog();
-        LOGGER.info("Client Ip: "+ InetAddress.getLocalHost().getHostAddress().toString());
+        LOGGER.info("Ip: "+ InetAddress.getLocalHost().getHostAddress().toString());
         launch(args);
 
     }

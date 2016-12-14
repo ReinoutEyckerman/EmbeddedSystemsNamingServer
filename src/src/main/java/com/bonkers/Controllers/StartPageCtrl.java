@@ -3,6 +3,7 @@ package com.bonkers.Controllers;
 import com.bonkers.Client;
 import com.bonkers.Logging;
 import com.bonkers.Server;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -57,10 +58,6 @@ public class StartPageCtrl implements Initializable, Runnable {
 
 
 
-    }
-    @FXML
-    public void exitApplication(ActionEvent event) {
-        System.out.println("Close from controller");
     }
     @Override
     public void run() {
