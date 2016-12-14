@@ -53,7 +53,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      */
     public AgentFileList agentFileList = null;
 
-
+    Thread t = null;
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     public Queue<File> LockQueue = new LinkedList<>();
@@ -98,7 +98,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         System.out.println("Started up FM.");
         if(!Objects.equals(previd.Address, id.Address))
             fm.StartupReplication(previd);
-        Thread t=new Thread(new TCPServer(downloadFolder));
+        t =new Thread(new TCPServer(downloadFolder));
         t.start();
     }
 
@@ -151,6 +151,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      */
     public void shutdown(){
         LOGGER.info("Shutdown");
+        t.interrupt();
         fm.shutdown(previd);
 
         if (previd != null && !Objects.equals(previd.Address, id.Address) && nextid != null) {

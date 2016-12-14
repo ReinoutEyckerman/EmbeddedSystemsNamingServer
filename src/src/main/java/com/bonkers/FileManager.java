@@ -186,6 +186,7 @@ public class FileManager implements QueueListener, FileManagerIntf{
      * @param prevID The id of the previous node
      */
     public void shutdown(NodeInfo prevID){
+
         timer.purge();
         try {
             Registry registry = LocateRegistry.getRegistry(prevID.Address);
