@@ -14,15 +14,18 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.bonkers.Logging;
 
 /**
  * Startup class
  * Todo public check because ?
  */
 public class Main extends Application {
-
+    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
      * Function to start JavaFX UI
@@ -41,9 +44,9 @@ public class Main extends Application {
 
     @SuppressWarnings("restriction")
     private void closeProgram() {
-        System.out.println("sluiten");
+        LOGGER.info("Closed GUI");
         //client.shutdown();
-        StartPageCtrl.client.shutdown();
+        //Todo shutdown
     }
 
     /**
@@ -53,10 +56,20 @@ public class Main extends Application {
      * @throws Exception Throws exception on fail
      */
     public static void main(String[] args)  throws Exception  {
-        System.out.println(InetAddress.getLocalHost().getHostAddress().toString());
+        StartLog();
+        LOGGER.info("Client Ip: "+ InetAddress.getLocalHost().getHostAddress().toString());
         launch(args);
+
     }
 
+    public static void StartLog(){
+        try {
+            Logging.setup();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Problems with creating the log files");
+        }
+    }
     /**
      * Checks if entered IP is an actual legit IP.
      * @param text Ip as string
@@ -68,5 +81,4 @@ public class Main extends Application {
         Matcher m = p.matcher(text);
         return m.find();
     }
-
 }

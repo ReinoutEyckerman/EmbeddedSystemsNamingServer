@@ -11,6 +11,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * Client class to connect to server
@@ -25,10 +27,6 @@ public class Client implements NodeIntf, ClientIntf {
      * Boolean that checks if the bootstrap has completed, essential for knowing if the node is connected properly
      */
     private boolean finishedBootstrap=false;
-    /**
-     * Error code TODO Jente
-     */
-    public boolean Error = true;
     /**
      * Name of the client.
      */
@@ -55,6 +53,8 @@ public class Client implements NodeIntf, ClientIntf {
      */
     public AgentFileList agentFileList = null;
 
+    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
     /**
      * Client constructor.
      * Initiates Bootstrap and the filemanager, does all essential bootup stuff
@@ -69,6 +69,7 @@ public class Client implements NodeIntf, ClientIntf {
             }
         }));
         try {
+
             Registry registry = LocateRegistry.createRegistry(1099);
             Remote remote =  UnicastRemoteObject.exportObject(this, 0);
             registry.bind("ClientIntf", remote);
@@ -95,12 +96,13 @@ public class Client implements NodeIntf, ClientIntf {
      */
     private void bootStrap(){
         try {
+
             multicast.sendMulticast(name);
 
         }catch (Exception e){
             e.printStackTrace();
         }
-        System.out.println("Bootstrap completed.");
+        LOGGER.info("Bootstrap completed.");
     }
 
     /**
@@ -113,16 +115,16 @@ public class Client implements NodeIntf, ClientIntf {
     {
         switch (error){
             case 201:
-            System.out.println("The node name already exists on the server please choose another one");
+            LOGGER.warning("The node name already exists on the server please choose another one");
                 break;
             case 202:
-            System.out.println("You already exist in the name server");
+            LOGGER.warning("You already exist in the name server");
                 break;
             case 100:
-            System.out.println("No errors");
+            LOGGER.info("No errors");
                 break;
             default:
-                System.out.println("Unknown error");
+                LOGGER.warning("Unknown error");
                 break;
         }
         return error;
@@ -133,8 +135,7 @@ public class Client implements NodeIntf, ClientIntf {
      * TODO Replication
      */
     public void shutdown(){
-
-        System.out.print("shutdown\n");
+        LOGGER.info("Shutdown");
         fm.shutdown(previd);
 
         if (previd != null && !Objects.equals(previd.Address, id.Address) && nextid != null) {
@@ -149,7 +150,7 @@ public class Client implements NodeIntf, ClientIntf {
                 node.updatePreviousNeighbor(previd);
 
             } catch (Exception e) {
-                System.err.println("Client exception: " + e.toString());
+                LOGGER.warning("Client exception: " + e.toString());
                 e.printStackTrace();
             }
         }
@@ -158,7 +159,7 @@ public class Client implements NodeIntf, ClientIntf {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        System.out.println("Successful shutdown");
+        LOGGER.info("Successful shutdown");
         System.exit(0);
     }
 
@@ -187,7 +188,7 @@ public class Client implements NodeIntf, ClientIntf {
             node.updatePreviousNeighbor(neighbors[0]);
             server.nodeShutdown(nodeFailed);
         }catch(Exception e){
-            System.err.println("Client exception: " + e.toString());
+            LOGGER.warning("Client exception: " + e.toString());
             e.printStackTrace();
         }
     }
@@ -195,7 +196,7 @@ public class Client implements NodeIntf, ClientIntf {
     @Override
     public void updateNextNeighbor(NodeInfo node) {
         this.nextid=node;
-        System.out.println("Next:" +node.Address);
+        LOGGER.info("Next:" +node.Address);
         if(fm!=null)
             fm.RecheckOwnership(node);
     }
@@ -203,7 +204,7 @@ public class Client implements NodeIntf, ClientIntf {
     @Override
     public void updatePreviousNeighbor(NodeInfo node) {
         this.previd=node;
-        System.out.println("Previous:" +node.Address);
+        LOGGER.info("Previous:" +node.Address);
     }
 
     @Override
@@ -275,10 +276,7 @@ public class Client implements NodeIntf, ClientIntf {
         try {
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
             server = (ServerIntf) registry.lookup("ServerIntf");
-            if (CheckError(server.error())!=100){
-                //TODO Joris Gooi grafische error en vraag dan nog is, die grafische error mag ook in dien checkerror geplaatst worde, dan kan deze if weg en heeft die functie tenminste nut
-                Error=false;
-            }
+            CheckError(server.error());
         }catch (NotBoundException e){
             e.printStackTrace();
         }
