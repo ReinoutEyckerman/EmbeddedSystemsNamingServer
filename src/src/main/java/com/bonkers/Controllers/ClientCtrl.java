@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
 /**
  * Created by Jente on 4/12/2016.
  */
-public class HomePageCtrl implements Initializable {
+public class ClientCtrl implements Initializable {
     @FXML
     private Button openBtn;
     @FXML
