@@ -34,15 +34,16 @@ bestanden die de lokale bestanden bevat. --Done
 SHUTDOWN
 Gerepliceerde bestanden
 1. Wanneer een node wordt afgesloten, moeten de bestanden die bij deze node gerepliceerd staan,
-verplaatst worden naar zijn vorige node, deze node wordt de nieuwe eigenaar.//Todo
+verplaatst worden naar zijn vorige node, deze node wordt de nieuwe eigenaar.--Done
 a. Wanneer een bestand dat bij deze node gerepliceerd is, lokaal aanwezig is bij zijn vorige node,
 moet het naar de vorige node van zijn vorige node verplaatst worden (Figuur 1: Als node 28
-zou stoppen, moet loon.pdf naar node 12 verplaatst worden)
-3. De bestandsfiches worden doorgegeven naar de node die eigenaar wordt + geüpdatet
+zou stoppen, moet loon.pdf naar node 12 verplaatst worden) --Done
+3. De bestandsfiches worden doorgegeven naar de node die eigenaar wordt + geüpdatet --Done
+
 Lokale bestanden
-1. De eigenaar van het bestand verwittigen
+1. De eigenaar van het bestand verwittigen--Done
 Eigenaar van bestand:
-2. Indien het bestand nooit gedownload is geweest  bestand verwijderen bij hem en de eigenaar
+2. Indien het bestand nooit gedownload is geweest  bestand verwijderen bij hem en de eigenaar Todo ?
 3. Anders downloadlocaties updaten in bestandsfiche
 3/3
 Figuur: nieuwe node, met ID = 14 nestelt zich tussen node ID 12 en ID 17

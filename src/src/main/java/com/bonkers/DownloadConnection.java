@@ -26,11 +26,11 @@ public class DownloadConnection implements Runnable{
      * The outputstream to write to, also known as the tcp connection
      */
     private DataOutputStream os = null;
-    private final String folderPath;
+    private final File folderPath;
 
-    public DownloadConnection(Socket client) {
+    public DownloadConnection(Socket client, File folderPath) {
         this.sock = client;
-        this.folderPath="";//TODO Dynamic folderpath
+        this.folderPath=folderPath;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class DownloadConnection implements Runnable{
             os = new DataOutputStream(sock.getOutputStream());
             BufferedReader inFromClient = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             String cmd=inFromClient.readLine();
-            sendFile(folderPath+cmd);
+            sendFile(folderPath.getAbsolutePath()+cmd);
             exit();
         }catch (IOException e){
             System.out.println("ConnectionIOException caught. ");

@@ -4,6 +4,7 @@ package com.bonkers;
  * Created by reinout on 9/27/16.
  */
 
+import java.io.File;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -16,7 +17,12 @@ public class TCPServer implements Runnable {
     /**
      * Predefined socket port on which the server listens
      */
-    public final static int SOCKET_PORT = 12346;  // you may change this
+    public final  int SOCKET_PORT = 12346;  // you may change othis
+    private final File folderLocation;
+
+    public TCPServer(File folderLocation) {
+        this.folderLocation = folderLocation;
+    }
 
     /**
      * Implementation of the runnable interface. It opens the socket, then waits for clients to connect,
@@ -37,7 +43,7 @@ public class TCPServer implements Runnable {
             try {
                 clientSocket = serversocket.accept();
                 System.out.println("Accepted connection : " + clientSocket);
-                Thread t = new Thread(new DownloadConnection(clientSocket));
+                Thread t = new Thread(new DownloadConnection(clientSocket, folderLocation));
                 t.start();
                 t.join();
             } catch (Exception e) {
@@ -46,5 +52,4 @@ public class TCPServer implements Runnable {
             }
         }
     }
-
 }
