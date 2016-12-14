@@ -1,6 +1,7 @@
 package com.bonkers.Controllers;
 
 import com.bonkers.Client;
+import com.bonkers.Logging;
 import com.bonkers.Server;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,6 +37,7 @@ public class StartPageCtrl implements Initializable, Runnable {
     public static Client client;
 
     File file = new File(System.getProperty("user.dir") + "/tmp");
+
 
 
 
@@ -90,16 +92,20 @@ public class StartPageCtrl implements Initializable, Runnable {
                 stage.setScene(scene);
                 stage.show();
 
+
                 //Start new client;
                 new Thread(() -> {
                     try {
+
                         client = new Client(nameTxt.getText(), file);
+
                     }
                     catch (Exception e){
                         System.out.println("Cannot start client");
                         e.printStackTrace();
                     }
                 }).start();
+
             }
         }
         else if (roleTxt.getText().toLowerCase().equals("server"))
