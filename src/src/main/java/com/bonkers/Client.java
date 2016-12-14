@@ -1,9 +1,7 @@
 package com.bonkers;
 
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.net.InetAddress;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -31,10 +29,6 @@ public class Client implements NodeIntf, ClientIntf {
      * Error code TODO Jente
      */
     public boolean Error = true;
-    /**
-     * The download location TODO might be removed?
-     */
-    private final File downloadFolder;
     /**
      * Name of the client.
      */
@@ -69,7 +63,6 @@ public class Client implements NodeIntf, ClientIntf {
      * @throws Exception Generic exception for when something fails TODO
      */
     public Client(String name, File downloadFolder) throws Exception {
-        this.downloadFolder=downloadFolder;
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
                 shutdown();
@@ -93,7 +86,7 @@ public class Client implements NodeIntf, ClientIntf {
         fm = new FileManager(downloadFolder,server,id,previd);
         fm.CheckIfOwner(this.nextid);
         fm.StartupReplication(previd);
-        Thread t=new Thread(new TCPServer());//Todo check why constructor dissapeared
+        Thread t=new Thread(new TCPServer(downloadFolder));//Todo check why constructor dissapeared
         t.start();
     }
 
@@ -142,6 +135,7 @@ public class Client implements NodeIntf, ClientIntf {
     public void shutdown(){
 
         System.out.print("shutdown\n");
+        fm.shutdown(previd);
 
         if (previd != null && !Objects.equals(previd.Address, id.Address) && nextid != null) {
             System.out.println(previd.Address);
@@ -202,7 +196,8 @@ public class Client implements NodeIntf, ClientIntf {
     public void updateNextNeighbor(NodeInfo node) {
         this.nextid=node;
         System.out.println("Next:" +node.Address);
-        fm.RecheckOwnership(node);
+        if(fm!=null)
+            fm.RecheckOwnership(node);
     }
 
     @Override
@@ -266,6 +261,11 @@ public class Client implements NodeIntf, ClientIntf {
     @Override
     public void setOwnerFile( FileInfo file) throws RemoteException {
         fm.setOwnerFile(file);
+    }
+
+    @Override
+    public void removeFromFilelist(String file, NodeInfo node) throws RemoteException {
+        fm.removeFromFilelist(file, node);
     }
 
 

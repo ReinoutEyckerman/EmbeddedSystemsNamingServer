@@ -30,7 +30,7 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("/View/HomePage.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/View/StartPage.fxml"));
         primaryStage.setTitle("SystemY");
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
@@ -52,7 +52,6 @@ public class Main extends Application {
      * @throws Exception Throws exception on fail
      */
     public static void main(String[] args) throws Exception {
-
         System.out.println(InetAddress.getLocalHost().getHostAddress().toString());
         File file = new File(System.getProperty("user.dir") + "/tmp");
         file.mkdirs();
