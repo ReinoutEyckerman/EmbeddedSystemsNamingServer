@@ -17,7 +17,7 @@ import java.util.logging.Level;
 /**
  * Client class to connect to server
  */
-public class Client implements NodeIntf, ClientIntf {
+public class Client implements NodeIntf, ClientIntf, QueueListener {
 
     /**
      * Address of the server to connect to.
@@ -47,13 +47,19 @@ public class Client implements NodeIntf, ClientIntf {
     /**
      * File manager, handles file operations for the current node
      */
-    private FileManager fm = null;
+    public FileManager fm = null;
     /**
      * TODO Jente
      */
     public AgentFileList agentFileList = null;
 
+
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+    public Queue<File> LockQueue = new LinkedList<>();
+    public Queue<File> UnlockQueue = new LinkedList<>();
+    public QueueEvent<File> FailedLocks = new QueueEvent();
+
 
     /**
      * Client constructor.
@@ -83,11 +89,16 @@ public class Client implements NodeIntf, ClientIntf {
         multicast=new MulticastCommunicator();
         bootStrap();
         while(!finishedBootstrap){
+            Thread.sleep(100);
         }
+        System.out.println("Finished bootstrap");
+        FailedLocks.addListener(this);
+        System.out.println("Added listener");
         fm = new FileManager(downloadFolder,server,id,previd);
-        fm.CheckIfOwner(this.nextid);
-        fm.StartupReplication(previd);
-        Thread t=new Thread(new TCPServer(downloadFolder));//Todo check why constructor dissapeared
+        System.out.println("Started up FM.");
+        if(!Objects.equals(previd.Address, id.Address))
+            fm.StartupReplication(previd);
+        Thread t=new Thread(new TCPServer(downloadFolder));
         t.start();
     }
 
@@ -102,7 +113,11 @@ public class Client implements NodeIntf, ClientIntf {
         }catch (Exception e){
             e.printStackTrace();
         }
+
         LOGGER.info("Bootstrap completed.");
+
+        LOGGER.info("Multicast sent.");
+
     }
 
     /**
@@ -211,7 +226,7 @@ public class Client implements NodeIntf, ClientIntf {
     public void transferAgent(AgentFileList agentFileList) throws RemoteException {
         agentFileList.started = true;
         Thread agentThread=new Thread(agentFileList);
-        agentFileList.setClientFileList(fm.ownedFiles);
+        agentFileList.setClient(this);
         agentThread.start();
         try {
             agentThread.join();
@@ -297,12 +312,13 @@ public class Client implements NodeIntf, ClientIntf {
             }
             if(clientcount == 2)
             {
-                agentFileList = AgentFileList.getInstance();
+            /*    agentFileList = AgentFileList.getInstance();
                 agentFileList.started = true;
-                transferAgent(agentFileList);
+                transferAgent(agentFileList);*/
             }
         }
         finishedBootstrap=true;
+        System.out.println("Fully completed bootstrap.");
     }
 
     /**
@@ -325,5 +341,11 @@ public class Client implements NodeIntf, ClientIntf {
         System.out.println("Error: Name already taken.");
         System.out.println("Exiting...");
         System.exit(1);
+    }
+
+    @Override
+    public void queueFilled()
+    {
+
     }
 }

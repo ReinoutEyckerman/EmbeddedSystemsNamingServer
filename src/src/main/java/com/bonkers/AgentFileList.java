@@ -1,34 +1,21 @@
 package com.bonkers;
 
-import javafx.beans.value.ObservableBooleanValue;
-import javafx.beans.value.ObservableListValue;
-
 import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * TODO Jente
  */
-public class AgentFileList implements Runnable, Serializable, QueueListener {
+public class AgentFileList implements Runnable, Serializable {
     public HashMap<File, Boolean> FileList = new HashMap<>();
 
     public Boolean started = false;
 
-    public QueueEvent<File> LockRequestQueue = new QueueEvent<>();
-    public QueueEvent<File> UnlockRequestQueue = new QueueEvent<>();
-
-    //public ObservableListValue<List<>>
-
-
     private static AgentFileList instance = null;
 
-    protected AgentFileList() {
-        LockRequestQueue.addListener(this);
-        UnlockRequestQueue.addListener(this);
-    }
+
+    protected AgentFileList() {}
 
     /**
      * Singleton make instance if none exists else make one
@@ -41,17 +28,14 @@ public class AgentFileList implements Runnable, Serializable, QueueListener {
         return instance;
     }
 
-    private List<FileInfo> ClientFileList = null;
+    private Client client = null;
 
-    public void setClientFileList(List<FileInfo> ClientFileList)
+    public void setClient(Client client)
     {
-        this.ClientFileList = ClientFileList;
+        this.client = client;
     }
 
-    public List<FileInfo> getClientFileList()
-    {
-        return ClientFileList;
-    }
+    public Client getClient() { return client; }
 
     @Override
     public void run() {
@@ -65,26 +49,21 @@ public class AgentFileList implements Runnable, Serializable, QueueListener {
      */
     private void getAndUpdateCurrentNodeFiles(){
 
-        ClientFileList.forEach((fileInfo) -> {
+        client.fm.ownedFiles.forEach((fileInfo) -> {
             FileList.putIfAbsent(new File(fileInfo.fileName), false);
         });
     }
     private void checkLockRequests(){
-        //TODO
+        client.LockQueue.forEach((fileName) -> {
+            if(!FileList.replace(fileName, false, true))
+            {
+                client.FailedLocks.add(fileName);
+            }
+        });
     }
     private void checkUnlock(){
-
-    }
-
-    @Override
-    public void queueFilled() {
-        if(LockRequestQueue.notifyPacketReceived())
-        {
-            FileList.replace(LockRequestQueue.poll(),false, true);
-        }
-        else if(UnlockRequestQueue.notifyPacketReceived())
-        {
-            FileList.replace(UnlockRequestQueue.poll(),true, false);
-        }
+        client.UnlockQueue.forEach((fileName) ->{
+            FileList.replace(fileName, true, false);
+        });
     }
 }

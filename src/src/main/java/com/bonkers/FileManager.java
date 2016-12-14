@@ -6,10 +6,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * It is he, FileManager, Manager of Files, Replicator of objects!
  */
-public class FileManager implements QueueListener{
+public class FileManager implements QueueListener, FileManagerIntf{
     /**
      * The Downloadqueue for downloading files
      */
@@ -46,7 +43,7 @@ public class FileManager implements QueueListener{
      * Server connection interface
      */
     private ServerIntf server;
-
+    private Timer timer;
     /**
      * The constructor, sets up the basic file list
      * @param downloadLocation The location of the files
@@ -69,18 +66,20 @@ public class FileManager implements QueueListener{
             f.fileOwners=new ArrayList<>();
             f.fileOwners.add(file.getValue());
         }
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
+        timer=new Timer();
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                System.out.println("Yo whadup");
                 Map<NodeInfo,String> l=fileChecker.checkFiles(id, localFiles);
+
                 for(String file: l.values()){
                     if(!localFiles.containsKey(file)){
                        Replicate(file,prevId);
                     }
                 }
             }
-        }, 0, 30, TimeUnit.SECONDS);
+        },0,5000);
     }
 
     /**
@@ -90,7 +89,6 @@ public class FileManager implements QueueListener{
     public void StartupReplication(NodeInfo prevId){
         for(Map.Entry<String,NodeInfo> file:localFiles.entrySet()){
             Replicate(file.getKey(),prevId);
-
         }
     }
 
@@ -103,7 +101,8 @@ public class FileManager implements QueueListener{
         try {
             String ip = server.findLocationFile(filename);
             if (Objects.equals(id.Address, ip))
-                RequestDownload(prevId.Address, filename);
+                if(!Objects.equals(prevId.Address, id.Address))
+                    RequestDownload(prevId.Address, filename);
             else {
                 RequestDownload(ip, filename);
                 for (FileInfo file:ownedFiles) {//Todo this can be optimized
@@ -149,6 +148,7 @@ public class FileManager implements QueueListener{
      */
     private void RequestDownload(String ip, String file){
         try {
+            System.out.println(ip);
             Registry registry = LocateRegistry.getRegistry(ip);
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
             node.requestDownload(id, file);
@@ -165,28 +165,6 @@ public class FileManager implements QueueListener{
         new Thread(new TCPClient(data.x,data.y,downloadLocation)).start();
     }
 
-    /**
-     * Checks for the owner of the files TODO unused?
-     * @param nextNode
-     * @return
-     */
-    public List<String> CheckIfOwner( NodeInfo nextNode)
-    {
-        List<String> OwnerOfList = new ArrayList<>();
-        Map<String,NodeInfo> fileMap = fileChecker.checkFiles(id, localFiles);
-        List<String> fileList=new ArrayList(fileMap.keySet());
-        fileList.listIterator().forEachRemaining((file)->{
-            int fileHash = HashTableCreator.createHash(file);
-            if(fileHash > id.Hash)
-            {
-                if(fileHash < nextNode.Hash)
-                {
-                    OwnerOfList.add(file);
-                }
-            }
-        });
-        return OwnerOfList;
-    }
 
     /**
      * Sets the ownership of a file, gets called via RMI
@@ -208,6 +186,7 @@ public class FileManager implements QueueListener{
      * @param prevID The id of the previous node
      */
     public void shutdown(NodeInfo prevID){
+        timer.purge();
         try {
             Registry registry = LocateRegistry.getRegistry(prevID.Address);
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
