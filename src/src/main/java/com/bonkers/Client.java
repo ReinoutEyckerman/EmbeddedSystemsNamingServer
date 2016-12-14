@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * Client class to connect to server
  */
-public class Client implements NodeIntf, ClientIntf {
+public class Client implements NodeIntf, ClientIntf, QueueListener {
 
     /**
      * Address of the server to connect to.
@@ -49,16 +49,16 @@ public class Client implements NodeIntf, ClientIntf {
     /**
      * File manager, handles file operations for the current node
      */
-    private FileManager fm = null;
+    public FileManager fm = null;
     /**
      * TODO Jente
      */
     public AgentFileList agentFileList = null;
 
-    /**
-     * Files The client is owner off
-     */
-    public static List<String> ownerOfFilesList = null;
+    public Queue<File> LockQueue = new LinkedList<>();
+    public Queue<File> UnlockQueue = new LinkedList<>();
+    public QueueEvent<File> FailedLocks = new QueueEvent();
+
     /**
      * Client constructor.
      * Initiates Bootstrap and the filemanager, does all essential bootup stuff
@@ -87,6 +87,7 @@ public class Client implements NodeIntf, ClientIntf {
         bootStrap();
         while(!finishedBootstrap){
         }
+        FailedLocks.addListener(this);
         fm = new FileManager(downloadFolder,server,id,previd);
         fm.CheckIfOwner(this.nextid);
         fm.StartupReplication(previd);
@@ -214,6 +215,7 @@ public class Client implements NodeIntf, ClientIntf {
     public void transferAgent(AgentFileList agentFileList) throws RemoteException {
         agentFileList.started = true;
         Thread agentThread=new Thread(agentFileList);
+        agentFileList.setClient(this);
         agentThread.start();
         try {
             agentThread.join();
@@ -330,5 +332,11 @@ public class Client implements NodeIntf, ClientIntf {
         System.out.println("Error: Name already taken.");
         System.out.println("Exiting...");
         System.exit(1);
+    }
+
+    @Override
+    public void queueFilled()
+    {
+
     }
 }

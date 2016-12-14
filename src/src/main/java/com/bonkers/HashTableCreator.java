@@ -4,13 +4,11 @@ package com.bonkers;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
+import javax.swing.text.html.parser.Entity;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Class that handles the writing and reading of hashmap.
@@ -106,19 +104,19 @@ public class HashTableCreator {
      * @return Connected host
      */
     //TODO (?)
-    public InetAddress findHost(int FileHash)
-    {
-        htIp.forEach((key, value) ->{
+    public String findHost(int FileHash) {
+        final String[] IP = {null};
+        if (htIp.firstEntry().getKey() > FileHash)
+        {
+                return htIp.lastEntry().getValue();
+        }
+        htIp.forEach((key,value) ->{
             if(key > FileHash && htIp.lowerEntry(key).getKey() <= FileHash)
             {
-                try {
-                    IP = InetAddress.getByName(String.valueOf(value));
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }
+                    IP[0] = value;
             }
         });
-        return IP;
+        return IP[0];
     }
 }
 

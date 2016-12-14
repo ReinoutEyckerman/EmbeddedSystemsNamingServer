@@ -1,18 +1,19 @@
 package com.bonkers;
 
+import java.io.File;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
+import java.util.HashMap;
 
 /**
  * TODO Jente
  */
 public class AgentFileList implements Runnable, Serializable {
-    List<Tuple<String, Boolean>> FileList;
+    public HashMap<File, Boolean> FileList = new HashMap<>();
 
     public Boolean started = false;
 
     private static AgentFileList instance = null;
+
 
     protected AgentFileList() {}
 
@@ -27,38 +28,42 @@ public class AgentFileList implements Runnable, Serializable {
         return instance;
     }
 
+    private Client client = null;
+
+    public void setClient(Client client)
+    {
+        this.client = client;
+    }
+
+    public Client getClient() { return client; }
+
     @Override
     public void run() {
         getAndUpdateCurrentNodeFiles();
         checkLockRequests();
         checkUnlock();
     }
+
+    /**
+     * Get the files of the node the agent runs on and check if files already exist or not
+     */
     private void getAndUpdateCurrentNodeFiles(){
 
-        for (String fileName: Client.ownerOfFilesList) {
-            FileList.add(new Tuple<String, Boolean>(fileName, false));
-        }
-        //TODO Get current files something something
-        List<String> s=null;
-        boolean found;
-        for(String search:s){
-            found=false;
-            for (Tuple<String, Boolean> curVal : FileList) {
-                if (curVal.x.contains(search)) {
-                   found=true;
-                    break;
-                }
-            }
-            if(!found){
-                FileList.add(new Tuple<String, Boolean>(search, false));
-            }
-        }
-        //TODO Set current file list to the agents file list
+        client.fm.ownedFiles.forEach((fileInfo) -> {
+            FileList.putIfAbsent(new File(fileInfo.fileName), false);
+        });
     }
     private void checkLockRequests(){
-        //TODO
+        client.LockQueue.forEach((fileName) -> {
+            if(!FileList.replace(fileName, false, true))
+            {
+                client.FailedLocks.add(fileName);
+            }
+        });
     }
     private void checkUnlock(){
-
+        client.UnlockQueue.forEach((fileName) ->{
+            FileList.replace(fileName, true, false);
+        });
     }
 }

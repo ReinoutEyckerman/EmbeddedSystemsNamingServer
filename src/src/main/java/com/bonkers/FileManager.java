@@ -30,7 +30,7 @@ public class FileManager implements QueueListener, FileManagerIntf{
     /**
      * A List of the files this node owns
      */
-    private List<FileInfo>ownedFiles;
+    public List<FileInfo>ownedFiles;
     /**
      * This nodes' ID
      */
