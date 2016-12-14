@@ -62,10 +62,6 @@ public class Client implements NodeIntf, ClientIntf {
     public AgentFileList agentFileList = null;
 
     /**
-     * Files The client is owner off
-     */
-    public static List<String> ownerOfFilesList = null;
-    /**
      * Client constructor.
      * Initiates Bootstrap and the filemanager, does all essential bootup stuff
      * @param name Name of the client
@@ -219,6 +215,7 @@ public class Client implements NodeIntf, ClientIntf {
     public void transferAgent(AgentFileList agentFileList) throws RemoteException {
         agentFileList.started = true;
         Thread agentThread=new Thread(agentFileList);
+        agentFileList.setClientFileList(fm.ownedFiles);
         agentThread.start();
         try {
             agentThread.join();

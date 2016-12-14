@@ -55,7 +55,8 @@ public class QueueEvent<E> extends PriorityQueue<E> {
     /**
      * "Event" That notifies all subscribers.
      */
-    public void notifyPacketReceived(){
+    public Boolean notifyPacketReceived(){
         listeners.forEach(QueueListener::queueFilled);
+        return true;
     }
 }
