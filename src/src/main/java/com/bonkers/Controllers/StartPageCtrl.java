@@ -1,5 +1,7 @@
 package com.bonkers.Controllers;
 
+import com.bonkers.Client;
+import com.bonkers.Server;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -11,6 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -29,6 +33,9 @@ public class StartPageCtrl implements Initializable {
     @FXML
     private Label nameLbl;
 
+    private static Client client;
+
+    File file = new File(System.getProperty("user.dir") + "/tmp");
 
     @Override
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
@@ -42,6 +49,7 @@ public class StartPageCtrl implements Initializable {
             checkRole();
         });
 
+        file.mkdirs();
     }
     public void checkRole(){
         if(roleTxt.getText().toLowerCase().equals("client")) {
@@ -55,7 +63,7 @@ public class StartPageCtrl implements Initializable {
         }
     }
     @FXML
-    private void ClickedSubmitBtn(ActionEvent event) throws IOException{
+    private void ClickedSubmitBtn(ActionEvent event) throws IOException, Exception{
         Stage stage;
         Parent root;
         if(roleTxt.getText().toLowerCase().equals("client")) {
@@ -73,6 +81,9 @@ public class StartPageCtrl implements Initializable {
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.show();
+
+                //Start new client
+                client = new Client(nameTxt.getText(), file);
             }
         }
         else if (roleTxt.getText().toLowerCase().equals("server"))
@@ -85,6 +96,15 @@ public class StartPageCtrl implements Initializable {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
+
+            //Start new server
+            System.out.println("Starting Server");
+            File f = new File("hashtable.json");
+            if (f.exists() && !f.isDirectory())
+            {
+                f.delete();
+            }
+            Server server = new Server();
         }
         else
         {
