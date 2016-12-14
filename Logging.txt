@@ -1,8 +1,10 @@
-dec 14, 2016 4:52:04 PM com.bonkers.Main main
+dec 14, 2016 5:09:00 PM com.bonkers.Main main
 INFO: Client Ip: 10.0.0.35
-dec 14, 2016 4:52:12 PM com.bonkers.Client bootStrap
+dec 14, 2016 5:10:30 PM com.bonkers.Client bootStrap
 INFO: Bootstrap completed.
-dec 14, 2016 4:52:12 PM com.bonkers.Client bootStrap
+dec 14, 2016 5:10:30 PM com.bonkers.Client bootStrap
 INFO: Multicast sent.
-dec 14, 2016 4:52:13 PM com.bonkers.Client CheckError
+dec 14, 2016 5:10:30 PM com.bonkers.Client CheckError
 INFO: No errors
+dec 14, 2016 5:26:39 PM com.bonkers.Main closeProgram
+INFO: Closed GUI
