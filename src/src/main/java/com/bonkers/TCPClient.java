@@ -73,7 +73,7 @@ public class TCPClient implements Runnable{
             is = new DataInputStream(serverSocket.getInputStream());
 
             os.writeBytes(remoteFileLocation + '\n');
-            getFile(downloadLocation.getPath()+remoteFileLocation);
+            getFile(downloadLocation.getPath()+"/"+remoteFileLocation);
             exit();
         }catch (IOException e){
             System.out.println("IO exception caught while downloading file.");
