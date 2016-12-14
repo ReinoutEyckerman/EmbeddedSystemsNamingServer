@@ -1,8 +1,10 @@
-Dec 14, 2016 4:39:57 PM com.bonkers.Main main
+Dec 14, 2016 4:56:36 PM com.bonkers.Main main
 INFO: Client Ip: 10.0.0.21
-Dec 14, 2016 4:40:16 PM com.bonkers.Client bootStrap
+Dec 14, 2016 4:56:43 PM com.bonkers.Client bootStrap
 INFO: Bootstrap completed.
-Dec 14, 2016 4:40:16 PM com.bonkers.Client bootStrap
+Dec 14, 2016 4:56:43 PM com.bonkers.Client bootStrap
 INFO: Multicast sent.
-Dec 14, 2016 4:40:16 PM com.bonkers.Client CheckError
+Dec 14, 2016 4:56:43 PM com.bonkers.Client CheckError
 INFO: No errors
+Dec 14, 2016 4:58:12 PM com.bonkers.Client shutdown
+INFO: Shutdown

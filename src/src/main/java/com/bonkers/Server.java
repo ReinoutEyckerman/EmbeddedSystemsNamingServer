@@ -108,19 +108,20 @@ public class Server implements QueueListener, ServerIntf{
         }
 
         @Override
-        public String findLocationFile(String file){
+        public NodeInfo findLocationFile(String file){
+
             return findLocationHash(HT.createHash(file));
         }
         @Override
-        public String findLocationHash(int hash){
+        public NodeInfo findLocationHash(int hash){
             List list=new ArrayList(HT.htIp.keySet());
             Collections.sort(list);
             String previousNeighbor = HT.findHost(hash);
             String lastNode=(String)HT.htIp.get(list.get(list.size()-1));
             if (previousNeighbor != null)
-                return previousNeighbor;
+                return new NodeInfo(HashTableCreator.createHash(previousNeighbor), previousNeighbor);
             else
-                return lastNode;
+                return new NodeInfo(HashTableCreator.createHash(previousNeighbor), previousNeighbor);
         }
         @Override
         public int error() throws RemoteException{

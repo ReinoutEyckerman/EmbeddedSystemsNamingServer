@@ -13,7 +13,7 @@ public interface ServerIntf extends Remote {
      * @return Returns location of the file
      * @throws RemoteException Throws exception if RMI failed.
      */
-    String findLocationFile(String FileName) throws RemoteException;
+    NodeInfo findLocationFile(String FileName) throws RemoteException;
     /**
      * TODO does this even work?
      * Finds location of file on the server using its hash.
@@ -21,7 +21,7 @@ public interface ServerIntf extends Remote {
      * @return Returns location of the file
      * @throws RemoteException Throws exception if RMI failed.
      */
-    String findLocationHash(int hash) throws RemoteException;
+    NodeInfo findLocationHash(int hash) throws RemoteException;
 
     /**
      * Gets the current error of the server
