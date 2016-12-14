@@ -43,10 +43,7 @@ public class AgentFileList implements Runnable, Serializable {
         getAndUpdateCurrentNodeFiles();
         checkLockRequests();
         checkUnlock();
-        if(Thread.interrupted())
-        {
-            return;
-        }
+        return;
     }
 
     /**
