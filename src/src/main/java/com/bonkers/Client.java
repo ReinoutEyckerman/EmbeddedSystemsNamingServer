@@ -230,7 +230,6 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
 
     @Override
     public void transferAgent(AgentFileList agentFileList) {
-        LOGGER.log(Level.INFO, "Agent Started on client");
         agentFileList.started = true;
         Thread agentThread=new Thread(agentFileList);
         agentFileList.setClient(this);
