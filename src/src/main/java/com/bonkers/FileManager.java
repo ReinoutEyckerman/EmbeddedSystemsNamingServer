@@ -55,6 +55,7 @@ public class FileManager implements QueueListener, FileManagerIntf{
      * @param id The id of this node
      */
     public FileManager(File downloadLocation, NodeInfo id){
+        new File(System.getProperty("user.dir")+"/tmp").mkdirs();
         this.downloadLocation =downloadLocation;
         this.id=id;
         downloadQueue=new QueueEvent<>();
