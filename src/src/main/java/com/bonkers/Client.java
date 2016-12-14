@@ -60,6 +60,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     public Queue<File> UnlockQueue = new LinkedList<>();
     public QueueEvent<File> FailedLocks = new QueueEvent();
 
+    public Boolean setStartAgent = false;
 
     /**
      * Client constructor.
@@ -75,7 +76,8 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
             }
         }));
         try {
-
+            Thread t=new Thread(new TCPServer(downloadFolder));
+            t.start();
             Registry registry = LocateRegistry.createRegistry(1099);
             Remote remote =  UnicastRemoteObject.exportObject(this, 0);
             registry.bind("ClientIntf", remote);
@@ -87,19 +89,28 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         String ip=InetAddress.getLocalHost().toString().split("/")[1];
         this.id=new NodeInfo(HashTableCreator.createHash(name),ip);
         multicast=new MulticastCommunicator();
+        fm = new FileManager(downloadFolder,id);
         bootStrap();
         while(!finishedBootstrap){
             Thread.sleep(100);
         }
         System.out.println("Finished bootstrap");
+        fm.server=server;
         FailedLocks.addListener(this);
         System.out.println("Added listener");
-        fm = new FileManager(downloadFolder,server,id,previd);
+        fm.startFileChecker(previd);
         System.out.println("Started up FM.");
         if(!Objects.equals(previd.Address, id.Address))
             fm.StartupReplication(previd);
+
         t =new Thread(new TCPServer(downloadFolder));
         t.start();
+
+        if(setStartAgent)
+        {
+          //  agentStarter();
+        }
+
     }
 
     /**
@@ -224,7 +235,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     }
 
     @Override
-    public void transferAgent(AgentFileList agentFileList) throws RemoteException {
+    public void transferAgent(AgentFileList agentFileList) {
         agentFileList.started = true;
         Thread agentThread=new Thread(agentFileList);
         agentFileList.setClient(this);
@@ -234,13 +245,21 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        agentThread.stop();
         if(!(nextid.Address.equals(id.Address)))
         {
-            Registry registry = LocateRegistry.getRegistry(nextid.Address);
+            agentFileList.setClient(null);
             try {
-                NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
-                neighbor.transferAgent(agentFileList);
-            } catch (NotBoundException e) {
+                Registry registry = LocateRegistry.getRegistry(nextid.Address);
+                try {
+                    NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
+                    neighbor.transferAgent(agentFileList);
+                } catch (NotBoundException e) {
+                    e.printStackTrace();
+                }
+            }
+            catch (RemoteException e)
+            {
                 e.printStackTrace();
             }
         }
@@ -313,9 +332,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
             }
             if(clientcount == 2)
             {
-            /*    agentFileList = AgentFileList.getInstance();
-                agentFileList.started = true;
-                transferAgent(agentFileList);*/
+                setStartAgent = true;
             }
         }
         finishedBootstrap=true;
@@ -348,5 +365,12 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     public void queueFilled()
     {
 
+    }
+
+    public void agentStarter()
+    {
+        agentFileList = AgentFileList.getInstance();
+        agentFileList.started = true;
+        transferAgent(agentFileList);
     }
 }

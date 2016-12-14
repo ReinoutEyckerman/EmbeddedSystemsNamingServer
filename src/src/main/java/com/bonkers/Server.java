@@ -108,19 +108,20 @@ public class Server implements QueueListener, ServerIntf{
         }
 
         @Override
-        public String findLocationFile(String file){
+        public NodeInfo findLocationFile(String file){
+
             return findLocationHash(HT.createHash(file));
         }
         @Override
-        public String findLocationHash(int hash){
+        public NodeInfo findLocationHash(int hash){
             List list=new ArrayList(HT.htIp.keySet());
             Collections.sort(list);
             String previousNeighbor = HT.findHost(hash);
             String lastNode=(String)HT.htIp.get(list.get(list.size()-1));
             if (previousNeighbor != null)
-                return previousNeighbor;
+                return new NodeInfo(HashTableCreator.createHash(previousNeighbor), previousNeighbor);
             else
-                return lastNode;
+                return new NodeInfo(HashTableCreator.createHash(lastNode), lastNode);
         }
         @Override
         public int error() throws RemoteException{
@@ -144,8 +145,16 @@ public class Server implements QueueListener, ServerIntf{
             Collections.sort(list);
             int index=list.indexOf(node.Hash);
             if(hashmap.size()>2) {
-                NodeInfo previousNeighbor = new NodeInfo((Integer) list.get(index - 1), (String) hashmap.get(list.get(index - 1)));
-                NodeInfo nextNeighbor = new NodeInfo((Integer) list.get(index + 1), (String) hashmap.get(list.get(index + 1)));
+                int x=index;
+                if(index==0)
+                    x=list.size();
+                NodeInfo previousNeighbor = new NodeInfo((Integer) list.get(x), (String) hashmap.get(list.get(x)));
+                if(index==list.size())
+                    x=0;
+                else
+                    x=index;
+
+                NodeInfo nextNeighbor = new NodeInfo((Integer) list.get(x), (String) hashmap.get(list.get(x)));
                 return new NodeInfo[]{previousNeighbor, nextNeighbor};
             }
             else{
