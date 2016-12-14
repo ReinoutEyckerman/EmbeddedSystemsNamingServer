@@ -59,7 +59,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     public Queue<File> UnlockQueue = new LinkedList<>();
     public QueueEvent<File> FailedLocks = new QueueEvent();
 
-    public List<FileInfo> OwnedFiles;
+    public static List<FileInfo> OwnedFiles;
 
     /**
      * Client constructor.
