@@ -103,9 +103,6 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         if(!Objects.equals(previd.Address, id.Address))
             fm.StartupReplication(previd);
 
-        t =new Thread(new TCPServer(downloadFolder));
-        t.start();
-
         if(setStartAgent)
         {
           //  agentStarter();
@@ -222,16 +219,16 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
 
     @Override
     public void updateNextNeighbor(NodeInfo node) {
-        this.nextid=node;
         LOGGER.info("Next:" +node.Address);
+        this.nextid=node;
         if(fm!=null)
             fm.RecheckOwnership(node);
     }
 
     @Override
     public void updatePreviousNeighbor(NodeInfo node) {
-        this.previd=node;
         LOGGER.info("Previous:" +node.Address);
+        this.previd=node;
     }
 
     @Override

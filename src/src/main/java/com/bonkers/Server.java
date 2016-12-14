@@ -153,13 +153,11 @@ public class Server implements QueueListener, ServerIntf{
                     x=0;
                 else
                     x=index;
-
                 NodeInfo nextNeighbor = new NodeInfo((Integer) list.get(x), (String) hashmap.get(list.get(x)));
                 return new NodeInfo[]{previousNeighbor, nextNeighbor};
             }
             else{
-                NodeInfo neighbor=new NodeInfo((Integer) list.get(1-index), (String) hashmap.get(list.get(1-index)));
-                return new NodeInfo[]{neighbor,neighbor};
+                return new NodeInfo[]{node,node};
             }
         }
     }
