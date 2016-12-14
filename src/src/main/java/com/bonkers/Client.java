@@ -93,9 +93,9 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         System.out.println("Added listener");
         fm = new FileManager(downloadFolder,server,id,previd);
         System.out.println("Started up FM.");
-        fm.CheckIfOwner(this.nextid);
-        fm.StartupReplication(previd);
-        Thread t=new Thread(new TCPServer(downloadFolder));//Todo check why constructor dissapeared
+        if(!Objects.equals(previd.Address, id.Address))
+            fm.StartupReplication(previd);
+        Thread t=new Thread(new TCPServer(downloadFolder));
         t.start();
     }
 
