@@ -88,6 +88,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         this.name=name;
         String ip=InetAddress.getLocalHost().toString().split("/")[1];
         this.id=new NodeInfo(HashTableCreator.createHash(name),ip);
+        LOGGER.info("This node's hash is: "+id.Hash);
         multicast=new MulticastCommunicator();
         fm = new FileManager(downloadFolder,id);
         bootStrap();
