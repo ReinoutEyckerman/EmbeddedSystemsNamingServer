@@ -86,9 +86,13 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         multicast=new MulticastCommunicator();
         bootStrap();
         while(!finishedBootstrap){
+            Thread.sleep(100);
         }
+        System.out.println("Finished bootstrap");
         FailedLocks.addListener(this);
+        System.out.println("Added listener");
         fm = new FileManager(downloadFolder,server,id,previd);
+        System.out.println("Started up FM.");
         fm.CheckIfOwner(this.nextid);
         fm.StartupReplication(previd);
         Thread t=new Thread(new TCPServer(downloadFolder));//Todo check why constructor dissapeared
@@ -105,7 +109,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         }catch (Exception e){
             e.printStackTrace();
         }
-        System.out.println("Bootstrap completed.");
+        System.out.println("Multicast sent.");
     }
 
     /**
@@ -310,6 +314,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
             }
         }
         finishedBootstrap=true;
+        System.out.println("Fully completed bootstrap.");
     }
 
     /**
