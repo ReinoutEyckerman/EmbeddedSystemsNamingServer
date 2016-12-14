@@ -70,9 +70,9 @@ public class FileManager implements QueueListener, FileManagerIntf{
             @Override
             public void run() {
                 System.out.println("Yo whadup");
-                Map<NodeInfo,String> l=fileChecker.checkFiles(id, localFiles);
+                Map<String, NodeInfo> l=fileChecker.checkFiles(id, localFiles);
 
-                for(String file: l.values()){
+                for(String file: l.keySet()){
                     if(!localFiles.containsKey(file)){
                        Replicate(file,prevId);
                     }
@@ -99,9 +99,10 @@ public class FileManager implements QueueListener, FileManagerIntf{
     private void Replicate(String filename,NodeInfo prevId){
         try {
             String ip = server.findLocationFile(filename);
-            if (Objects.equals(id.Address, ip))
-                if(!Objects.equals(prevId.Address, id.Address))
+            if (Objects.equals(id.Address, ip)) {
+                if (!Objects.equals(prevId.Address, id.Address))
                     RequestDownload(prevId.Address, filename);
+            }
             else {
                 RequestDownload(ip, filename);
                 for (FileInfo file:ownedFiles) {//Todo this can be optimized
