@@ -1,5 +1,6 @@
 package com.bonkers;
 
+import com.bonkers.Controllers.StartPageCtrl;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -21,7 +22,7 @@ import java.util.regex.Pattern;
  * Todo public check because ?
  */
 public class Main extends Application {
-    private static Client client;
+
 
     /**
      * Function to start JavaFX UI
@@ -41,7 +42,8 @@ public class Main extends Application {
     @SuppressWarnings("restriction")
     private void closeProgram() {
         System.out.println("sluiten");
-        client.shutdown();
+        //client.shutdown();
+        StartPageCtrl.client.shutdown();
     }
 
     /**

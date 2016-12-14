@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 /**
  * Created by Kenny on 14/12/16.
  */
-public class StartPageCtrl implements Initializable {
+public class StartPageCtrl implements Initializable, Runnable {
     @FXML
     private Button submitBtn;
     @FXML
@@ -33,9 +33,11 @@ public class StartPageCtrl implements Initializable {
     @FXML
     private Label nameLbl;
 
-    private static Client client;
+    public static Client client;
 
     File file = new File(System.getProperty("user.dir") + "/tmp");
+
+
 
     @Override
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
@@ -50,6 +52,18 @@ public class StartPageCtrl implements Initializable {
         });
 
         file.mkdirs();
+
+
+    }
+    @Override
+    public void run() {
+        try {
+            client = new Client(nameTxt.getText(), file);
+        }
+        catch (Exception e){
+            System.out.println("Cannot start client");
+            e.printStackTrace();
+        }
     }
     public void checkRole(){
         if(roleTxt.getText().toLowerCase().equals("client")) {
@@ -83,7 +97,8 @@ public class StartPageCtrl implements Initializable {
                 stage.show();
 
                 //Start new client
-                client = new Client(nameTxt.getText(), file);
+                //client = new Client(nameTxt.getText(), file);
+                (new Thread(new StartPageCtrl())).start();
             }
         }
         else if (roleTxt.getText().toLowerCase().equals("server"))
