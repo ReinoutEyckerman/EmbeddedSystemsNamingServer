@@ -302,9 +302,9 @@ public class Client implements NodeIntf, ClientIntf {
             }
             if(clientcount == 2)
             {
-                agentFileList = AgentFileList.getInstance();
+            /*    agentFileList = AgentFileList.getInstance();
                 agentFileList.started = true;
-                transferAgent(agentFileList);
+                transferAgent(agentFileList);*/
             }
         }
         finishedBootstrap=true;
