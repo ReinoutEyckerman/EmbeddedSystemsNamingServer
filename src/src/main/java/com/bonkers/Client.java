@@ -240,6 +240,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        agentThread.interrupt();
         if(!(nextid.Address.equals(id.Address)))
         {
             agentFileList.setClient(null);
