@@ -1,6 +1,7 @@
 package com.bonkers;
 
 import java.io.File;
+import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -194,5 +195,43 @@ public class FileManager implements QueueListener{
     public void setOwnerFile(FileInfo file) {
         file.fileOwners.add(id);
         ownedFiles.add(file);
+    }
+    public void removeFromFilelist(String file, NodeInfo nodeID){
+        localFiles.forEach((filename, id)->{
+            if(Objects.equals(file, filename)&& id==nodeID){
+               localFiles.remove(file);//Todo might not work
+            }
+        });
+    }
+    /**
+     * Removes and transports all files where it is owner of, and notifies removal of those it is not
+     * @param prevID The id of the previous node
+     */
+    public void shutdown(NodeInfo prevID){
+        try {
+            Registry registry = LocateRegistry.getRegistry(prevID.Address);
+            NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
+            registry=LocateRegistry.getRegistry(server.nodeNeighbors(prevID)[0].Address);
+            NodeIntf nextNode = (NodeIntf) registry.lookup("NodeIntf");
+            for (FileInfo file : ownedFiles) {
+                file.fileOwners.remove(id);
+                if(!file.fileOwners.contains(prevID))
+                    nextNode.requestDownload(id, file.fileName);
+                else
+                    node.requestDownload(id, file.fileName);
+                node.setOwnerFile(file);
+            }
+            for(Map.Entry<String, NodeInfo> entry: localFiles.entrySet()){ //Todo can be optimized
+               if(!ownedFiles.contains(entry.getKey())){
+
+                }
+            }
+        } catch (AccessException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
     }
 }

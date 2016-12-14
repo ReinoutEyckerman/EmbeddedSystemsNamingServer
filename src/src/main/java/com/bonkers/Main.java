@@ -51,7 +51,6 @@ public class Main extends Application {
      * @throws Exception Throws exception on fail
      */
     public static void main(String[] args) throws Exception {
-
         System.out.println(InetAddress.getLocalHost().getHostAddress().toString());
         File file = new File(System.getProperty("user.dir") + "/tmp");
         file.mkdirs();
@@ -78,6 +77,7 @@ public class Main extends Application {
                     if(args.length>1)
                     {
                         client = new Client(args[1], file);
+
                     }
                     else
                     {
