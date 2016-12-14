@@ -75,7 +75,8 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
             }
         }));
         try {
-
+            Thread t=new Thread(new TCPServer(downloadFolder));
+            t.start();
             Registry registry = LocateRegistry.createRegistry(1099);
             Remote remote =  UnicastRemoteObject.exportObject(this, 0);
             registry.bind("ClientIntf", remote);
@@ -100,8 +101,6 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         System.out.println("Started up FM.");
         if(!Objects.equals(previd.Address, id.Address))
             fm.StartupReplication(previd);
-        Thread t=new Thread(new TCPServer(downloadFolder));
-        t.start();
     }
 
     /**
