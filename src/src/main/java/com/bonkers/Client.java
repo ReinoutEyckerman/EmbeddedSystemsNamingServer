@@ -200,7 +200,8 @@ public class Client implements NodeIntf, ClientIntf {
     public void updateNextNeighbor(NodeInfo node) {
         this.nextid=node;
         System.out.println("Next:" +node.Address);
-        fm.RecheckOwnership(node);
+        if(fm!=null)
+            fm.RecheckOwnership(node);
     }
 
     @Override

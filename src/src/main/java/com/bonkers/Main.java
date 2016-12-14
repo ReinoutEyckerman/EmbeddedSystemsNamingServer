@@ -56,7 +56,7 @@ public class Main extends Application {
         System.out.println(InetAddress.getLocalHost().getHostAddress().toString());
         File file = new File(System.getProperty("user.dir") + "/tmp");
         file.mkdirs();
-        launch(args);
+      // launch(args);
         if(args.length>0) {
             switch (args[0]) {
                 case "server":
