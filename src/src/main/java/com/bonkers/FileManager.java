@@ -49,9 +49,8 @@ public class FileManager implements QueueListener, FileManagerIntf{
      * @param downloadLocation The location of the files
      * @param server The server interface
      * @param id The id of this node
-     * @param prevId The id of the previous node, used for replication purposes. NOTE THAT THIS ISNT CONNECTED PERMANENTLY. That is because the prevId might change, and I'm too lazy for an addition interface
      */
-    public FileManager(File downloadLocation, ServerIntf server, NodeInfo id, NodeInfo prevId){
+    public FileManager(File downloadLocation, ServerIntf server, NodeInfo id){
         this.downloadLocation =downloadLocation;
         this.id=id;
         this.server=server;
@@ -66,7 +65,9 @@ public class FileManager implements QueueListener, FileManagerIntf{
             f.fileOwners=new ArrayList<>();
             f.fileOwners.add(file.getValue());
         }
-        timer=new Timer();
+    }
+    public void startFileChecker(NodeInfo prevId){
+           timer=new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -80,8 +81,8 @@ public class FileManager implements QueueListener, FileManagerIntf{
                 }
             }
         },0,5000);
-    }
 
+    }
     /**
      * First replication when the node starts
      * @param prevId Previous node id
@@ -89,7 +90,6 @@ public class FileManager implements QueueListener, FileManagerIntf{
     public void StartupReplication(NodeInfo prevId){
         for(Map.Entry<String,NodeInfo> file:localFiles.entrySet()){
             Replicate(file.getKey(),prevId);
-
         }
     }
 
@@ -102,7 +102,8 @@ public class FileManager implements QueueListener, FileManagerIntf{
         try {
             String ip = server.findLocationFile(filename);
             if (Objects.equals(id.Address, ip))
-                RequestDownload(prevId.Address, filename);
+                if(!Objects.equals(prevId.Address, id.Address))
+                    RequestDownload(prevId.Address, filename);
             else {
                 RequestDownload(ip, filename);
                 for (FileInfo file:ownedFiles) {//Todo this can be optimized
@@ -165,28 +166,6 @@ public class FileManager implements QueueListener, FileManagerIntf{
         new Thread(new TCPClient(data.x,data.y,downloadLocation)).start();
     }
 
-    /**
-     * Checks for the owner of the files TODO unused?
-     * @param nextNode
-     * @return
-     */
-    public List<String> CheckIfOwner( NodeInfo nextNode)
-    {
-        List<String> OwnerOfList = new ArrayList<>();
-        Map<String,NodeInfo> fileMap = fileChecker.checkFiles(id, localFiles);
-        List<String> fileList=new ArrayList(fileMap.keySet());
-        fileList.listIterator().forEachRemaining((file)->{
-            int fileHash = HashTableCreator.createHash(file);
-            if(fileHash > id.Hash)
-            {
-                if(fileHash < nextNode.Hash)
-                {
-                    OwnerOfList.add(file);
-                }
-            }
-        });
-        return OwnerOfList;
-    }
 
     /**
      * Sets the ownership of a file, gets called via RMI

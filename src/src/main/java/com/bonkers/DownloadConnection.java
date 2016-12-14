@@ -39,7 +39,7 @@ public class DownloadConnection implements Runnable{
             os = new DataOutputStream(sock.getOutputStream());
             BufferedReader inFromClient = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             String cmd=inFromClient.readLine();
-            sendFile(folderPath.getAbsolutePath()+cmd);
+            sendFile(folderPath.getAbsolutePath()+"/"+cmd);
             exit();
         }catch (IOException e){
             System.out.println("ConnectionIOException caught. ");

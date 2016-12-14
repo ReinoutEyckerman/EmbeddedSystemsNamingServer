@@ -11,6 +11,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * Client class to connect to server
@@ -25,10 +27,6 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      * Boolean that checks if the bootstrap has completed, essential for knowing if the node is connected properly
      */
     private boolean finishedBootstrap=false;
-    /**
-     * Error code TODO Jente
-     */
-    public boolean Error = true;
     /**
      * Name of the client.
      */
@@ -54,6 +52,9 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      * TODO Jente
      */
     public AgentFileList agentFileList = null;
+
+
+    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     public Queue<File> LockQueue = new LinkedList<>();
     public Queue<File> UnlockQueue = new LinkedList<>();
@@ -86,6 +87,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         String ip=InetAddress.getLocalHost().toString().split("/")[1];
         this.id=new NodeInfo(HashTableCreator.createHash(name),ip);
         multicast=new MulticastCommunicator();
+        fm = new FileManager(downloadFolder,server,id);
         bootStrap();
         while(!finishedBootstrap){
             Thread.sleep(100);
@@ -93,12 +95,11 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         System.out.println("Finished bootstrap");
         FailedLocks.addListener(this);
         System.out.println("Added listener");
-        fm = new FileManager(downloadFolder,server,id,previd);
+        fm.startFileChecker(previd);
         System.out.println("Started up FM.");
-        fm.CheckIfOwner(this.nextid);
-        fm.StartupReplication(previd);
-        OwnedFiles = fm.ownedFiles;
-        Thread t=new Thread(new TCPServer(downloadFolder));//Todo check why constructor dissapeared
+        if(!Objects.equals(previd.Address, id.Address))
+            fm.StartupReplication(previd);
+        Thread t=new Thread(new TCPServer(downloadFolder));
         t.start();
     }
 
@@ -107,12 +108,17 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      */
     private void bootStrap(){
         try {
+
             multicast.sendMulticast(name);
 
         }catch (Exception e){
             e.printStackTrace();
         }
-        System.out.println("Multicast sent.");
+
+        LOGGER.info("Bootstrap completed.");
+
+        LOGGER.info("Multicast sent.");
+
     }
 
     /**
@@ -125,16 +131,16 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     {
         switch (error){
             case 201:
-            System.out.println("The node name already exists on the server please choose another one");
+            LOGGER.warning("The node name already exists on the server please choose another one");
                 break;
             case 202:
-            System.out.println("You already exist in the name server");
+            LOGGER.warning("You already exist in the name server");
                 break;
             case 100:
-            System.out.println("No errors");
+            LOGGER.info("No errors");
                 break;
             default:
-                System.out.println("Unknown error");
+                LOGGER.warning("Unknown error");
                 break;
         }
         return error;
@@ -145,8 +151,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      * TODO Replication
      */
     public void shutdown(){
-
-        System.out.print("shutdown\n");
+        LOGGER.info("Shutdown");
         fm.shutdown(previd);
 
         if (previd != null && !Objects.equals(previd.Address, id.Address) && nextid != null) {
@@ -161,7 +166,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
                 node.updatePreviousNeighbor(previd);
 
             } catch (Exception e) {
-                System.err.println("Client exception: " + e.toString());
+                LOGGER.warning("Client exception: " + e.toString());
                 e.printStackTrace();
             }
         }
@@ -170,7 +175,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        System.out.println("Successful shutdown");
+        LOGGER.info("Successful shutdown");
         System.exit(0);
     }
 
@@ -199,7 +204,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
             node.updatePreviousNeighbor(neighbors[0]);
             server.nodeShutdown(nodeFailed);
         }catch(Exception e){
-            System.err.println("Client exception: " + e.toString());
+            LOGGER.warning("Client exception: " + e.toString());
             e.printStackTrace();
         }
     }
@@ -207,7 +212,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     @Override
     public void updateNextNeighbor(NodeInfo node) {
         this.nextid=node;
-        System.out.println("Next:" +node.Address);
+        LOGGER.info("Next:" +node.Address);
         if(fm!=null)
             fm.RecheckOwnership(node);
     }
@@ -215,7 +220,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     @Override
     public void updatePreviousNeighbor(NodeInfo node) {
         this.previd=node;
-        System.out.println("Previous:" +node.Address);
+        LOGGER.info("Previous:" +node.Address);
     }
 
     @Override
@@ -287,10 +292,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         try {
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
             server = (ServerIntf) registry.lookup("ServerIntf");
-            if (CheckError(server.error())!=100){
-                //TODO Joris Gooi grafische error en vraag dan nog is, die grafische error mag ook in dien checkerror geplaatst worde, dan kan deze if weg en heeft die functie tenminste nut
-                Error=false;
-            }
+            CheckError(server.error());
         }catch (NotBoundException e){
             e.printStackTrace();
         }
@@ -311,10 +313,9 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
             }
             if(clientcount == 2)
             {
-                agentFileList = AgentFileList.getInstance();
+            /*    agentFileList = AgentFileList.getInstance();
                 agentFileList.started = true;
-                transferAgent(agentFileList);
-                System.out.println("Agent started");
+                transferAgent(agentFileList);*/
             }
         }
         finishedBootstrap=true;
