@@ -102,8 +102,6 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         System.out.println("Started up FM.");
         if(!Objects.equals(previd.Address, id.Address))
             fm.StartupReplication(previd);
-        Thread t=new Thread(new TCPServer(downloadFolder));
-        t.start();
         if(setStartAgent)
         {
             //agentStarter();
