@@ -11,6 +11,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -67,6 +68,8 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     public QueueEvent<Tuple<File, Boolean>> LockStatusQueue = new QueueEvent();
 
     public Boolean setStartAgent = false;
+
+    public List<File> globalFileList = null;
 
     /**
      * Client constructor.
@@ -241,7 +244,28 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     @Override
     public void transferAgent(AgentFileList agentFileList) {
         agentFileList.started = true;
-        Thread agentThread=new Thread(agentFileList);
+
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+
+        globalFileList = agentFileList.call();
+
+        try {
+            Future<List<File>> future = executor.submit(agentFileList);
+            while (!future.isDone())
+            {
+
+            }
+            globalFileList = future.get();
+
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            executor.shutdownNow();
+        }
+
+        /*Thread agentThread=new Thread(agentFileList);
         agentFileList.setClient(this);
         agentThread.start();
         try {
@@ -249,7 +273,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        agentThread.stop();
+        agentThread.stop();*/
         if(!(nextid.Address.equals(id.Address)))
         {
             agentFileList.setClient(null);

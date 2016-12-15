@@ -1,15 +1,20 @@
 package com.bonkers;
 
+import jdk.nashorn.internal.codegen.CompilerConstants;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * TODO Jente
  */
-public class AgentFileList implements Runnable, Serializable {
-    public HashMap<File, Boolean> FileList = new HashMap<>();
+public class AgentFileList implements Callable, Serializable {
+    public HashMap<File, Boolean> FileMap = new HashMap<>();
+    public List<File> Filelist = new LinkedList<>();
 
     public Boolean started = false;
 
@@ -39,11 +44,14 @@ public class AgentFileList implements Runnable, Serializable {
     public Client getClient() { return client; }
 
     @Override
-    public void run() {
+    public List<File> call() {
         getAndUpdateCurrentNodeFiles();
         checkLockRequests();
         checkUnlock();
-        return;
+        FileMap.forEach(((file, aBoolean) -> {
+            Filelist.add(file);
+        }));
+        return Filelist;
     }
 
     /**
@@ -51,13 +59,13 @@ public class AgentFileList implements Runnable, Serializable {
      */
     private void getAndUpdateCurrentNodeFiles(){
         client.fm.ownedFiles.forEach((fileInfo) ->{
-            FileList.putIfAbsent(new File(fileInfo.fileName), false);
+            FileMap.putIfAbsent(new File(fileInfo.fileName), false);
         });
-        System.out.println(client.fm.ownedFiles.size() + " " + FileList.size());
+        System.out.println(client.fm.ownedFiles.size() + " " + FileMap.size());
     }
     private void checkLockRequests(){
         client.LockQueue.forEach((fileName) -> {
-            if(!FileList.replace(fileName, false, true))
+            if(!FileMap.replace(fileName, false, true))
             {
                 client.LockStatusQueue.add(new Tuple<>(fileName, false));
             }
@@ -69,7 +77,7 @@ public class AgentFileList implements Runnable, Serializable {
     }
     private void checkUnlock(){
         client.UnlockQueue.forEach((fileName) ->{
-            FileList.replace(fileName, true, false);
+            FileMap.replace(fileName, true, false);
         });
     }
 }
