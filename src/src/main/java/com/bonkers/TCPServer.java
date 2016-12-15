@@ -7,6 +7,8 @@ package com.bonkers;
 import java.io.File;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
@@ -21,9 +23,11 @@ public class TCPServer implements Runnable {
      */
     public final  int SOCKET_PORT = 12346;  // you may change othis
     private final File folderLocation;
+    private final ExecutorService pool;
 
     public TCPServer(File folderLocation) {
         this.folderLocation = folderLocation;
+        pool = Executors.newFixedThreadPool(10);
     }
 
     /**
@@ -33,7 +37,6 @@ public class TCPServer implements Runnable {
     @Override
     public void run() {
         ServerSocket serversocket = null;
-        Socket clientSocket;
         try {
             serversocket = new ServerSocket(SOCKET_PORT);
 
@@ -44,14 +47,11 @@ public class TCPServer implements Runnable {
         LOGGER.info("TCP Server succesfully started.");
         while (true) {
             try {
-                clientSocket = serversocket.accept();
-                LOGGER.info("Accepted connection : " + clientSocket);
-                Thread t = new Thread(new DownloadConnection(clientSocket, folderLocation));
-                t.start();
-                t.join();
+                pool.execute(new DownloadConnection(serversocket.accept(),folderLocation));
             } catch (Exception e) {
                 LOGGER.warning("Error " + e + " in connection attempt.");
                 e.printStackTrace();
+                pool.shutdown();
             }
         }
     }
