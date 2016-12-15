@@ -36,9 +36,7 @@ public class Logging{
             StreamHandler sh = new StreamHandler();
             @Override
             public void publish(LogRecord record) {
-                String sourceclass = record.getSourceClassName();
-                String[] Class = sourceclass.split("\\.");
-                logRecordsQueue.add(record, Class[2]);
+                logRecordsQueue.add(record);
             }
 
            @Override

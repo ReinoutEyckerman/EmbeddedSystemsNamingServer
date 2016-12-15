@@ -1,6 +1,8 @@
 package com.bonkers;
 
 
+import com.bonkers.Controllers.ClientCtrl;
+
 import java.io.File;
 import java.net.InetAddress;
 import java.rmi.AlreadyBoundException;
@@ -85,7 +87,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      */
     public Client(String name, File downloadFolder) throws Exception {
         LOGGER.addHandler(Logging.ListHandler(logRecordQueue));
-        logRecordQueue.addListener(this, "Client");
+        logRecordQueue.addListener(this);
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
                 shutdown();
@@ -400,7 +402,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     @Override
     public void queueFilled()
     {
-        if(LockStatusQueue.queue.peek() != null)
+        if(LockStatusQueue.queue.size() > 0)
         {
             LockStatusQueue.forEach((fileTuple) ->{
                 if(fileTuple.y)
@@ -416,7 +418,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         if(logRecordQueue.queue.size() > 0)
         {
             LogRecord lr = logRecordQueue.poll();
-            setLogs(lr);
+            ClientCtrl.setLogs(lr);
         }
     }
 
