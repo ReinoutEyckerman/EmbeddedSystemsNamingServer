@@ -49,16 +49,22 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      */
     public FileManager fm = null;
     /**
-     * TODO Jente
+     * Sets the agent to handle the files on the clients but waits to start it
      */
     public AgentFileList agentFileList = null;
 
     Thread t = null;
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
+    /**
+     * Saves the lock and unlock request until the agent gets to the client
+     */
     public Queue<File> LockQueue = new LinkedList<>();
     public Queue<File> UnlockQueue = new LinkedList<>();
-    public QueueEvent<File> FailedLocks = new QueueEvent();
+    /**
+     * Saves the status if the lock failed the boolean is false else the boolean is true
+     */
+    public QueueEvent<Tuple<File, Boolean>> LockStatusQueue = new QueueEvent();
 
     public Boolean setStartAgent = false;
 
@@ -97,7 +103,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         }
         System.out.println("Finished bootstrap");
         fm.server=server;
-        FailedLocks.addListener(this);
+        LockStatusQueue.addListener(this);
         System.out.println("Added listener");
         fm.startFileChecker(previd);
         System.out.println("Started up FM.");
@@ -359,12 +365,27 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         System.exit(1);
     }
 
+    /**
+     * Method that gets fired when the LockStatusQueue gets filled
+     */
     @Override
     public void queueFilled()
     {
-
+        LockStatusQueue.forEach((fileTuple) ->{
+            if(fileTuple.y)
+            {
+                //TODO start download
+            }
+            else
+            {
+                LockQueue.add(fileTuple.x);
+            }
+        });
     }
 
+    /**
+     * Method to start the agent
+     */
     public void agentStarter()
     {
         agentFileList = AgentFileList.getInstance();

@@ -59,7 +59,11 @@ public class AgentFileList implements Runnable, Serializable {
         client.LockQueue.forEach((fileName) -> {
             if(!FileList.replace(fileName, false, true))
             {
-                client.FailedLocks.add(fileName);
+                client.LockStatusQueue.add(new Tuple<>(fileName, false));
+            }
+            else
+            {
+                client.LockStatusQueue.add(new Tuple<>(fileName, true));
             }
         });
     }
