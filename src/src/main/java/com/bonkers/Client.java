@@ -15,6 +15,8 @@ import java.util.concurrent.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
+import static com.bonkers.Controllers.ClientCtrl.setData;
+
 /**
  * Client class to connect to server
  */
@@ -254,7 +256,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
 
             }
             globalFileList = future.get();
-
+            setData(globalFileList);
         } catch (Exception e)
         {
             e.printStackTrace();
