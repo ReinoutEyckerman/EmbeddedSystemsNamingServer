@@ -84,9 +84,9 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
                 shutdown();
             }
         }));
+        Thread t=new Thread(new TCPServer(downloadFolder));
+        t.start();
         try {
-            Thread t=new Thread(new TCPServer(downloadFolder));
-            t.start();
             Registry registry = LocateRegistry.createRegistry(1099);
             Remote remote =  UnicastRemoteObject.exportObject(this, 0);
             registry.bind("ClientIntf", remote);
@@ -104,15 +104,13 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         while(!finishedBootstrap){
             Thread.sleep(100);
         }
-        System.out.println("Finished bootstrap");
+        LOGGER.info("Finished bootstrap");
         fm.server=server;
         LockStatusQueue.addListener(this);
-        System.out.println("Added listener");
         fm.startFileChecker(previd);
-        System.out.println("Started up FM.");
+        LOGGER.info("Started up FM.");
         if(!Objects.equals(previd.Address, id.Address))
             fm.StartupReplication(previd);
-
         if(setStartAgent)
         {
           //  agentStarter();
@@ -229,7 +227,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
 
     @Override
     public void updateNextNeighbor(NodeInfo node) {
-        LOGGER.info("Next:" +node.Address);
+        LOGGER.info("Updated next neighbor: " +node.Address);
         this.nextid=node;
         if(fm!=null)
             fm.RecheckOwnership(node);
@@ -237,7 +235,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
 
     @Override
     public void updatePreviousNeighbor(NodeInfo node) {
-        LOGGER.info("Previous:" +node.Address);
+        LOGGER.info("Updated previous neighbor: " +node.Address);
         this.previd=node;
     }
 
@@ -335,6 +333,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
 
     @Override
     public void setStartingInfo(String address, int clientcount) throws RemoteException {
+        LOGGER.info("Setting starting info");
         this.ServerAddress=address;
         try {
             Registry registry = LocateRegistry.getRegistry(ServerAddress);
@@ -364,7 +363,6 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
             }
         }
         finishedBootstrap=true;
-        System.out.println("Fully completed bootstrap.");
     }
 
     /**

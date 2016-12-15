@@ -6,6 +6,8 @@ package com.bonkers;
 import java.io.*;
 import java.net.Socket;
 
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+
 /***
  * The actual and technical downloading of a file. Well, more uploading, this is the thread that a tcpserver uses to connect a client node with
  */
@@ -29,6 +31,7 @@ public class DownloadConnection implements Runnable{
     private final File folderPath;
 
     public DownloadConnection(Socket client, File folderPath) {
+        LOGGER.info("Accepted connection from "+client.getInetAddress());
         this.sock = client;
         this.folderPath=folderPath;
     }
@@ -42,7 +45,7 @@ public class DownloadConnection implements Runnable{
             sendFile(folderPath.getAbsolutePath()+"/"+cmd);
             exit();
         }catch (IOException e){
-            System.out.println("ConnectionIOException caught. ");
+            LOGGER.severe("ConnectionIOException caught. ");
             e.printStackTrace();
         }
     }
@@ -54,19 +57,18 @@ public class DownloadConnection implements Runnable{
      */
     private void sendFile(String filepath) throws IOException {
         os  = new DataOutputStream(sock.getOutputStream());
-        System.out.println("Waiting...");
         File myFile = new File(filepath);
         os.writeLong(myFile.length());
         byte[] buffer=new byte[1024];
         fis = new FileInputStream(myFile);
         bis = new BufferedInputStream(fis);
-        System.out.println("Sending " + filepath + "(" + myFile.length() + " bytes)");
+        LOGGER.info("Sending " + filepath + "(" + myFile.length() + " bytes)");
         int count;
         while ((count = fis.read(buffer)) > 0) {
             os.write(buffer, 0, count);
         }
         os.flush();
-        System.out.println("File sent.");
+        LOGGER.info("File sent.");
     }
 
     /**
