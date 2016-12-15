@@ -11,6 +11,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.LogRecord;
 
 /**
  * Created by Jente on 4/12/2016.
@@ -24,6 +25,10 @@ public class ClientCtrl implements Initializable {
     private Button deleteLocalBtn;
     @FXML
     private static ListView fileList;
+    @FXML
+    private static ListView logsList;
+
+    private static ObservableList<String> oLogs = FXCollections.observableArrayList();
 
 
     @Override
@@ -32,6 +37,7 @@ public class ClientCtrl implements Initializable {
         assert deleteBtn != null : "fx:id=\"deleteBtn\" was not injected: check your FXML file 'simple.fxml'.";
         assert deleteLocalBtn != null : "fx:id=\"deleteLocalBtn\" was not injected: check your FXML file 'simple.fxml'.";
         assert fileList != null : "fx:id=\"fileList\" was not injected: check your FXML file 'simple.fxml'.";
+        assert logsList != null : "fx:id=\"logsList\" was not injected: check your FXML file 'simple.fxml'.";
     }
 
     public static void setData(List<File> files)
@@ -41,6 +47,12 @@ public class ClientCtrl implements Initializable {
             oFiles.add(file.getName());
         });
         fileList.setItems(oFiles);
+    }
+
+    public static void setLogs(LogRecord logRecord)
+    {
+        oLogs.add(logRecord.getMessage());
+        logsList.setItems(oLogs);
     }
 
 }

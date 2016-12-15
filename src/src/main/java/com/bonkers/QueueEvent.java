@@ -1,5 +1,6 @@
 package com.bonkers;
 
+import javax.security.auth.Subject;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -23,6 +24,7 @@ public class QueueEvent<E> extends PriorityQueue<E> {
      * List of listeners that subscribed to the add event
      */
     private List<QueueListener> listeners = new ArrayList<QueueListener>();
+    private Map<QueueListener, String> listenersWithSubject = new HashMap<>();
     // usual methods for adding/removing listeners
     //TODO DISABLE PUBLIC
     /**
@@ -40,6 +42,14 @@ public class QueueEvent<E> extends PriorityQueue<E> {
         notifyPacketReceived();
         return out;
     }
+
+    public boolean add(E item, String subject)
+    {
+        boolean out=queue.add(item);
+        notifyPacketReceived(subject);
+        return out;
+    }
+
     public E poll(){
         return queue.poll();
     }
@@ -52,11 +62,21 @@ public class QueueEvent<E> extends PriorityQueue<E> {
         listeners.add(listener);
     }
 
+    public void addListener(QueueListener listener, String subject){listenersWithSubject.put(listener, subject);}
+
     /**
      * "Event" That notifies all subscribers.
      */
     public Boolean notifyPacketReceived(){
         listeners.forEach(QueueListener::queueFilled);
+        return true;
+    }
+    public Boolean notifyPacketReceived(String subject){
+        listenersWithSubject.forEach((QueueListener, Subject) ->
+        {
+            if(subject.equals(Subject))
+                QueueListener.queueFilled();
+        });
         return true;
     }
 }

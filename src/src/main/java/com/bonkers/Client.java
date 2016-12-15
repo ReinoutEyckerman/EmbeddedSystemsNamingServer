@@ -12,10 +12,12 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
 import static com.bonkers.Controllers.ClientCtrl.setData;
+import static com.bonkers.Controllers.ClientCtrl.setLogs;
 
 /**
  * Client class to connect to server
@@ -58,6 +60,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
 
     Thread t = null;
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    public QueueEvent<LogRecord> logRecordQueue = new QueueEvent<>();
 
     /**
      * Saves the lock and unlock request until the agent gets to the client
@@ -81,11 +84,14 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      * @throws Exception Generic exception for when something fails TODO
      */
     public Client(String name, File downloadFolder) throws Exception {
+        LOGGER.addHandler(Logging.ListHandler(logRecordQueue));
+        logRecordQueue.addListener(this, "Client");
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
                 shutdown();
             }
         }));
+        LOGGER.log(Level.FINE, "Test");
         Thread t=new Thread(new TCPServer(downloadFolder));
         t.start();
         try {
@@ -117,7 +123,6 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         {
           //  agentStarter();
         }
-
     }
 
     /**
@@ -395,16 +400,24 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     @Override
     public void queueFilled()
     {
-        LockStatusQueue.forEach((fileTuple) ->{
-            if(fileTuple.y)
-            {
-                //TODO start download
-            }
-            else
-            {
-                LockQueue.add(fileTuple.x);
-            }
-        });
+        if(LockStatusQueue.queue.peek() != null)
+        {
+            LockStatusQueue.forEach((fileTuple) ->{
+                if(fileTuple.y)
+                {
+                    //TODO start download
+                }
+                else
+                {
+                    LockQueue.add(fileTuple.x);
+                }
+            });
+        }
+        if(logRecordQueue.queue.size() > 0)
+        {
+            LogRecord lr = logRecordQueue.poll();
+            setLogs(lr);
+        }
     }
 
     /**
