@@ -15,4 +15,8 @@ public class FileInfo implements Serializable{
      * List of nodes who also have this file
      */
     public List<NodeInfo> fileOwners;
+    @Override
+    public String toString(){
+        return fileName+" with following nodes "+fileOwners;
+    }
 }

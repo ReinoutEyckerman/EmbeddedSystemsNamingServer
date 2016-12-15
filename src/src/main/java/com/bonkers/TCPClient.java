@@ -6,6 +6,9 @@ package com.bonkers;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.logging.Logger;
+
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 /**
  * Thread that connects to a TCPServer, aka another node. This then downloads the specified file from the connected server.
@@ -66,7 +69,7 @@ public class TCPClient implements Runnable{
      */
     @Override
     public void run() {
-        System.out.println("Connecting...");
+        LOGGER.info("Connecting TCP client to "+Server+" for downloading "+remoteFileLocation);
         try {
             serverSocket = new Socket(Server, SOCKET_PORT);
             os = new DataOutputStream(serverSocket.getOutputStream());
@@ -76,7 +79,7 @@ public class TCPClient implements Runnable{
             getFile(downloadLocation.getPath()+"/"+remoteFileLocation);
             exit();
         }catch (IOException e){
-            System.out.println("IO exception caught while downloading file.");
+            LOGGER.warning("IO exception caught while downloading file.");
             e.printStackTrace();
         }
     }
@@ -100,7 +103,7 @@ public class TCPClient implements Runnable{
             bytesReceived+=bytesRead;
         }while(bytesReceived<fileLength);
         bos.flush(); //Force buffered bytes to be written
-        System.out.println("File " +destinyFilePath + " downloaded." );
+        LOGGER.info("File " +destinyFilePath + " downloaded." );
     }
 
     /**

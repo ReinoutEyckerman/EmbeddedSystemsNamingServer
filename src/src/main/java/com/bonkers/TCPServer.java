@@ -8,6 +8,8 @@ import java.io.File;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+
 /**
  * Thread that allows TCP clients to connect and opens a Connection thread to the client
  * This is implemented on every node, so that every node can connect to every other node for file transfer
@@ -34,20 +36,21 @@ public class TCPServer implements Runnable {
         Socket clientSocket;
         try {
             serversocket = new ServerSocket(SOCKET_PORT);
+
         } catch (Exception e) {
-            System.err.println("Port already in use.");
+            LOGGER.severe("TCP Server socket already in use. Exiting...");
             System.exit(1);
         }
-        System.out.println("Server succesfully started.");
+        LOGGER.info("TCP Server succesfully started.");
         while (true) {
             try {
                 clientSocket = serversocket.accept();
-                System.out.println("Accepted connection : " + clientSocket);
+                LOGGER.info("Accepted connection : " + clientSocket);
                 Thread t = new Thread(new DownloadConnection(clientSocket, folderLocation));
                 t.start();
                 t.join();
             } catch (Exception e) {
-                System.err.println("Error " + e + " in connection attempt.");
+                LOGGER.warning("Error " + e + " in connection attempt.");
                 e.printStackTrace();
             }
         }
