@@ -153,7 +153,7 @@ public class Server implements QueueListener, ServerIntf{
         Collections.sort(list);
         int index=list.indexOf(node.Hash);
         if(hashmap.size()==2) {
-            NodeInfo neighbor=new NodeInfo((Integer)list.get(1-index), (String) hashmap.get(1-index));
+            NodeInfo neighbor=new NodeInfo((Integer)list.get(1-index), (String) hashmap.get(list.get(1-index)));
             return new NodeInfo[] {neighbor,neighbor};
         }
         else if(hashmap.size()>2){
