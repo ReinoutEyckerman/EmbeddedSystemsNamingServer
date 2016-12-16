@@ -25,4 +25,8 @@ public class NodeInfo implements Serializable{
         this.Hash=hash;
         this.Address=address;
     }
+    @Override
+    public String toString(){
+        return Address+" with hash "+Hash;
+    }
 }

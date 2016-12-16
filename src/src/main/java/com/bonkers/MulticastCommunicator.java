@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+
 /**
  * Multicast communication Thread.
  */
@@ -50,6 +52,7 @@ public class MulticastCommunicator extends Thread {
      * No interaction required.
      */
     public void run(){
+        LOGGER.info("Started multicastserver successfully");
         while(!IsFinished) {
             Tuple<String,String> info = receiveMulticast();
             if(info!=null)
@@ -75,6 +78,7 @@ public class MulticastCommunicator extends Thread {
      */
     public void sendMulticast(String msg) {
         try {
+            LOGGER.info("Sent "+msg+" as multicast.");
             DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), group, 6789);
             castSocket.send(packet);
         } catch (Exception e) {
@@ -91,15 +95,13 @@ public class MulticastCommunicator extends Thread {
             byte[] buf = new byte[2048];
             DatagramPacket recv = new DatagramPacket(buf, buf.length);
             castSocket.receive(recv);
-            System.out.println("packet received" + recv.getData());
             String address=recv.getAddress().getHostAddress();
-            System.out.println(address);
+            LOGGER.info("Received a packet from address "+address+" with following data: "+recv.getData());
             String Nodename=new String(buf,0,recv.getLength());
-            System.out.println(Nodename);
             return new Tuple<String,String>(Nodename,address);
         } catch (Exception e) {
             IsFinished=true;
-            System.out.println(e);
+            e.printStackTrace();
         }
         return null;
     }
@@ -109,6 +111,7 @@ public class MulticastCommunicator extends Thread {
      */
     public void leaveGroup() {
         try {
+            LOGGER.info("Leaving multicast group.");
             castSocket.leaveGroup(group);
         } catch (Exception e) {
         }

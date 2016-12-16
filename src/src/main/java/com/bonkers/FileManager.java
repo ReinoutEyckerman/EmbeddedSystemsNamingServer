@@ -1,26 +1,19 @@
 package com.bonkers;
 
-import com.sun.media.jfxmedia.logging.Logger;
-import sun.rmi.runtime.Log;
-
 import java.io.File;
-import java.net.InetAddress;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 /**
  * It is he, FileManager, Manager of Files, Replicator of objects!
  */
-public class FileManager implements QueueListener, FileManagerIntf{
+public class FileManager implements QueueListener {
     /**
      * The Downloadqueue for downloading files
      */
@@ -56,6 +49,7 @@ public class FileManager implements QueueListener, FileManagerIntf{
      * @param id The id of this node
      */
     public FileManager(File downloadLocation, NodeInfo id){
+        LOGGER.info("Starting filemanager...");
         new File(System.getProperty("user.dir")+"/tmp").mkdirs();
         this.downloadLocation =downloadLocation;
         this.id=id;
@@ -64,13 +58,16 @@ public class FileManager implements QueueListener, FileManagerIntf{
         fileChecker=new FileChecker(downloadLocation);
         localFiles=fileChecker.checkFiles(id);
         ownedFiles=new ArrayList<>();
+        LOGGER.info("Filling ownedFiles with local files for startup.");
         for (Map.Entry<String,NodeInfo> file: localFiles.entrySet()) {
             FileInfo f=new FileInfo();
             f.fileName=file.getKey();
             f.fileOwners=new ArrayList<>();
             f.fileOwners.add(file.getValue());
             ownedFiles.add(f);
+            LOGGER.info("Added "+f);
         }
+        LOGGER.info("Filemanager successfully started.");
     }
 
     public void startFileChecker(NodeInfo prevId){
@@ -78,7 +75,7 @@ public class FileManager implements QueueListener, FileManagerIntf{
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.println("Yo whadup");
+                LOGGER.info("Yo whadup");
                 Map<String, NodeInfo> l=fileChecker.checkFiles(id, localFiles);
                 for(String file: l.keySet()){
                     if(!localFiles.containsKey(file)){

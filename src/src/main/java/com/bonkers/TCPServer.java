@@ -7,6 +7,10 @@ package com.bonkers;
 import java.io.File;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 /**
  * Thread that allows TCP clients to connect and opens a Connection thread to the client
@@ -19,9 +23,11 @@ public class TCPServer implements Runnable {
      */
     public final  int SOCKET_PORT = 12346;  // you may change othis
     private final File folderLocation;
+    private final ExecutorService pool;
 
     public TCPServer(File folderLocation) {
         this.folderLocation = folderLocation;
+        pool = Executors.newFixedThreadPool(10);
     }
 
     /**
@@ -31,24 +37,21 @@ public class TCPServer implements Runnable {
     @Override
     public void run() {
         ServerSocket serversocket = null;
-        Socket clientSocket;
         try {
             serversocket = new ServerSocket(SOCKET_PORT);
+
         } catch (Exception e) {
-            System.err.println("Port already in use.");
+            LOGGER.severe("TCP Server socket already in use. Exiting...");
             System.exit(1);
         }
-        System.out.println("Server succesfully started.");
+        LOGGER.info("TCP Server succesfully started.");
         while (true) {
             try {
-                clientSocket = serversocket.accept();
-                System.out.println("Accepted connection : " + clientSocket);
-                Thread t = new Thread(new DownloadConnection(clientSocket, folderLocation));
-                t.start();
-                t.join();
+                pool.execute(new DownloadConnection(serversocket.accept(),folderLocation));
             } catch (Exception e) {
-                System.err.println("Error " + e + " in connection attempt.");
+                LOGGER.warning("Error " + e + " in connection attempt.");
                 e.printStackTrace();
+                pool.shutdown();
             }
         }
     }

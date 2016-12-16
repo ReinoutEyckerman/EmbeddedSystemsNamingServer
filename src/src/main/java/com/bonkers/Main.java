@@ -73,15 +73,4 @@ public class Main extends Application {
             throw new RuntimeException("Problems with creating the log files");
         }
     }
-    /**
-     * Checks if entered IP is an actual legit IP.
-     * @param text Ip as string
-     * @return Boolean that returns true or false depending of the string is an IP.
-     * TODO: Replace this by an InetAddress function?
-     */
-    public static boolean isIP(String text) {
-        Pattern p = Pattern.compile("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
-        Matcher m = p.matcher(text);
-        return m.find();
-    }
 }

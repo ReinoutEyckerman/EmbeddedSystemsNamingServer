@@ -1,5 +1,6 @@
 package com.bonkers;
 
+import javax.security.auth.Subject;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -40,6 +41,7 @@ public class QueueEvent<E> extends PriorityQueue<E> {
         notifyPacketReceived();
         return out;
     }
+
     public E poll(){
         return queue.poll();
     }
