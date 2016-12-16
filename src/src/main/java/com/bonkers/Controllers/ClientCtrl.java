@@ -60,7 +60,9 @@ public class ClientCtrl implements Initializable, ListChangeListener {
 
     @Override
     public void onChanged(Change c) {
-        logsList.setItems(oLogs);
-        fileList.setItems(oFiles);
+        if(oLogs.size() > 0)
+            logsList.setItems(oLogs);
+        if(oFiles.size() >0)
+            fileList.setItems(oFiles);
     }
 }

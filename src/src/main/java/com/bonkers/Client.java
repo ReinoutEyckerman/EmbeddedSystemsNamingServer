@@ -138,11 +138,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         }catch (Exception e){
             e.printStackTrace();
         }
-
-        LOGGER.info("Bootstrap completed.");
-
         LOGGER.info("Multicast sent.");
-
     }
 
     /**
