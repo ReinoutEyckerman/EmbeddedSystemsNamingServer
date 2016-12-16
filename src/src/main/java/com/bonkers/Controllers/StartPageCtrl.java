@@ -57,7 +57,7 @@ public class StartPageCtrl implements Initializable, Runnable {
 
         file.mkdirs();
 
-        //submitBtn.defaultButtonProperty().bind(submitBtn.focusedProperty());
+        submitBtn.defaultButtonProperty().bind(submitBtn.focusedProperty());
 
 
     }
