@@ -247,11 +247,12 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
 
     @Override
     public void transferAgent(AgentFileList agentFileList) {
+        LOGGER.log(Level.INFO,"AgentStarted");
         agentFileList.started = true;
 
         ExecutorService executor = Executors.newFixedThreadPool(1);
 
-        globalFileList = agentFileList.call();
+        //globalFileList = agentFileList.call();
 
         try {
             Future<List<File>> future = executor.submit(agentFileList);
@@ -288,6 +289,10 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
                     NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
                     neighbor.transferAgent(agentFileList);
                 } catch (NotBoundException e) {
+                    e.printStackTrace();
+                }
+                catch (NullPointerException e)
+                {
                     e.printStackTrace();
                 }
             }
