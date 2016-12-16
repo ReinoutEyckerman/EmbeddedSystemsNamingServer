@@ -146,7 +146,11 @@ public class StartPageCtrl implements Initializable, Runnable {
         alert.showAndWait();
     }
     public static void Shutdown(){
-        client.shutdown();
+        if (client !=null){
+            client.shutdown();
+        }
+        else
+            System.exit(0);
     }
 
     @FXML
