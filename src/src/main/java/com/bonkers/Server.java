@@ -151,6 +151,10 @@ public class Server implements QueueListener, ServerIntf{
             if(index==0)
                 x=list.size()-1;
             NodeInfo previousNeighbor = new NodeInfo((Integer) list.get(x), (String) hashmap.get(list.get(x)));
+            if(node.Address.equals(previousNeighbor.Address))
+            {
+                previousNeighbor = new NodeInfo((Integer) list.get(list.size()-1), (String) hashmap.get(list.get(list.size()-1)));
+            }
             if(index==list.size())
                 x=0;
             else
