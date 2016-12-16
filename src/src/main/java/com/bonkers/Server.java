@@ -150,6 +150,7 @@ public class Server implements QueueListener, ServerIntf{
             int x=index;
             if(index==0)
                 x=list.size()-1;
+            else x=index+1;
             NodeInfo previousNeighbor = new NodeInfo((Integer) list.get(x), (String) hashmap.get(list.get(x)));
             if(node.Address.equals(previousNeighbor.Address))
             {
@@ -158,7 +159,7 @@ public class Server implements QueueListener, ServerIntf{
             if(index==list.size()-1)
                 x=0;
             else
-                x=index;
+                x=index-1;
             NodeInfo nextNeighbor = new NodeInfo((Integer) list.get(x), (String) hashmap.get(list.get(x)));
             return new NodeInfo[]{previousNeighbor, nextNeighbor};
         }
