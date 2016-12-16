@@ -4,6 +4,7 @@ tmp/
 .mtj.tmp/
 
 Logging.*
+hashtable.json
 
 # Package Files #
 *.war
