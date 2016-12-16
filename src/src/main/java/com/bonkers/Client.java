@@ -93,7 +93,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         logRecordQueue.addListener(this);
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
-                shutdown();
+                //shutdown();
             }
         }));
         Thread t=new Thread(new TCPServer(downloadFolder));
@@ -175,7 +175,6 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
      */
     public void shutdown(){
         LOGGER.info("Shutdown");
-        t.interrupt();
         fm.shutdown(previd);
 
         if (previd != null && !Objects.equals(previd.Address, id.Address) && nextid != null) {
