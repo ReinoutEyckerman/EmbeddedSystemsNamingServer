@@ -54,10 +54,10 @@ public class ClientCtrl implements Initializable {
 
     public static void setData(List<File> files)
     {
-        files.forEach((file) -> {
+        /*files.forEach((file) -> {
             oFiles.add(file.getName());
         });
-        fileList.setItems(oFiles);
+        fileList.setItems(oFiles);*/
 
     }
 
