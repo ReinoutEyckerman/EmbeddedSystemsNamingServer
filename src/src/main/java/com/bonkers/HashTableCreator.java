@@ -114,7 +114,7 @@ public class HashTableCreator {
         for(Map.Entry<Integer,String>entry:htIp.entrySet()){
             if(entry.getKey() > FileHash && htIp.lowerEntry(entry.getKey()).getKey() <= FileHash)
             {
-                return new NodeInfo(entry.getKey(), entry.getValue());
+                return new NodeInfo(htIp.lowerEntry(entry.getKey()).getKey(), htIp.lowerEntry(entry.getKey()).getValue());
             }
         }
         return new NodeInfo(htIp.firstEntry().getKey(), htIp.firstEntry().getValue());
