@@ -64,7 +64,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
 
     Thread t = null;
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    public QueueEvent<LogRecord> logRecordQueue = new QueueEvent<>();
+    public static QueueEvent<LogRecord> logRecordQueue = new QueueEvent<>();
 
     /**
      * Saves the lock and unlock request until the agent gets to the client
@@ -127,6 +127,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         {
           //  agentStarter();
         }
+        ClientCtrl.setLogs();
     }
 
     /**
@@ -416,7 +417,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         if(logRecordQueue.queue.size() > 0)
         {
             LogRecord lr = logRecordQueue.poll();
-            ClientCtrl.setLogs(lr);
+            //ClientCtrl.setLogs(lr);
         }
     }
 

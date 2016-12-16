@@ -6,8 +6,11 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import java.awt.event.WindowEvent;
@@ -73,4 +76,5 @@ public class Main extends Application {
             throw new RuntimeException("Problems with creating the log files");
         }
     }
+
 }

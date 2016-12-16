@@ -13,9 +13,9 @@
                 <Font name="System Bold" size="34.0" />
             </font></Label>
         <Label fx:id="roleLbl" layoutX="20" layoutY="85" text="Role:"/>
-        <TextField fx:id="roleTxt" layoutX="80.0" layoutY="80.0" />
+        <TextField fx:id="roleTxt" layoutX="80.0" layoutY="80.0" onAction="#onEnter"/>
         <Label fx:id="nameLbl" layoutX="20" layoutY="125" text="Name:" visible="false"/>
-        <TextField fx:id="nameTxt" layoutX="80.0" layoutY="120.0" visible="false" />
+        <TextField fx:id="nameTxt" layoutX="80.0" layoutY="120.0" visible="false" onAction="#onEnter" />
         <Button fx:id="submitBtn" onAction="#ClickedSubmitBtn" layoutX="130.0" layoutY="160.0"  mnemonicParsing="false" text="Submit" />
 
 

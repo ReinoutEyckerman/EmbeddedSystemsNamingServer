@@ -3,6 +3,7 @@ package com.bonkers.Controllers;
 import com.bonkers.Client;
 import com.bonkers.Logging;
 import com.bonkers.Server;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -56,6 +57,7 @@ public class StartPageCtrl implements Initializable, Runnable {
 
         file.mkdirs();
 
+        //submitBtn.defaultButtonProperty().bind(submitBtn.focusedProperty());
 
 
     }
@@ -145,5 +147,10 @@ public class StartPageCtrl implements Initializable, Runnable {
     }
     public static void Shutdown(){
         client.shutdown();
+    }
+
+    @FXML
+    public void onEnter(ActionEvent actionEvent) throws Exception {
+        ClickedSubmitBtn(actionEvent);
     }
 }

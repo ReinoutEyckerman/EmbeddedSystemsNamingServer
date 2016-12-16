@@ -1,8 +1,0 @@
-dec 14, 2016 7:56:04 PM com.bonkers.Main main
-INFO: Ip: 10.0.0.38
-dec 14, 2016 7:56:12 PM com.bonkers.Client bootStrap
-INFO: Bootstrap completed.
-dec 14, 2016 7:56:12 PM com.bonkers.Client bootStrap
-INFO: Multicast sent.
-dec 14, 2016 7:56:12 PM com.bonkers.Client CheckError
-INFO: No errors
