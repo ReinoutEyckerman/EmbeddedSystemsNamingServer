@@ -75,7 +75,7 @@ public class FileManager implements QueueListener {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                LOGGER.info("Yo whadup");
+                //LOGGER.info("Yo whadup");
                 Map<String, NodeInfo> l=fileChecker.checkFiles(id, localFiles);
                 for(String file: l.keySet()){
                     if(!localFiles.containsKey(file)){
