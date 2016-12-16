@@ -52,7 +52,8 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
     /**
      * Tuples with the hash and IPAddress from itself, previous and nextid.
      */
-    private NodeInfo id, previd, nextid;
+    private NodeInfo id, nextid;//, previd;
+    public static NodeInfo previd;
     /**
      * File manager, handles file operations for the current node
      */
@@ -118,7 +119,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         LOGGER.info("Finished bootstrap");
         fm.server=server;
         LockStatusQueue.addListener(this);
-        fm.startFileChecker(this);
+        fm.startFileChecker();
         LOGGER.info("Started up FM.");
         if(!Objects.equals(previd.Address, id.Address))
             fm.StartupReplication(previd);
