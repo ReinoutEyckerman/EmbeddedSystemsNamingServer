@@ -155,7 +155,7 @@ public class Server implements QueueListener, ServerIntf{
             {
                 previousNeighbor = new NodeInfo((Integer) list.get(list.size()-1), (String) hashmap.get(list.get(list.size()-1)));
             }
-            if(index==list.size())
+            if(index==list.size()-1)
                 x=0;
             else
                 x=index;
