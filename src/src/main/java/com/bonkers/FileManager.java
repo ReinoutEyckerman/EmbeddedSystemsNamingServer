@@ -70,7 +70,7 @@ public class FileManager implements QueueListener {
         LOGGER.info("Filemanager successfully started.");
     }
 
-    public void startFileChecker(ClientNodeIntf intf){
+    public void startFileChecker(){
         timer=new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -85,7 +85,7 @@ public class FileManager implements QueueListener {
                         f.fileOwners.add(id);
                         ownedFiles.add(f);
                         localFiles.put(file,id);
-                        Replicate(file, intf.prevId);
+                        Replicate(file, Client.previd);
                     }
                 }
             }
