@@ -125,7 +125,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
             fm.StartupReplication(previd);
         if(setStartAgent)
         {
-          //  agentStarter();
+          agentStarter();
         }
     }
 
@@ -260,7 +260,8 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
 
             }
             globalFileList = future.get();
-            setData(globalFileList);
+            if(globalFileList.size() > 0)
+                setData(globalFileList);
         } catch (Exception e)
         {
             e.printStackTrace();
@@ -427,6 +428,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
     {
         agentFileList = AgentFileList.getInstance();
         agentFileList.started = true;
+        agentFileList.setClient(this);
         transferAgent(agentFileList);
     }
 }
