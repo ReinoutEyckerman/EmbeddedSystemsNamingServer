@@ -1,6 +1,7 @@
 package com.bonkers.Controllers;
 
 import com.bonkers.Client;
+import com.bonkers.FileManager;
 import com.bonkers.QueueEvent;
 import com.bonkers.QueueEvent.*;
 import javafx.collections.FXCollections;
@@ -38,7 +39,6 @@ public class ClientCtrl implements Initializable {
 
     private static ObservableList<String> oLogs = FXCollections.observableArrayList();
     private static ObservableList<String> oFiles = FXCollections.observableArrayList();
-    static ObservableList<String> items =FXCollections.observableArrayList ();
 
 
     @Override
@@ -48,6 +48,7 @@ public class ClientCtrl implements Initializable {
         assert deleteLocalBtn != null : "fx:id=\"deleteLocalBtn\" was not injected: check your FXML file 'simple.fxml'.";
         assert fileList != null : "fx:id=\"fileList\" was not injected: check your FXML file 'simple.fxml'.";
         assert logsList != null : "fx:id=\"logsList\" was not injected: check your FXML file 'simple.fxml'.";
+
 
     }
 
