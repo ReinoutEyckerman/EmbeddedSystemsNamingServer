@@ -10,6 +10,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 
+import static com.sun.corba.se.spi.activation.IIOP_CLEAR_TEXT.value;
+
 /**
  * Class that handles the writing and reading of hashmap.
  * TODO: Potential singleton?
@@ -103,20 +105,19 @@ public class HashTableCreator {
      * @param FileHash Filehash
      * @return Connected host
      */
-    //TODO (?)
     public String findHost(int FileHash) {
         final String[] IP = {null};
         if (htIp.firstEntry().getKey() > FileHash)
         {
                 return htIp.lastEntry().getValue();
         }
-        htIp.forEach((key,value) ->{
-            if(key > FileHash && htIp.lowerEntry(key).getKey() <= FileHash)
+        for(Map.Entry<Integer,String>entry:htIp.entrySet()){
+            if(entry.getKey() > FileHash && htIp.lowerEntry(entry.getKey()).getKey() <= FileHash)
             {
-                    IP[0] = value;
+                return entry.getValue();
             }
-        });
-        return IP[0];
+        }
+        return htIp.firstEntry().getValue();
     }
 }
 
