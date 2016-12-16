@@ -14,14 +14,14 @@ import java.util.concurrent.Callable;
  */
 public class AgentFileList implements Callable, Serializable {
     public HashMap<File, Boolean> FileMap = new HashMap<>();
-    public List<File> Filelist = new LinkedList<>();
+    public List<File> Filelist = null;
 
     public Boolean started = false;
 
     private static AgentFileList instance = null;
 
 
-    protected AgentFileList() {}
+    protected AgentFileList() { new LinkedList<>(); }
 
     /**
      * Singleton make instance if none exists else make one
