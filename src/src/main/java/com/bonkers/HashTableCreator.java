@@ -105,19 +105,19 @@ public class HashTableCreator {
      * @param FileHash Filehash
      * @return Connected host
      */
-    public String findHost(int FileHash) {
+    public NodeInfo findHost(int FileHash) {
         final String[] IP = {null};
         if (htIp.firstEntry().getKey() > FileHash)
         {
-                return htIp.lastEntry().getValue();
+                return new NodeInfo(htIp.lastEntry().getKey(),htIp.lastEntry().getValue());
         }
         for(Map.Entry<Integer,String>entry:htIp.entrySet()){
             if(entry.getKey() > FileHash && htIp.lowerEntry(entry.getKey()).getKey() <= FileHash)
             {
-                return entry.getValue();
+                return new NodeInfo(entry.getKey(), entry.getValue());
             }
         }
-        return htIp.firstEntry().getValue();
+        return new NodeInfo(htIp.firstEntry().getKey(), htIp.firstEntry().getValue());
     }
 }
 
