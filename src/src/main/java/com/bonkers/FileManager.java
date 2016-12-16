@@ -132,6 +132,7 @@ public class FileManager implements QueueListener {
                     NodeIntf nodeIntf = (NodeIntf) registry.lookup("NodeIntf");
                     nodeIntf.setOwnerFile(file);
                     localFiles.replace(filename,node);
+                    LOGGER.info("Set "+node+" as new file owner of file "+filename);
                 } catch (AccessException e) {
                     e.printStackTrace();
                 } catch (RemoteException e) {
@@ -180,6 +181,7 @@ public class FileManager implements QueueListener {
             for (FileInfo f:ownedFiles) {
                 if(Objects.equals(f.fileName,file)&&!f.fileOwners.contains(file)){
                     f.fileOwners.add(nodeInfo);
+                    LOGGER.info("Added "+nodeInfo+" as owner of file "+f);
                     break;
                 }
             }
@@ -203,11 +205,13 @@ public class FileManager implements QueueListener {
      */
     public void setOwnerFile(FileInfo file) {
         ownedFiles.add(file);
+        LOGGER.info("Added new file ownership of file "+file);
     }
     public void removeFromFilelist(String file, NodeInfo nodeID){
         localFiles.forEach((filename, id)->{
             if(Objects.equals(file, filename)&& id==nodeID){
-                localFiles.remove(file);//Todo might not work
+                localFiles.remove(file);
+                LOGGER.info("Removing "+nodeID+" from file list at file "+ file);
             }
         });
     }
@@ -233,7 +237,7 @@ public class FileManager implements QueueListener {
             }
             for(Map.Entry<String, NodeInfo> entry: localFiles.entrySet()){ //Todo can be optimized
                 if(!ownedFiles.contains(entry.getKey())){
-
+                    //Todo ?
                 }
             }
         } catch (AccessException e) {

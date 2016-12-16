@@ -95,7 +95,6 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
                 shutdown();
             }
         }));
-        LOGGER.log(Level.FINE, "Test");
         Thread t=new Thread(new TCPServer(downloadFolder));
         t.start();
         try {
