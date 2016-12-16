@@ -112,9 +112,9 @@ public class HashTableCreator {
                 return new NodeInfo(htIp.lastEntry().getKey(),htIp.lastEntry().getValue());
         }
         for(Map.Entry<Integer,String>entry:htIp.entrySet()){
-            if(entry.getKey() <= FileHash && htIp.lowerEntry(entry.getKey()).getKey() > FileHash)
+            if(entry.getKey() <= FileHash && htIp.higherEntry(entry.getKey()).getKey() > FileHash)
             {
-                return new NodeInfo(htIp.lowerEntry(entry.getKey()).getKey(), htIp.lowerEntry(entry.getKey()).getValue());
+                return new NodeInfo(entry.getKey(), entry.getValue());
             }
         }
         return new NodeInfo(htIp.firstEntry().getKey(), htIp.firstEntry().getValue());
