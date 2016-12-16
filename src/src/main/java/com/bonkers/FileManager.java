@@ -215,6 +215,9 @@ public class FileManager implements QueueListener {
             }
         });
     }
+    public Map<String,NodeInfo> GetLocalFiles(){
+        return localFiles;
+    }
     /**
      * Removes and transports all files where it is owner of, and notifies removal of those it is not
      * @param prevID The id of the previous node

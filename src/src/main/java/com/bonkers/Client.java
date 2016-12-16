@@ -126,7 +126,6 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         {
           //  agentStarter();
         }
-        ClientCtrl.setLogs();
     }
 
     /**
