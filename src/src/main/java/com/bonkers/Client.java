@@ -381,9 +381,10 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
             NodeInfo[] neighbors=server.nodeNeighbors(id);
             if(neighbors[0]!=null)
                 previd=neighbors[0];
-
+            LOGGER.info("Received " +previd+ " as previous neighbor.");
             if(neighbors[1]!=null)
                 nextid=neighbors[1];
+            LOGGER.info("Received " +nextid+ " as next neighbor.");
         } catch (RemoteException e) {
             e.printStackTrace();
         }
