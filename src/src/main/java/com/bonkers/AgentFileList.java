@@ -21,7 +21,7 @@ public class AgentFileList implements Callable, Serializable {
     private static AgentFileList instance = null;
 
 
-    protected AgentFileList() { new LinkedList<>(); }
+    protected AgentFileList() {}
 
     /**
      * Singleton make instance if none exists else make one
@@ -48,6 +48,7 @@ public class AgentFileList implements Callable, Serializable {
         getAndUpdateCurrentNodeFiles();
         checkLockRequests();
         checkUnlock();
+        Filelist = new LinkedList<>();
         FileMap.forEach(((file, aBoolean) -> {
             Filelist.add(file);
         }));
