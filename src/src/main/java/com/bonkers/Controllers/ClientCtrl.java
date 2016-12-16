@@ -55,14 +55,14 @@ public class ClientCtrl implements Initializable, ListChangeListener {
 
     public static void setLogs(LogRecord logRecord)
     {
-        oLogs.add(logRecord.getMessage());
+        //oLogs.add(logRecord.getMessage());
     }
 
     @Override
     public void onChanged(Change c) {
         if(oLogs.size() > 0)
-            logsList.setItems(oLogs);
-        if(oFiles.size() >0)
-            fileList.setItems(oFiles);
+            //logsList.setItems(oLogs);
+        if(oFiles.size() >0){}
+            //fileList.setItems(oFiles);
     }
 }

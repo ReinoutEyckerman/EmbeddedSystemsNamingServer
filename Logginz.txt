@@ -1,0 +1,12 @@
+dec 14, 2016 8:48:47 PM com.bonkers.Main main
+INFO: Client Ip: 10.0.0.36
+dec 14, 2016 8:48:55 PM com.bonkers.Client <init>
+INFO: This node's hash is: 26399
+dec 14, 2016 8:48:55 PM com.bonkers.Client bootStrap
+INFO: Bootstrap completed.
+dec 14, 2016 8:48:55 PM com.bonkers.Client bootStrap
+INFO: Multicast sent.
+dec 14, 2016 8:48:56 PM com.bonkers.Client CheckError
+INFO: No errors
+dec 14, 2016 8:58:07 PM com.bonkers.Client shutdown
+INFO: Shutdown
