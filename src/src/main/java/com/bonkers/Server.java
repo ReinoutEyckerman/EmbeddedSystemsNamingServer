@@ -152,7 +152,7 @@ public class Server implements QueueListener, ServerIntf{
         List list=new ArrayList(hashmap.keySet());
         Collections.sort(list);
         int index=list.indexOf(node.Hash);
-        if(hashmap.size()>2) {
+        if(hashmap.size()>1) {
             int x=index;
             if(index==0)
                 x=list.size()-1;
