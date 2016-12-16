@@ -26,7 +26,7 @@ import static com.bonkers.Controllers.ClientCtrl.setLogs;
 /**
  * Client class to connect to server
  */
-public class Client implements NodeIntf, ClientIntf, QueueListener {
+public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListener {
 
     /**
      * Address of the server to connect to.
@@ -118,7 +118,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         LOGGER.info("Finished bootstrap");
         fm.server=server;
         LockStatusQueue.addListener(this);
-        fm.startFileChecker(previd);
+        fm.startFileChecker(this);
         LOGGER.info("Started up FM.");
         if(!Objects.equals(previd.Address, id.Address))
             fm.StartupReplication(previd);
