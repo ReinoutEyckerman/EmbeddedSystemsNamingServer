@@ -254,6 +254,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
     @Override
     public void transferAgent(AgentFileList agentFileList) {
         LOGGER.log(Level.INFO,"AgentStarted");
+        agentFileList.setClient(this);
         agentFileList.started = true;
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -280,7 +281,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         }*/
 
         /*Thread agentThread=new Thread(agentFileList);
-        agentFileList.setClient(this);
+
         agentThread.start();
         try {
             agentThread.join();
