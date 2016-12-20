@@ -259,10 +259,11 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        globalFileList = agentFileList.call();
+        globalFileList = (List<File>) executor.submit(agentFileList);
+        executor.shutdownNow();
 
         /*try {
-            Future<List<File>> future = executor.submit(agentFileList);
+            Future<List<File>> future
             while (!future.isDone())
             {
 
@@ -277,7 +278,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
             e.printStackTrace();
         }
         finally {
-            executor.shutdownNow();
+
         }*/
 
         /*Thread agentThread=new Thread(agentFileList);
