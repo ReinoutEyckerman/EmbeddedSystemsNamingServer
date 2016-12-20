@@ -59,7 +59,7 @@ public class AgentFileList implements Callable, Serializable {
      * Get the files of the node the agent runs on and check if files already exist or not
      */
     private void getAndUpdateCurrentNodeFiles(){
-        if(client.fm.ownedFiles != null && client.fm.ownedFiles.size() > 0)
+        if(client.fm.ownedFiles != null || client.fm.ownedFiles.size() > 0)
         {
             client.fm.ownedFiles.forEach((fileInfo) ->{
                 FileMap.putIfAbsent(new File(fileInfo.fileName), false);
