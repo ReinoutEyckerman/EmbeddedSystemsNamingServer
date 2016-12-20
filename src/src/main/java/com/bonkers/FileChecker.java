@@ -25,14 +25,13 @@ public class FileChecker {
 
     /**
      * Check for files locally, should only be used if you want a complete Map, not if you want additions to an existing Map
-     * @param id The current node id
      * @return The Map of files
      */
-    public Map checkFiles(NodeInfo id){
-        Map<String,NodeInfo> files=new HashMap<>();
+    public List checkFiles(){
+        List<String> files=new ArrayList<>();
         for (final File fileEntry : folderLocation.listFiles()) {
             if (!fileEntry.isDirectory()) {
-                files.put(fileEntry.getName(),id);
+                files.add(fileEntry.getName());
             }
         }
         return files;
@@ -40,14 +39,13 @@ public class FileChecker {
 
     /**
      * Check for files locally, Updates an already existing Map
-     * @param id The current node id
      * @return The Map of files
      */
-    public Map checkFiles(NodeInfo id,Map existingFiles){
-        Map<String, NodeInfo> files=new HashMap<>();
+    public List checkFiles(List existingFiles){
+        List<String> files=new ArrayList<>();
         for (final File fileEntry : folderLocation.listFiles()) {
-            if (!fileEntry.isDirectory() && !existingFiles.containsKey(fileEntry.getName())) {
-                files.put(fileEntry.getName(),id);
+            if (!fileEntry.isDirectory() && !existingFiles.contains(fileEntry.getName())) {
+                files.add(fileEntry.getName());
             }
         }
         return files;
