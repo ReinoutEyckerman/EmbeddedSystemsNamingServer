@@ -371,8 +371,8 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
     }
 
     @Override
-    public void removeFromFilelist(String file, NodeInfo node) throws RemoteException {
-        fm.removeFromFilelist(file, node);
+    public void removeFromOwnerList(String file, NodeInfo node) throws RemoteException {
+        fm.removeFromOwnerList(file, node);
     }
 
 
