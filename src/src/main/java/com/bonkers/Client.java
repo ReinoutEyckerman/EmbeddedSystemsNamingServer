@@ -264,25 +264,53 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         executor.execute(futureTask);
 
         executor.shutdownNow();
-
-        while (true) {
+        Boolean executing = true;
+        while (executing) {
             try {
                 if(futureTask.isDone()){
                     System.out.println("Done");
                     //shut down executor service
                     executor.shutdown();
-                    return;
+                    executing = false;
                 }
 
                 if(!futureTask.isDone()){
                     //wait indefinitely for future task to complete
-                    System.out.println("FutureTask1 output="+futureTask.get());
+                    globalFileList = futureTask.get();
                 }
 
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
+            finally {
+                return;
+            }
 
+        }
+        agentFileList.setClient(null);
+        if(!nextid.Address.equals(id.Address))
+        {
+            try {
+                Registry registry = LocateRegistry.getRegistry(nextid.Address);
+                try {
+                    NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
+                    neighbor.transferAgent(agentFileList);
+                } catch (NotBoundException e) {
+                    e.printStackTrace();
+                }
+                catch (NullPointerException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            catch (RemoteException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            agentFileList.started = false;
         }
 
         /*try {
@@ -313,31 +341,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
             e.printStackTrace();
         }
         agentThread.stop();*/
-        if(!(nextid.Address.equals(id.Address)))
-        {
-            agentFileList.setClient(null);
-            try {
-                Registry registry = LocateRegistry.getRegistry(nextid.Address);
-                try {
-                    NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
-                    neighbor.transferAgent(agentFileList);
-                } catch (NotBoundException e) {
-                    e.printStackTrace();
-                }
-                catch (NullPointerException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-            catch (RemoteException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        else
-        {
-            agentFileList.started = false;
-        }
+
     }
 
     @Override
