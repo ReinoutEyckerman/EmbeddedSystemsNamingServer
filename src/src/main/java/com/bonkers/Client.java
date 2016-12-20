@@ -256,7 +256,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         LOGGER.log(Level.INFO,"AgentStarted");
         agentFileList.started = true;
 
-        ExecutorService executor = Executors.newFixedThreadPool(1);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
 
         //globalFileList = agentFileList.call();
 
