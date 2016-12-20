@@ -259,8 +259,31 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        globalFileList = (List<File>) executor.submit(agentFileList);
+        FutureTask<List<File>> futureTask = new FutureTask<List<File>>(agentFileList);
+
+        executor.execute(futureTask);
+
         executor.shutdownNow();
+
+        while (true) {
+            try {
+                if(futureTask.isDone()){
+                    System.out.println("Done");
+                    //shut down executor service
+                    executor.shutdown();
+                    return;
+                }
+
+                if(!futureTask.isDone()){
+                    //wait indefinitely for future task to complete
+                    System.out.println("FutureTask1 output="+futureTask.get());
+                }
+
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+
+        }
 
         /*try {
             Future<List<File>> future
