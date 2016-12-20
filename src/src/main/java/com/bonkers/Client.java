@@ -266,7 +266,9 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
             {
 
             }
-            globalFileList = future.get();
+            if(!future.get().isEmpty()) {
+                globalFileList = future.get();
+            }
             if(globalFileList.size() > 0)
                 setData(globalFileList);
         } catch (Exception e)
