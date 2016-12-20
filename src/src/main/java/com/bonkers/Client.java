@@ -115,8 +115,8 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         fm = new FileManager(downloadFolder,id);
         bootStrap();
         LOGGER.info("Finished bootstrap");
-        fm.server=server;
         LockStatusQueue.addListener(this);
+        fm.server=server;
         fm.startFileChecker();
         LOGGER.info("Started up FM.");
         if(!Objects.equals(previd.Address, id.Address))

@@ -90,7 +90,6 @@ public class FileManager implements QueueListener {
                 }
             }
         },0,5000);
-
     }
     /**
      * First replication when the node starts
@@ -130,8 +129,10 @@ public class FileManager implements QueueListener {
                 try {
                     Registry registry = LocateRegistry.getRegistry(node.Address);
                     NodeIntf nodeIntf = (NodeIntf) registry.lookup("NodeIntf");
+                    file.fileOwners.add(node);
                     nodeIntf.setOwnerFile(file);
                     localFiles.replace(filename,node);
+                    ownedFiles.remove(file);
                     LOGGER.info("Set "+node+" as new file owner of file "+filename);
                 } catch (AccessException e) {
                     e.printStackTrace();
