@@ -254,19 +254,22 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
     @Override
     public void transferAgent(AgentFileList agentFileList) {
         LOGGER.log(Level.INFO,"AgentStarted");
+        agentFileList.setClient(this);
         agentFileList.started = true;
 
-        ExecutorService executor = Executors.newFixedThreadPool(1);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        //globalFileList = agentFileList.call();
+        globalFileList = agentFileList.call();
 
-        try {
+        /*try {
             Future<List<File>> future = executor.submit(agentFileList);
             while (!future.isDone())
             {
 
             }
-            globalFileList = future.get();
+            if(!future.get().isEmpty()) {
+                globalFileList = future.get();
+            }
             if(globalFileList.size() > 0)
                 setData(globalFileList);
         } catch (Exception e)
@@ -275,10 +278,10 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         }
         finally {
             executor.shutdownNow();
-        }
+        }*/
 
         /*Thread agentThread=new Thread(agentFileList);
-        agentFileList.setClient(this);
+
         agentThread.start();
         try {
             agentThread.join();
