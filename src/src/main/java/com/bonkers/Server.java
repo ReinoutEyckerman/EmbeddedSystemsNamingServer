@@ -59,6 +59,10 @@ public class Server implements QueueListener, ServerIntf{
         Tuple<String, String> t= multicast.packetQueue.poll();
         error = checkDoubles(t.x, t.y);
         LOGGER.info("Multicast packet received from "+t.x+" at "+t.y);
+        if(error!=100){
+            LOGGER.info("Dropping "+t.x+" at " +t.y +" with error code: "+error);
+            return;
+        }
         addNode(t);
         System.out.println();
     }

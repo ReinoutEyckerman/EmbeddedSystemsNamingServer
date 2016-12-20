@@ -22,6 +22,7 @@ import java.util.logging.Level;
 
 import static com.bonkers.Controllers.ClientCtrl.setData;
 import static com.bonkers.Controllers.ClientCtrl.setLogs;
+import static java.lang.Thread.sleep;
 
 /**
  * Client class to connect to server
@@ -113,9 +114,6 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         multicast=new MulticastCommunicator();
         fm = new FileManager(downloadFolder,id);
         bootStrap();
-        while(!finishedBootstrap){
-            Thread.sleep(100);
-        }
         LOGGER.info("Finished bootstrap");
         fm.server=server;
         LockStatusQueue.addListener(this);
@@ -134,13 +132,21 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
      */
     private void bootStrap(){
         try {
-
-            multicast.sendMulticast(name);
-
+            int tries=0;
+            while (!finishedBootstrap){
+                sleep(2000);
+               if (tries<5){
+                   tries++;
+                   multicast.sendMulticast(name);
+               }
+               else if(tries==5){
+                   tries++;
+                   LOGGER.info("Multicast limit reached. Stopped retrying");
+               }
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
-        LOGGER.info("Multicast sent.");
     }
 
     /**
