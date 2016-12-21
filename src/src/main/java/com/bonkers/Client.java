@@ -53,7 +53,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
     /**
      * Tuples with the hash and IPAddress from itself, previous and nextid.
      */
-    private NodeInfo id, nextid;//, previd;
+    public NodeInfo id, nextid;//, previd;
     public static NodeInfo previd;
     /**
      * File manager, handles file operations for the current node
@@ -254,7 +254,8 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
     @Override
     public void transferAgent(AgentFileList agentFileList) {
         LOGGER.log(Level.INFO,"AgentStarted");
-        agentFileList.setClient(this);
+
+       /* agentFileList.setClient(this);
         agentFileList.started = true;
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -312,7 +313,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         {
             agentFileList.started = false;
         }
-
+*/
         /*try {
             Future<List<File>> future
             while (!future.isDone())
@@ -331,16 +332,11 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         finally {
 
         }*/
-
-        /*Thread agentThread=new Thread(agentFileList);
+        agentFileList.started = true;
+        agentFileList.setClient(this);
+        Thread agentThread=new Thread(agentFileList);
 
         agentThread.start();
-        try {
-            agentThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        agentThread.stop();*/
 
     }
 

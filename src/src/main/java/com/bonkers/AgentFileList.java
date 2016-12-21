@@ -4,6 +4,10 @@ import jdk.nashorn.internal.codegen.CompilerConstants;
 
 import java.io.File;
 import java.io.Serializable;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +16,7 @@ import java.util.concurrent.Callable;
 /**
  * TODO Jente
  */
-public class AgentFileList implements Callable, Serializable {
+public class AgentFileList implements Runnable, Serializable {
     public HashMap<File, Boolean> FileMap = new HashMap<>();
     public List<File> Filelist = null;
 
@@ -44,7 +48,8 @@ public class AgentFileList implements Callable, Serializable {
     public Client getClient() { return client; }
 
     @Override
-    public List<File> call() {
+    public void run() {
+        started=true;
         getAndUpdateCurrentNodeFiles();
         checkLockRequests();
         checkUnlock();
@@ -52,7 +57,31 @@ public class AgentFileList implements Callable, Serializable {
         FileMap.forEach(((file, aBoolean) -> {
             Filelist.add(file);
         }));
-        return Filelist;
+        setClient(null);
+         if(!client.prevId.Address.equals(client.id.Address))
+        {
+            try {
+                Registry registry = LocateRegistry.getRegistry(client.nextid.Address);
+                try {
+                    NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
+                    neighbor.transferAgent(this);
+                } catch (NotBoundException e) {
+                    e.printStackTrace();
+                }
+                catch (NullPointerException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            catch (RemoteException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            started = false;
+        }
     }
 
     /**
