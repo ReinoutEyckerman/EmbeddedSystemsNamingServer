@@ -120,7 +120,7 @@ public class HashTableCreator {
                 }
             }
         }
-        return new NodeInfo(htIp.firstEntry().getKey(), htIp.firstEntry().getValue());
+        return new NodeInfo(htIp.lastEntry().getKey(), htIp.lastEntry().getValue());
     }
 }
 
