@@ -264,7 +264,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         executor.execute(futureTask);
 
         executor.shutdownNow();
-
+/*
         while (true) {
             try {
                 if(futureTask.isDone()){
@@ -284,7 +284,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
             }
 
         }
-
+*/
         /*try {
             Future<List<File>> future
             while (!future.isDone())

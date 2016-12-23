@@ -1,10 +1,9 @@
 package com.bonkers;
 
 import java.io.IOException;
+import java.io.PushbackInputStream;
 import java.net.InetAddress;
-import java.rmi.AccessException;
-import java.rmi.AlreadyBoundException;
-import java.rmi.RemoteException;
+import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -24,6 +23,8 @@ public class Server implements QueueListener, ServerIntf{
      * The multicast listener, listens to multicast clients wanting to joing
      */
     private MulticastCommunicator multicast =null;
+
+    private Registry registry;
     /**
      * Error string
      */
@@ -34,7 +35,7 @@ public class Server implements QueueListener, ServerIntf{
      */
     public Server()  {
         try {
-            Registry registry = LocateRegistry.createRegistry(1099);
+            registry = LocateRegistry.createRegistry(1099);
             ServerIntf stub = (ServerIntf) UnicastRemoteObject.exportObject(this, 0);
             registry.bind("ServerIntf", stub);
         }catch(AlreadyBoundException e){
@@ -165,6 +166,24 @@ public class Server implements QueueListener, ServerIntf{
         }
         else{
             return new NodeInfo[]{node,node};
+        }
+    }
+
+    public void shutdown(){
+        System.out.println("Shutdown");
+        multicast.interrupt();
+
+        if (registry != null) {
+            try {
+                registry.unbind("ServerIntf");
+                UnicastRemoteObject.unexportObject(registry, true);
+                Thread.sleep(2000);
+            } catch (NoSuchObjectException e) {
+                e.printStackTrace();
+            }
+            catch (Exception e) {
+                System.out.println(e);
+            }
         }
     }
 }

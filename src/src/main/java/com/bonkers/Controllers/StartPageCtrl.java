@@ -38,6 +38,8 @@ public class StartPageCtrl implements Initializable, Runnable {
 
     public static Client client;
 
+    public static Server server;
+
     File file = new File(System.getProperty("user.dir") + "/tmp");
 
 
@@ -129,7 +131,7 @@ public class StartPageCtrl implements Initializable, Runnable {
             {
                 f.delete();
             }
-            Server server = new Server();
+            server = new Server();
             ServerCtrl.PrintErrors();
         }
         else
@@ -148,6 +150,9 @@ public class StartPageCtrl implements Initializable, Runnable {
     public static void Shutdown(){
         if (client !=null){
             client.shutdown();
+        }
+        else if (server!= null){
+            server.shutdown();
         }
         else
             System.exit(0);
