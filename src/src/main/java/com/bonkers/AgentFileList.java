@@ -1,5 +1,6 @@
 package com.bonkers;
 
+import com.bonkers.Controllers.ClientCtrl;
 import jdk.nashorn.internal.codegen.CompilerConstants;
 
 import java.io.File;
@@ -72,6 +73,7 @@ public class AgentFileList implements  Serializable {
                     FileMap.putIfAbsent(new File(fileInfo.fileName), false);
                 });
             }
+            ClientCtrl.setData(Filelist);
         }
         System.out.println(client.fm.ownedFiles.size() + " " + FileMap.size());
     }

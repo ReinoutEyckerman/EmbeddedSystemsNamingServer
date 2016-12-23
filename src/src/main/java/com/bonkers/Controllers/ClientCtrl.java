@@ -56,7 +56,7 @@ public class ClientCtrl implements Initializable {
 
     public static void setData(List<File> files)
     {
-        //fileList.getItems().addAll(files);
+        fileList.getItems().addAll(files);
 
         /*files.forEach((file) -> {
             oFiles.add(file.getName());
