@@ -406,7 +406,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
             }
             if(clientcount == 2)
             {
-                setStartAgent = true;
+                setStartAgent = false;
             }
         }
         finishedBootstrap=true;

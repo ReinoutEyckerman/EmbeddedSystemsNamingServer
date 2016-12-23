@@ -1,6 +1,7 @@
 package com.bonkers;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -19,4 +20,5 @@ public class FileInfo implements Serializable{
     public String toString(){
         return fileName+" with following nodes "+fileOwners;
     }
+
 }
