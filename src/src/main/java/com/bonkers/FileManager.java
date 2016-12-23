@@ -78,7 +78,17 @@ public class FileManager implements QueueListener {
                 //LOGGER.info("Yo whadup");
                 List<String> l=fileChecker.checkFiles(localFiles);
                 for(String file: l){
-                    if(!localFiles.contains(file)){
+                    boolean skip=false;
+                    for(FileInfo fileInfo:ownedFiles){
+                       if(Objects.equals(fileInfo.fileName,file)){
+                           LOGGER.info("File received, am owner, nothing will happen.");
+                           if(!localFiles.contains(file))
+                               localFiles.add(file);
+                          skip=true;
+                       }
+                    }
+    
+                    if(!localFiles.contains(file)&&!skip){
                         FileInfo f=new FileInfo();
                         f.fileName=file;
                         f.fileOwners=new ArrayList<>();
@@ -123,7 +133,6 @@ public class FileManager implements QueueListener {
         }
     }
     private void MoveFileAndChangeOwner(NodeInfo node, String filename){
-        RequestDownload(node, filename);
         for (FileInfo file:ownedFiles) {//Todo this can be optimized
             if(Objects.equals(file.fileName, filename)){
                 try {
@@ -143,7 +152,7 @@ public class FileManager implements QueueListener {
                 break;
             }
         }
-
+        RequestDownload(node, filename);
     }
     /**
      * Rechecks ownership of files, this gets run when a nextNeighbor gets added
@@ -179,7 +188,7 @@ public class FileManager implements QueueListener {
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
             node.requestDownload(id, file);
             for (FileInfo f:ownedFiles) {
-                if(Objects.equals(f.fileName,file)&&!f.fileOwners.contains(file)){
+                if(Objects.equals(f.fileName,file)&&!f.fileOwners.contains(nodeInfo)){
                     f.fileOwners.add(nodeInfo);
                     LOGGER.info("Added "+nodeInfo+" as owner of file "+f);
                     break;
