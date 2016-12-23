@@ -53,7 +53,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
     /**
      * Tuples with the hash and IPAddress from itself, previous and nextid.
      */
-    private NodeInfo id, nextid;//, previd;
+    public NodeInfo id, nextid;//, previd;
     public static NodeInfo previd;
     /**
      * File manager, handles file operations for the current node
@@ -254,7 +254,8 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
     @Override
     public void transferAgent(AgentFileList agentFileList) {
         LOGGER.log(Level.INFO,"AgentStarted");
-        agentFileList.setClient(this);
+
+       /* agentFileList.setClient(this);
         agentFileList.started = true;
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -264,58 +265,34 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         executor.execute(futureTask);
 
         executor.shutdownNow();
-/*
-        while (true) {
+
+        Boolean executing = true;
+        while (executing) {
+
             try {
                 if(futureTask.isDone()){
                     System.out.println("Done");
                     //shut down executor service
                     executor.shutdown();
-                    return;
+                    executing = false;
                 }
 
                 if(!futureTask.isDone()){
                     //wait indefinitely for future task to complete
-                    System.out.println("FutureTask1 output="+futureTask.get());
+                    globalFileList = futureTask.get();
                 }
 
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
-
-        }
-*/
-        /*try {
-            Future<List<File>> future
-            while (!future.isDone())
-            {
-
+            finally {
+                return;
             }
-            if(!future.get().isEmpty()) {
-                globalFileList = future.get();
-            }
-            if(globalFileList.size() > 0)
-                setData(globalFileList);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
+
         }
-        finally {
-
-        }*/
-
-        /*Thread agentThread=new Thread(agentFileList);
-
-        agentThread.start();
-        try {
-            agentThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        agentThread.stop();*/
-        if(!(nextid.Address.equals(id.Address)))
+        agentFileList.setClient(null);
+        if(!nextid.Address.equals(id.Address))
         {
-            agentFileList.setClient(null);
             try {
                 Registry registry = LocateRegistry.getRegistry(nextid.Address);
                 try {
@@ -338,6 +315,31 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         {
             agentFileList.started = false;
         }
+*/
+        /*try {
+            Future<List<File>> future
+            while (!future.isDone())
+            {
+
+            }
+            if(!future.get().isEmpty()) {
+                globalFileList = future.get();
+            }
+            if(globalFileList.size() > 0)
+                setData(globalFileList);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+
+        }*/
+        agentFileList.started = true;
+        agentFileList.setClient(this);
+        Thread agentThread=new Thread(agentFileList);
+
+        agentThread.start();
+
     }
 
     @Override
