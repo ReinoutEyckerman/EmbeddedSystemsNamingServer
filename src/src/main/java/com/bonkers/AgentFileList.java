@@ -58,13 +58,17 @@ public class AgentFileList implements Runnable, Serializable {
             Filelist.add(file);
         }));
         //setClient(null);
+<<<<<<< HEAD
         if(!client.prevId.Address.equals(client.id.Address))
+=======
+         if(!client.prevId.Address.equals(client.id.Address))
+>>>>>>> 15d6c2b66bfef373e83809a484d83b9b6b3f5d4e
         {
             try {
                 Registry registry = LocateRegistry.getRegistry(client.nextid.Address);
                 try {
                     NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
-                    neighbor.transferAgent(this);
+                    neighbor.transferAgent(AgentFileList.this);
                 } catch (NotBoundException e) {
                     e.printStackTrace();
                 }
