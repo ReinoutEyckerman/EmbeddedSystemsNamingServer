@@ -365,6 +365,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
     @Override
     public void requestDownload(NodeInfo node, String file) throws RemoteException {
        fm.downloadQueue.add(new Tuple<>(node.Address,file ));
+       fm.localFiles.add(file);
     }
 
     @Override

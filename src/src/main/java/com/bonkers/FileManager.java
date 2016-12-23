@@ -25,7 +25,7 @@ public class FileManager implements QueueListener {
     /**
      * A Map containing local files and the nodes who are owner of them
      */
-    private List<String> localFiles;
+    public List<String> localFiles;
     /**
      * A List of the files this node owns
      */
