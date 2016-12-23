@@ -80,7 +80,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
 
     public Boolean setStartAgent = false;
 
-    public List<File> globalFileList = null;
+    public static List<File> globalFileList = null;
 
     /**
      * Client constructor.
@@ -336,9 +336,11 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         }*/
         agentFileList.started = true;
         agentFileList.setClient(this);
+        agentFileList.Update(this.agentFileList.Filelist);
         Thread agentThread=new Thread(agentFileList);
 
         agentThread.start();
+
 
     }
 
@@ -407,7 +409,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
             }
             if(clientcount == 2)
             {
-                setStartAgent = false;
+                setStartAgent = true;
             }
         }
         finishedBootstrap=true;

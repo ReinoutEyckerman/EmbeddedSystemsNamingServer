@@ -41,6 +41,7 @@ public class ClientCtrl implements Initializable {
     private static ObservableList<String> oFiles = FXCollections.observableArrayList();
 
 
+
     @Override
     public void initialize(URL fxmlFileLocation, ResourceBundle resources){
         assert openBtn != null : "fx:id=\"openBtn\" was not injected: check your FXML file 'simple.fxml'.";
@@ -49,11 +50,14 @@ public class ClientCtrl implements Initializable {
         assert fileList != null : "fx:id=\"fileList\" was not injected: check your FXML file 'simple.fxml'.";
         assert logsList != null : "fx:id=\"logsList\" was not injected: check your FXML file 'simple.fxml'.";
 
+        //setData(Client.globalFileList);
 
     }
 
     public static void setData(List<File> files)
     {
+        //fileList.getItems().addAll(files);
+
         /*files.forEach((file) -> {
             oFiles.add(file.getName());
         });

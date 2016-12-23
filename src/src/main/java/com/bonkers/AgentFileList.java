@@ -27,6 +27,19 @@ public class AgentFileList implements Runnable, Serializable {
 
     protected AgentFileList() {}
 
+    public List<File> Update(List<File> List){
+        Filelist = List;
+        started=true;
+        getAndUpdateCurrentNodeFiles();
+        checkLockRequests();
+        checkUnlock();
+        Filelist = new LinkedList<>();
+        FileMap.forEach(((file, aBoolean) -> {
+            Filelist.add(file);
+        }));
+        return Filelist;
+    }
+
     /**
      * Singleton make instance if none exists else make one
      * @return instance
@@ -49,22 +62,13 @@ public class AgentFileList implements Runnable, Serializable {
 
     @Override
     public void run() {
-        started=true;
-        getAndUpdateCurrentNodeFiles();
-        checkLockRequests();
-        checkUnlock();
-        Filelist = new LinkedList<>();
-        FileMap.forEach(((file, aBoolean) -> {
-            Filelist.add(file);
-        }));
-        //setClient(null);
         if(!client.prevId.Address.equals(client.id.Address))
         {
             try {
                 Registry registry = LocateRegistry.getRegistry(client.nextid.Address);
                 try {
                     NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
-                    neighbor.transferAgent(AgentFileList.this);
+                    neighbor.transferAgent(this);
                 } catch (NotBoundException e) {
                     e.printStackTrace();
                 }
