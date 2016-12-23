@@ -7,10 +7,7 @@ import javafx.collections.ObservableList;
 
 import java.io.File;
 import java.net.InetAddress;
-import java.rmi.AlreadyBoundException;
-import java.rmi.NotBoundException;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
+import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -92,11 +89,6 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
     public Client(String name, File downloadFolder) throws Exception {
         LOGGER.addHandler(Logging.ListHandler(logRecordQueue));
         logRecordQueue.addListener(this);
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            public void run() {
-                //shutdown();
-            }
-        }));
         Thread t=new Thread(new TCPServer(downloadFolder));
         t.start();
         try {
@@ -121,6 +113,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         LOGGER.info("Started up FM.");
         if(!Objects.equals(previd.Address, id.Address))
             fm.StartupReplication(previd);
+        notifyExistence();
         if(setStartAgent)
         {
           agentStarter();
@@ -394,23 +387,31 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
             previd=nextid=id;
         }
         else{
-            try {
-                setNeighbors();
-                Registry registry = LocateRegistry.getRegistry(previd.Address);
-                NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
-                node.updateNextNeighbor(id);
-                registry = LocateRegistry.getRegistry(nextid.Address);
-                node = (NodeIntf) registry.lookup("NodeIntf");
-                node.updatePreviousNeighbor(id);
-            }catch(NotBoundException e){
-                e.printStackTrace();
-            }
+            setNeighbors();
             if(clientcount == 2)
             {
                 setStartAgent = false;
             }
         }
         finishedBootstrap=true;
+    }
+    private void notifyExistence(){
+        if(Objects.equals(id, previd)){
+            try {
+                Registry registry = LocateRegistry.getRegistry(previd.Address);
+                NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
+                node.updateNextNeighbor(id);
+                registry = LocateRegistry.getRegistry(nextid.Address);
+                node = (NodeIntf) registry.lookup("NodeIntf");
+                node.updatePreviousNeighbor(id);
+            } catch (AccessException e) {
+                e.printStackTrace();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            } catch (NotBoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
