@@ -57,8 +57,8 @@ public class AgentFileList implements Runnable, Serializable {
         FileMap.forEach(((file, aBoolean) -> {
             Filelist.add(file);
         }));
-        setClient(null);
-         if(!client.prevId.Address.equals(client.id.Address))
+        //setClient(null);
+        if(!client.prevId.Address.equals(client.id.Address))
         {
             try {
                 Registry registry = LocateRegistry.getRegistry(client.nextid.Address);
