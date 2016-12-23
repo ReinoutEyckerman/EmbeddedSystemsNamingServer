@@ -335,6 +335,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
                 agentFileList.Update(agentFileList.Filelist);
                 if(!nextid.Address.equals(id.Address))
                 {
+                    agentFileList.setClient(null);
                     try {
                         Registry registry = LocateRegistry.getRegistry(nextid.Address);
                         NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
