@@ -392,14 +392,15 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
             setNeighbors();
             if(clientcount == 2)
             {
-                setStartAgent = true;
+                setStartAgent = false;
             }
         }
         finishedBootstrap=true;
     }
     private void notifyExistence(){
-        if(Objects.equals(id, previd)){
+        if(!Objects.equals(id, previd)){
             try {
+                LOGGER.info("Notifying neighbors of my existence.");
                 Registry registry = LocateRegistry.getRegistry(previd.Address);
                 NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
                 node.updateNextNeighbor(id);
