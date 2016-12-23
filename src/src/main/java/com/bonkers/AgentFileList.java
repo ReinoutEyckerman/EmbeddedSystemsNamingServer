@@ -16,7 +16,7 @@ import java.util.concurrent.Callable;
 /**
  * TODO Jente
  */
-public class AgentFileList implements Runnable, Serializable {
+public class AgentFileList implements  Serializable {
     public HashMap<File, Boolean> FileMap = new HashMap<>();
     public List<File> Filelist = null;
 
@@ -59,34 +59,6 @@ public class AgentFileList implements Runnable, Serializable {
     }
 
     public Client getClient() { return client; }
-
-    @Override
-    public void run() {
-        if(!client.prevId.Address.equals(client.id.Address))
-        {
-            try {
-                Registry registry = LocateRegistry.getRegistry(client.nextid.Address);
-                try {
-                    NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
-                    neighbor.transferAgent(this);
-                } catch (NotBoundException e) {
-                    e.printStackTrace();
-                }
-                catch (NullPointerException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-            catch (RemoteException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        else
-        {
-            started = false;
-        }
-    }
 
     /**
      * Get the files of the node the agent runs on and check if files already exist or not

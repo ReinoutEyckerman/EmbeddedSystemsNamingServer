@@ -116,7 +116,7 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         notifyExistence();
         if(setStartAgent)
         {
-          agentStarter();
+            agentStarter();
         }
     }
 
@@ -128,14 +128,14 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
             int tries=0;
             while (!finishedBootstrap){
                 sleep(2000);
-               if (tries<5){
-                   tries++;
-                   multicast.sendMulticast(name);
-               }
-               else if(tries==5){
-                   tries++;
-                   LOGGER.info("Multicast limit reached. Stopped retrying");
-               }
+                if (tries<5){
+                    tries++;
+                    multicast.sendMulticast(name);
+                }
+                else if(tries==5){
+                    tries++;
+                    LOGGER.info("Multicast limit reached. Stopped retrying");
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -152,13 +152,13 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
     {
         switch (error){
             case 201:
-            LOGGER.warning("The node name already exists on the server please choose another one");
+                LOGGER.warning("The node name already exists on the server please choose another one");
                 break;
             case 202:
-            LOGGER.warning("You already exist in the name server");
+                LOGGER.warning("You already exist in the name server");
                 break;
             case 100:
-            LOGGER.info("No errors");
+                LOGGER.info("No errors");
                 break;
             default:
                 LOGGER.warning("Unknown error");
@@ -329,12 +329,30 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
         }*/
         agentFileList.started = true;
         agentFileList.setClient(this);
-        agentFileList.Update(this.agentFileList.Filelist);
-        Thread agentThread=new Thread(agentFileList);
-
-        agentThread.start();
-
-
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                agentFileList.Update(agentFileList.Filelist);
+                if(!nextid.Address.equals(id.Address))
+                {
+                    try {
+                        Registry registry = LocateRegistry.getRegistry(nextid.Address);
+                        NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
+                        neighbor.transferAgent(agentFileList);
+                    }
+                    catch (RemoteException e)
+                    {
+                        e.printStackTrace();
+                    } catch (NotBoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    agentFileList.started = false;
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -359,8 +377,8 @@ public class Client implements NodeIntf, ClientIntf, ClientNodeIntf, QueueListen
 
     @Override
     public void requestDownload(NodeInfo node, String file) throws RemoteException {
-       fm.downloadQueue.add(new Tuple<>(node.Address,file ));
-       fm.localFiles.add(file);
+        fm.downloadQueue.add(new Tuple<>(node.Address,file ));
+        fm.localFiles.add(file);
     }
 
     @Override
