@@ -1,6 +1,5 @@
 package com.bonkers;
 
-import java.net.InetAddress;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -10,7 +9,8 @@ import java.rmi.RemoteException;
 public interface ClientIntf extends Remote {
     /**
      * Sets starting info for the node so it can function properly
-      * @param address The server's IP address
+     *
+     * @param address     The server's IP address
      * @param clientcount Amount of clients/nodes currently connected
      * @throws RemoteException
      * @throws Exception
@@ -20,7 +20,8 @@ public interface ClientIntf extends Remote {
     /**
      * This is created, but not used for it's purpose
      * TODO Joris Jente?
+     *
      * @throws RemoteException
      */
-    void setNameError()throws RemoteException;
+    void setNameError() throws RemoteException;
 }

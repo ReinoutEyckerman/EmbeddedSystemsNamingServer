@@ -1,11 +1,6 @@
 package com.bonkers.Controllers;
 
-import com.bonkers.Client;
-import com.bonkers.Logging;
-import com.bonkers.Main;
 import com.bonkers.Server;
-import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,14 +13,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * Created by Jente on 4/12/2016.
- */
 public class ServerCtrl implements Initializable {
+    private static ObservableList<String> items = FXCollections.observableArrayList();
     @FXML
     private ListView nodeList;
     @FXML
@@ -35,21 +31,7 @@ public class ServerCtrl implements Initializable {
     @FXML
     private Button RestartBtn;
 
-    static ObservableList<String> items =FXCollections.observableArrayList ();
-
-    @Override
-    public void initialize(URL fxmlFileLocation, ResourceBundle resources){
-        assert errorList != null : "fx:id=\"errorList\" was not injected: check your FXML file 'simple.fxml'.";
-        assert nodeList != null : "fx:id=\"deleteBtn\" was not injected: check your FXML file 'simple.fxml'.";
-        assert shutdownBtn != null : "fx:id=\"deleteLocalBtn\" was not injected: check your FXML file 'simple.fxml'.";
-        assert RestartBtn != null : "fx:id=\"RestartBtn\" was not injected: check your FXML file 'simple.fxml'.";
-
-
-
-        errorList.setItems(items);
-        //nodeList.setItems(items);
-    }
-    public static void PrintErrors() throws Exception {
+    public static void PrintErrors()  {
         try (BufferedReader br = new BufferedReader(new FileReader("Logging.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -60,19 +42,31 @@ public class ServerCtrl implements Initializable {
         }
     }
 
+    @Override
+    public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+        assert errorList != null : "fx:id=\"errorList\" was not injected: check your FXML file 'simple.fxml'.";
+        assert nodeList != null : "fx:id=\"deleteBtn\" was not injected: check your FXML file 'simple.fxml'.";
+        assert shutdownBtn != null : "fx:id=\"deleteLocalBtn\" was not injected: check your FXML file 'simple.fxml'.";
+        assert RestartBtn != null : "fx:id=\"RestartBtn\" was not injected: check your FXML file 'simple.fxml'.";
+
+
+        errorList.setItems(items);
+        //nodeList.setItems(items);
+    }
+
     @FXML
-    public void CloseApp(ActionEvent actionEvent){
+    public void CloseApp(ActionEvent actionEvent) {
         StartPageCtrl.Shutdown();
         System.exit(0);
     }
 
 
-    public void RestartApp(ActionEvent actionEvent) throws Exception{
+    public void RestartApp(ActionEvent actionEvent) throws Exception {
         StartPageCtrl.Shutdown();
         Stage stage;
         Parent root;
         //get reference to the button's stage
-        stage=(Stage) RestartBtn.getScene().getWindow();
+        stage = (Stage) RestartBtn.getScene().getWindow();
         //load up OTHER FXML document
         root = FXMLLoader.load(getClass().getResource("/View/Server.fxml"));
 
@@ -83,8 +77,7 @@ public class ServerCtrl implements Initializable {
         //Start new server
         System.out.println("Starting Server");
         File f = new File("hashtable.json");
-        if (f.exists() && !f.isDirectory())
-        {
+        if (f.exists() && !f.isDirectory()) {
             f.delete();
         }
         Server server = new Server();

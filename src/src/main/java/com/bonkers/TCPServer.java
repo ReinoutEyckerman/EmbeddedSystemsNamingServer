@@ -1,12 +1,8 @@
 package com.bonkers;
 
-/**
- * Created by reinout on 9/27/16.
- */
 
 import java.io.File;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,7 +17,7 @@ public class TCPServer implements Runnable {
     /**
      * Predefined socket port on which the server listens
      */
-    public final  int SOCKET_PORT = 12346;  // you may change othis
+    private final int SOCKET_PORT = 12346;  // you may change othis
     private final File folderLocation;
     private final ExecutorService pool;
 
@@ -47,7 +43,7 @@ public class TCPServer implements Runnable {
         LOGGER.info("TCP Server succesfully started.");
         while (true) {
             try {
-                pool.execute(new DownloadConnection(serversocket.accept(),folderLocation));
+                pool.execute(new DownloadConnection(serversocket.accept(), folderLocation));
             } catch (Exception e) {
                 LOGGER.warning("Error " + e + " in connection attempt.");
                 e.printStackTrace();

@@ -1,32 +1,33 @@
 package com.bonkers;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 
 /**
  * Implementation of Node information.
  */
-public class NodeInfo implements Serializable{
+public class NodeInfo implements Serializable {
     /**
      * Node Hash
      */
-    public int Hash ;
+    public int hash;
     /**
-     *  Node IP address
+     * Node IP address
      */
-    public String Address;
+    public String address;
 
     /**
      * Constructor of the Node
-     * @param hash Hash value of the node
+     *
+     * @param hash    Hash value of the node
      * @param address IP address of the node
      */
-    public NodeInfo(int hash, String address){
-        this.Hash=hash;
-        this.Address=address;
+    public NodeInfo(int hash, String address) {
+        this.hash = hash;
+        this.address = address;
     }
+
     @Override
-    public String toString(){
-        return Address+" with hash "+Hash;
+    public String toString() {
+        return address + " with hash " + hash;
     }
 }

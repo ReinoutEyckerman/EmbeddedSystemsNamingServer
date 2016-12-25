@@ -1,52 +1,55 @@
 package com.bonkers;
 
-import java.io.IOException;
-import java.io.PushbackInputStream;
 import java.net.InetAddress;
-import java.rmi.*;
+import java.rmi.AccessException;
+import java.rmi.AlreadyBoundException;
+import java.rmi.NoSuchObjectException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 /**
  * Server class that accepts client connections.
  */
-public class Server implements QueueListener, ServerIntf{
-    /**
-     * The hash table, essential to its functionality
-     */
-    private HashTableCreator HT=null;
-    /**
-     * The multicast listener, listens to multicast clients wanting to joing
-     */
-    private MulticastCommunicator multicast =null;
-
-    private Registry registry;
+public class Server implements QueueListener, ServerIntf {
     /**
      * Error string
      */
-    public int error;
+    private int error;
+    /**
+     * The hash table, essential to its functionality
+     */
+    private HashTableCreator hashTableCreator = null;
+    /**
+     * The multicast listener, listens to multicast clients wanting to joing
+     */
+    private MulticastCommunicator multicast = null;
+    private Registry registry;
 
     /**
      * Main server object constructor, creates MulticastCommunicator and Hashtablecreator, and subscribes on the queueEvent object
      */
-    public Server()  {
+    public Server() {
         try {
             registry = LocateRegistry.createRegistry(1099);
             ServerIntf stub = (ServerIntf) UnicastRemoteObject.exportObject(this, 0);
             registry.bind("ServerIntf", stub);
-        }catch(AlreadyBoundException e){
+        } catch (AlreadyBoundException e) {
             e.printStackTrace();
         } catch (AccessException e) {
             e.printStackTrace();
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        HT=new HashTableCreator();
-        multicast =new MulticastCommunicator();
+        hashTableCreator = new HashTableCreator();
+        multicast = new MulticastCommunicator();
         multicast.start();
         multicast.packetQueue.addListener(this);
     }
@@ -57,11 +60,11 @@ public class Server implements QueueListener, ServerIntf{
      */
     @Override
     public void queueFilled() {
-        Tuple<String, String> t= multicast.packetQueue.poll();
+        Tuple<String, String> t = multicast.packetQueue.poll();
         error = checkDoubles(t.x, t.y);
-        LOGGER.info("Multicast packet received from "+t.x+" at "+t.y);
-        if(error!=100){
-            LOGGER.info("Dropping "+t.x+" at " +t.y +" with error code: "+error);
+        LOGGER.info("Multicast packet received from " + t.x + " at " + t.y);
+        if (error != 100) {
+            LOGGER.info("Dropping " + t.x + " at " + t.y + " with error code: " + error);
             return;
         }
         addNode(t);
@@ -70,15 +73,16 @@ public class Server implements QueueListener, ServerIntf{
 
     /**
      * Sets the starting info at the new node. //TODO better naming? Node gets added at checkdoubles
+     *
      * @param t
      */
-    private void addNode(Tuple<String, String> t){
-        try{
+    private void addNode(Tuple<String, String> t) {
+        try {
             Registry registry = LocateRegistry.getRegistry(t.y);
-            ClientIntf stub = (ClientIntf)registry.lookup("ClientIntf");
+            ClientIntf stub = (ClientIntf) registry.lookup("ClientIntf");
             String[] host = InetAddress.getLocalHost().toString().split("/");
-            LOGGER.info("Setting starting info at "+t.x);
-            stub.setStartingInfo(host[1],HT.getNodeAmount());
+            LOGGER.info("Setting starting info at " + t.x);
+            stub.setStartingInfo(host[1], hashTableCreator.getNodeAmount());
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
@@ -88,88 +92,82 @@ public class Server implements QueueListener, ServerIntf{
 
     /**
      * This checks for duplicates and adds them to the hashtable if not duplicate.
+     *
      * @param name Name of the device
-     * @param ip Ip address
+     * @param ip   Ip address
      * @return Returns error code
      */
-    private int checkDoubles(String name, String ip)
-    {
+    private int checkDoubles(String name, String ip) {
         int resp;
-        int hash = HT.createHash(name);
-        if(HT.htIp.containsKey(hash))
-        {
+        int hash = HashTableCreator.createHash(name);
+        if (hashTableCreator.htIp.containsKey(hash)) {
             resp = 201;
-        }
-        else if (HT.htIp.containsValue(ip))
-        {
+        } else if (hashTableCreator.htIp.containsValue(ip)) {
             resp = 202;
-        }
-        else
-        {
+        } else {
             resp = 100;
-            HT.createHashTable(ip, name);
+            hashTableCreator.createHashTable(ip, name);
         }
         return resp;
     }//TODO THIS IS USELESS
 
     @Override
-    public NodeInfo findLocationFile(String file){
-        LOGGER.info("Location of file "+ file+" requested.");
-        return findLocationHash(HT.createHash(file));
+    public NodeInfo findLocationFile(String file) {
+        LOGGER.info("Location of file " + file + " requested.");
+        return findLocationHash(HashTableCreator.createHash(file));
     }
+
     @Override
-    public NodeInfo findLocationHash(int hash){
-        LOGGER.info("Location of hash "+ hash+" requested.");
-        LOGGER.info("Returning "+HT.findHost(hash));
-        return HT.findHost(hash);
+    public NodeInfo findLocationHash(int hash) {
+        LOGGER.info("Location of hash " + hash + " requested.");
+        LOGGER.info("Returning " + hashTableCreator.findHost(hash));
+        return hashTableCreator.findHost(hash);
     }
+
     @Override
-    public int error() throws RemoteException{
+    public int error() throws RemoteException {
         return error;
     }
 
     @Override
     public void nodeShutdown(NodeInfo node) {
-        LOGGER.info("Received node shutdown of node "+node.toString());
-        HT.htIp=HT.readHashtable();
-        if(HT.htIp.containsKey(node.Hash)){
-            HT.htIp.remove(node.Hash);
-            HT.writeHashtable();
-        }
-        else throw new IllegalArgumentException("Somehow, the node that shut down didn't exist");
-        LOGGER.info("Removed "+node.toString()+" successfully.");
+        LOGGER.info("Received node shutdown of node " + node.toString());
+        hashTableCreator.htIp = hashTableCreator.readHashtable();
+        if (hashTableCreator.htIp.containsKey(node.hash)) {
+            hashTableCreator.htIp.remove(node.hash);
+            hashTableCreator.writeHashtable();
+        } else throw new IllegalArgumentException("Somehow, the node that shut down didn't exist");
+        LOGGER.info("Removed " + node.toString() + " successfully.");
     }
 
     @Override
     public NodeInfo[] nodeNeighbors(NodeInfo node) {
-        LOGGER.info("Node neighbors requested of node "+node.toString());
-        Map hashmap=HT.readHashtable();
-        List list=new ArrayList(hashmap.keySet());
+        LOGGER.info("Node neighbors requested of node " + node.toString());
+        Map hashmap = hashTableCreator.readHashtable();
+        List list = new ArrayList(hashmap.keySet());
         Collections.sort(list);
-        int index=list.indexOf(node.Hash);
-        if(hashmap.size()==2) {
-            NodeInfo neighbor=new NodeInfo((Integer)list.get(1-index), (String) hashmap.get(list.get(1-index)));
-            return new NodeInfo[] {neighbor,neighbor};
-        }
-        else if(hashmap.size()>2){
-            int x=index;
-            if(index==0)
-                x=list.size()-1;
-            else x=index-1;
+        int index = list.indexOf(node.hash);
+        if (hashmap.size() == 2) {
+            NodeInfo neighbor = new NodeInfo((Integer) list.get(1 - index), (String) hashmap.get(list.get(1 - index)));
+            return new NodeInfo[]{neighbor, neighbor};
+        } else if (hashmap.size() > 2) {
+            int x;
+            if (index == 0)
+                x = list.size() - 1;
+            else x = index - 1;
             NodeInfo previousNeighbor = new NodeInfo((Integer) list.get(x), (String) hashmap.get(list.get(x)));
-            if(index==list.size()-1)
-                x=0;
+            if (index == list.size() - 1)
+                x = 0;
             else
-                x=index+1;
+                x = index + 1;
             NodeInfo nextNeighbor = new NodeInfo((Integer) list.get(x), (String) hashmap.get(list.get(x)));
             return new NodeInfo[]{previousNeighbor, nextNeighbor};
-        }
-        else{
-            return new NodeInfo[]{node,node};
+        } else {
+            return new NodeInfo[]{node, node};
         }
     }
 
-    public void shutdown(){
+    public void shutdown() {
         System.out.println("Shutdown");
         multicast.interrupt();
 
@@ -180,9 +178,8 @@ public class Server implements QueueListener, ServerIntf{
                 Thread.sleep(2000);
             } catch (NoSuchObjectException e) {
                 e.printStackTrace();
-            }
-            catch (Exception e) {
-                System.out.println(e);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

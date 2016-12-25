@@ -7,47 +7,53 @@ import java.util.List;
  * TODO Jente
  */
 public class AgentFailure implements Runnable, Serializable {
-    List<Tuple<String, Boolean>> FileList;
+    private List<Tuple<String, Boolean>> fileList;
 
-    NodeInfo failingNode, startingNode;
-    public AgentFailure(NodeInfo failingNode, NodeInfo startingNode){
-        this.failingNode=failingNode;
-        this.startingNode=startingNode;
+    private NodeInfo failingNode;
+    public final NodeInfo startingNode;
+
+    public AgentFailure(NodeInfo failingNode, NodeInfo startingNode) {
+        this.failingNode = failingNode;
+        this.startingNode = startingNode;
     }
 
     @Override
     public void run() {
         searchFailingNode();
     }
-    private void searchFailingNode(){
+
+    private void searchFailingNode() {
         //TODO Get current files something something
-        List<String> s=null;
-        for(String search:s) {
+        List<String> list = null;
+        for (String search : list) {
             int hash = HashTableCreator.createHash(search);
         }
     }
-    private void getAndUpdateCurrentNodeFiles(){
+
+    private void UpdateCurrentNodeFiles() {
         //TODO Get current files something something
-        List<String> s=null;
+        List<String> list = null;
         boolean found;
-        for(String search:s){
-            found=false;
-            for (Tuple<String, Boolean> curVal : FileList) {
+        for (String search : list) {
+            found = false;
+            for (Tuple<String, Boolean> curVal : fileList) {
                 if (curVal.x.contains(search)) {
-                   found=true;
+                    found = true;
                     break;
                 }
             }
-            if(!found){
-                FileList.add(new Tuple<String, Boolean>(search, false));
+            if (!found) {
+                fileList.add(new Tuple<String, Boolean>(search, false));
             }
         }
         //TODO Set current file list to the agents file list
     }
-    private void checkLockRequests(){
+
+    private void checkLockRequests() {
         //TODO
     }
-    private void checkUnlock(){
-        
+
+    private void checkUnlock() {
+
     }
 }

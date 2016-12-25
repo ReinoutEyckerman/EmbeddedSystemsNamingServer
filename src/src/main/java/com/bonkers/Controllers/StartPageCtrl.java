@@ -1,10 +1,8 @@
 package com.bonkers.Controllers;
 
 import com.bonkers.Client;
-import com.bonkers.Logging;
 import com.bonkers.Server;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,16 +13,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.event.ActionEvent;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-/**
- * Created by Kenny on 14/12/16.
- */
+
 public class StartPageCtrl implements Initializable, Runnable {
+    private static Client client;
+    private static Server server;
+    private File file = new File(System.getProperty("user.dir") + "/tmp");
     @FXML
     private Button submitBtn;
     @FXML
@@ -36,14 +33,22 @@ public class StartPageCtrl implements Initializable, Runnable {
     @FXML
     private Label nameLbl;
 
-    public static Client client;
+    private static void infoBox(String titleBar, String headerMessage, String infoMessage) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titleBar);
+        alert.setHeaderText(headerMessage);
+        alert.setContentText(infoMessage);
+        alert.showAndWait();
+    }
 
-    public static Server server;
-
-    File file = new File(System.getProperty("user.dir") + "/tmp");
-
-
-
+    public static void Shutdown() {
+        if (client != null) {
+            client.shutdown();
+        } else if (server != null) {
+            server.shutdown();
+        } else
+            System.exit(0);
+    }
 
     @Override
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
@@ -63,32 +68,30 @@ public class StartPageCtrl implements Initializable, Runnable {
 
 
     }
+
     @Override
     public void run() {
 
     }
-    public void checkRole(){
-        if(roleTxt.getText().toLowerCase().equals("client")) {
+
+    private void checkRole() {
+        if (roleTxt.getText().toLowerCase().equals("client")) {
             nameLbl.setVisible(true);
             nameTxt.setVisible(true);
-        }
-        else
-        {
+        } else {
             nameLbl.setVisible(false);
             nameTxt.setVisible(false);
         }
     }
+
     @FXML
-    private void ClickedSubmitBtn(ActionEvent event) throws IOException, Exception{
+    private void ClickedSubmitBtn(ActionEvent event) throws Exception {
         Stage stage;
         Parent root;
-        if(roleTxt.getText().toLowerCase().equals("client")) {
-            if(nameTxt.getText().toLowerCase().isEmpty())
-            {
-                infoBox("Empty name","No name given", "Please give us a valid name (not empty)");
-            }
-            else
-            {
+        if (roleTxt.getText().toLowerCase().equals("client")) {
+            if (nameTxt.getText().toLowerCase().isEmpty()) {
+                infoBox("Empty name", "No name given", "Please give us a valid name (not empty)");
+            } else {
                 //get reference to the button's stage
                 stage = (Stage) submitBtn.getScene().getWindow();
                 //load up OTHER FXML document
@@ -104,19 +107,16 @@ public class StartPageCtrl implements Initializable, Runnable {
                     try {
                         client = new Client(nameTxt.getText(), file);
 
-                    }
-                    catch (Exception e){
+                    } catch (Exception e) {
                         System.out.println("Cannot start client");
                         e.printStackTrace();
                     }
                 }).start();
 
             }
-        }
-        else if (roleTxt.getText().toLowerCase().equals("server"))
-        {
+        } else if (roleTxt.getText().toLowerCase().equals("server")) {
             //get reference to the button's stage
-            stage=(Stage) submitBtn.getScene().getWindow();
+            stage = (Stage) submitBtn.getScene().getWindow();
             //load up OTHER FXML document
             root = FXMLLoader.load(getClass().getResource("/View/Server.fxml"));
 
@@ -127,35 +127,14 @@ public class StartPageCtrl implements Initializable, Runnable {
             //Start new server
             System.out.println("Starting Server");
             File f = new File("hashtable.json");
-            if (f.exists() && !f.isDirectory())
-            {
+            if (f.exists() && !f.isDirectory()) {
                 f.delete();
             }
             server = new Server();
             ServerCtrl.PrintErrors();
+        } else {
+            infoBox("Wrong role", "You appeared to have given the wrong role", "Please give us a valid System Y role (Server or Client");
         }
-        else
-        {
-            infoBox("Wrong role","You appeared to have given the wrong role","Please give us a valid System Y role (Server or Client");
-        }
-    }
-    public static void infoBox(String titleBar,String headerMessage,String infoMessage)
-    {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titleBar);
-        alert.setHeaderText(headerMessage);
-        alert.setContentText(infoMessage);
-        alert.showAndWait();
-    }
-    public static void Shutdown(){
-        if (client !=null){
-            client.shutdown();
-        }
-        else if (server!= null){
-            server.shutdown();
-        }
-        else
-            System.exit(0);
     }
 
     @FXML

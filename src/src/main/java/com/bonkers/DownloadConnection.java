@@ -1,8 +1,5 @@
 package com.bonkers;
 
-/**
- * Created by reinout on 9/27/16.
- */
 import java.io.*;
 import java.net.Socket;
 
@@ -11,11 +8,12 @@ import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 /***
  * The actual and technical downloading of a file. Well, more uploading, this is the thread that a tcpserver uses to connect a client node with
  */
-public class DownloadConnection implements Runnable{
+public class DownloadConnection implements Runnable {
     /**
      * The socket to connect with
      */
-    private final Socket sock;
+    private final Socket socket;
+    private final File folderPath;
     /**
      * File input stream read from
      */
@@ -28,23 +26,22 @@ public class DownloadConnection implements Runnable{
      * The outputstream to write to, also known as the tcp connection
      */
     private DataOutputStream os = null;
-    private final File folderPath;
 
     public DownloadConnection(Socket client, File folderPath) {
-        LOGGER.info("Accepted connection from "+client.getInetAddress());
-        this.sock = client;
-        this.folderPath=folderPath;
+        LOGGER.info("Accepted connection from " + client.getInetAddress());
+        this.socket = client;
+        this.folderPath = folderPath;
     }
 
     @Override
     public void run() {
         try {
-            os = new DataOutputStream(sock.getOutputStream());
-            BufferedReader inFromClient = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-            String cmd=inFromClient.readLine();
-            sendFile(folderPath.getAbsolutePath()+"/"+cmd);
+            os = new DataOutputStream(socket.getOutputStream());
+            BufferedReader inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String cmd = inFromClient.readLine();
+            sendFile(folderPath.getAbsolutePath() + "/" + cmd);
             exit();
-        }catch (IOException e){
+        } catch (IOException e) {
             LOGGER.severe("ConnectionIOException caught. ");
             e.printStackTrace();
         }
@@ -52,14 +49,15 @@ public class DownloadConnection implements Runnable{
 
     /**
      * The sending of a file
+     *
      * @param filepath The location of the file
      * @throws IOException If the file isnt found or w/e
      */
     private void sendFile(String filepath) throws IOException {
-        os  = new DataOutputStream(sock.getOutputStream());
+        os = new DataOutputStream(socket.getOutputStream());
         File myFile = new File(filepath);
         os.writeLong(myFile.length());
-        byte[] buffer=new byte[1024];
+        byte[] buffer = new byte[1024];
         fis = new FileInputStream(myFile);
         bis = new BufferedInputStream(fis);
         LOGGER.info("Sending " + filepath + "(" + myFile.length() + " bytes)");
@@ -73,12 +71,13 @@ public class DownloadConnection implements Runnable{
 
     /**
      * Clear all the open streams
+     *
      * @throws IOException
      */
-    private void exit() throws IOException{
-        if (fis!=null) fis.close();
+    private void exit() throws IOException {
+        if (fis != null) fis.close();
         if (bis != null) bis.close();
         if (os != null) os.close();
-        if (sock != null) sock.close();
+        if (socket != null) socket.close();
     }
 }
