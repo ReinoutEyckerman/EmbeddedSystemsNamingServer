@@ -7,7 +7,8 @@ import java.util.List;
 /**
  * Checks for local files and changes
  */
-public class FileChecker {
+public class FileChecker
+{
     /**
      * The folder location of the files
      */
@@ -18,7 +19,8 @@ public class FileChecker {
      *
      * @param folderLocation Location of the folder as a File object
      */
-    public FileChecker(File folderLocation) {
+    public FileChecker(File folderLocation)
+    {
         this.folderLocation = folderLocation;
     }
 
@@ -27,10 +29,13 @@ public class FileChecker {
      *
      * @return The Map of files
      */
-    public List checkFiles() {
+    public List checkFiles()
+    {
         List<String> files = new ArrayList<>();
-        for (final File fileEntry : folderLocation.listFiles()) {
-            if (!fileEntry.isDirectory()) {
+        for (final File fileEntry : folderLocation.listFiles())
+        {
+            if (!fileEntry.isDirectory())
+            {
                 files.add(fileEntry.getName());
             }
         }
@@ -42,10 +47,13 @@ public class FileChecker {
      *
      * @return The Map of files
      */
-    public List checkFiles(List existingFiles) {
+    public List checkFiles(List existingFiles)
+    {
         List<String> files = new ArrayList<>();
-        for (final File fileEntry : folderLocation.listFiles()) {
-            if (!fileEntry.isDirectory() && !existingFiles.contains(fileEntry.getName())) {
+        for (final File fileEntry : folderLocation.listFiles())
+        {
+            if (!fileEntry.isDirectory() && !existingFiles.contains(fileEntry.getName()))
+            {
                 files.add(fileEntry.getName());
             }
         }

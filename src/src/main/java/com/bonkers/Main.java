@@ -16,7 +16,8 @@ import java.util.logging.Logger;
  * Startup class
  * Todo public check because ?
  */
-public class Main extends Application {
+public class Main extends Application
+{
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
@@ -26,17 +27,21 @@ public class Main extends Application {
      * @param args startup arguments.
      * @throws Exception Throws exception on fail
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception
+    {
         startLog();
         LOGGER.info("Ip: " + InetAddress.getLocalHost().getHostAddress());
         launch(args);
 
     }
 
-    private static void startLog() {
-        try {
+    private static void startLog()
+    {
+        try
+        {
             Logging.setup();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
             throw new RuntimeException("Problems with creating the log files");
         }
@@ -49,7 +54,8 @@ public class Main extends Application {
      * @throws Exception
      */
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) throws Exception
+    {
         Parent root = FXMLLoader.load(getClass().getResource("/View/StartPage.fxml"));
         primaryStage.setTitle("SystemY");
         primaryStage.setScene(new Scene(root, 300, 200));
@@ -59,7 +65,8 @@ public class Main extends Application {
     }
 
     @SuppressWarnings("restriction")
-    private void closeProgram() {
+    private void closeProgram()
+    {
         LOGGER.info("Closed GUI");
         Platform.exit();
         StartPageCtrl.Shutdown();

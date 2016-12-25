@@ -8,7 +8,8 @@ import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 /***
  * The actual and technical downloading of a file. Well, more uploading, this is the thread that a tcpserver uses to connect a client node with
  */
-public class DownloadConnection implements Runnable {
+public class DownloadConnection implements Runnable
+{
     /**
      * The socket to connect with
      */
@@ -27,21 +28,25 @@ public class DownloadConnection implements Runnable {
      */
     private DataOutputStream os = null;
 
-    public DownloadConnection(Socket client, File folderPath) {
+    public DownloadConnection(Socket client, File folderPath)
+    {
         LOGGER.info("Accepted connection from " + client.getInetAddress());
         this.socket = client;
         this.folderPath = folderPath;
     }
 
     @Override
-    public void run() {
-        try {
+    public void run()
+    {
+        try
+        {
             os = new DataOutputStream(socket.getOutputStream());
             BufferedReader inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String cmd = inFromClient.readLine();
             sendFile(folderPath.getAbsolutePath() + "/" + cmd);
             exit();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             LOGGER.severe("ConnectionIOException caught. ");
             e.printStackTrace();
         }
@@ -53,7 +58,8 @@ public class DownloadConnection implements Runnable {
      * @param filepath The location of the file
      * @throws IOException If the file isnt found or w/e
      */
-    private void sendFile(String filepath) throws IOException {
+    private void sendFile(String filepath) throws IOException
+    {
         os = new DataOutputStream(socket.getOutputStream());
         File myFile = new File(filepath);
         os.writeLong(myFile.length());
@@ -62,7 +68,8 @@ public class DownloadConnection implements Runnable {
         bis = new BufferedInputStream(fis);
         LOGGER.info("Sending " + filepath + "(" + myFile.length() + " bytes)");
         int count;
-        while ((count = fis.read(buffer)) > 0) {
+        while ((count = fis.read(buffer)) > 0)
+        {
             os.write(buffer, 0, count);
         }
         os.flush();
@@ -74,10 +81,23 @@ public class DownloadConnection implements Runnable {
      *
      * @throws IOException
      */
-    private void exit() throws IOException {
-        if (fis != null) fis.close();
-        if (bis != null) bis.close();
-        if (os != null) os.close();
-        if (socket != null) socket.close();
+    private void exit() throws IOException
+    {
+        if (fis != null)
+        {
+            fis.close();
+        }
+        if (bis != null)
+        {
+            bis.close();
+        }
+        if (os != null)
+        {
+            os.close();
+        }
+        if (socket != null)
+        {
+            socket.close();
+        }
     }
 }

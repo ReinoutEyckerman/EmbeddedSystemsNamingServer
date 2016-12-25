@@ -6,7 +6,8 @@ import java.rmi.RemoteException;
 /**
  * Remote Client Interface for Client-Server Connection
  */
-public interface ClientIntf extends Remote {
+public interface ClientIntf extends Remote
+{
     /**
      * Sets starting info for the node so it can function properly
      *

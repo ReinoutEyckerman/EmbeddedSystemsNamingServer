@@ -17,7 +17,8 @@ import java.util.TreeMap;
  * TODO: Potential singleton?
  * TODO: Jente check javadoc comments
  */
-public class HashTableCreator {
+public class HashTableCreator
+{
     /**
      * Local hashmap for intermediate and outside use.
      */
@@ -31,11 +32,13 @@ public class HashTableCreator {
      * @param name Original hash code
      * @return hash integer
      */
-    public static int createHash(String name) {
+    public static int createHash(String name)
+    {
         return Math.abs(name.hashCode()) % 32768;
     }
 
-    public int getNodeAmount() {
+    public int getNodeAmount()
+    {
         return htIp.size();
     }
 
@@ -45,7 +48,8 @@ public class HashTableCreator {
      * @param ip   Ip address of the hash host
      * @param name Name of the hash host of which the hash has to be calculated.
      */
-    public void createHashTable(String ip, String name) {
+    public void createHashTable(String ip, String name)
+    {
         int digest = createHash(name);
         htIp = readHashtable();
         htIp.put(digest, ip);
@@ -55,18 +59,22 @@ public class HashTableCreator {
     /**
      * Writes hash to gson file.
      */
-    public void writeHashtable() {
+    public void writeHashtable()
+    {
         Gson gson = new Gson();
         String json = gson.toJson(htIp);
-        try {
+        try
+        {
             File f = new File("hashtable.json");
-            if (f.exists() && !f.isDirectory()) {
+            if (f.exists() && !f.isDirectory())
+            {
                 f.delete();
             }
             FileWriter fw = new FileWriter("hashtable.json", true);
             fw.write(json);
             fw.close();
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             e.printStackTrace();
         }
     }
@@ -76,20 +84,25 @@ public class HashTableCreator {
      *
      * @return Hashtable map
      */
-    public TreeMap<Integer, String> readHashtable() {
+    public TreeMap<Integer, String> readHashtable()
+    {
         TreeMap<Integer, String> Hashtable = new TreeMap<>();
-        try {
+        try
+        {
             JsonReader reader = new JsonReader(new FileReader("hashtable.json"));
             reader.beginObject();
 
-            while (reader.hasNext()) {
+            while (reader.hasNext())
+            {
                 Hashtable.put(Integer.valueOf(reader.nextName()), reader.nextString());
             }
             reader.endObject();
             reader.close();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             System.err.println("Cannot read JSON");
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             e.printStackTrace();
         }
         return Hashtable;
@@ -102,13 +115,18 @@ public class HashTableCreator {
      * @param FileHash Filehash
      * @return Connected host
      */
-    public NodeInfo findHost(int FileHash) {
-        if (htIp.firstEntry().getKey() > FileHash) {
+    public NodeInfo findHost(int FileHash)
+    {
+        if (htIp.firstEntry().getKey() > FileHash)
+        {
             return new NodeInfo(htIp.lastEntry().getKey(), htIp.lastEntry().getValue());
         }
-        for (Map.Entry<Integer, String> entry : htIp.entrySet()) {
-            if (htIp.higherEntry(entry.getKey()) != null) {
-                if (entry.getKey() <= FileHash && htIp.higherEntry(entry.getKey()).getKey() > FileHash) {
+        for (Map.Entry<Integer, String> entry : htIp.entrySet())
+        {
+            if (htIp.higherEntry(entry.getKey()) != null)
+            {
+                if (entry.getKey() <= FileHash && htIp.higherEntry(entry.getKey()).getKey() > FileHash)
+                {
                     return new NodeInfo(entry.getKey(), entry.getValue());
                 }
             }

@@ -6,7 +6,8 @@ import java.rmi.RemoteException;
 /**
  * RMI interface that defines inter-node-communication.
  */
-public interface NodeIntf extends Remote {
+public interface NodeIntf extends Remote
+{
     /**
      * RMI function that updates the next neighbor of the targeted node
      *

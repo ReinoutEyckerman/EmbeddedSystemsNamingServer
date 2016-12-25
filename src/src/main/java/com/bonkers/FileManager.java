@@ -13,7 +13,8 @@ import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 /**
  * It is he, FileManager, Manager of Files, Replicator of objects!
  */
-public class FileManager implements QueueListener {
+public class FileManager implements QueueListener
+{
     /**
      * The location to download to
      */
@@ -50,7 +51,8 @@ public class FileManager implements QueueListener {
      * @param downloadLocation The location of the files
      * @param id               The id of this node
      */
-    public FileManager(File downloadLocation, NodeInfo id) {
+    public FileManager(File downloadLocation, NodeInfo id)
+    {
         LOGGER.info("Starting filemanager...");
         new File(System.getProperty("user.dir") + "/tmp").mkdirs();
         this.downloadLocation = downloadLocation;
@@ -61,7 +63,8 @@ public class FileManager implements QueueListener {
         localFiles = fileChecker.checkFiles();
         ownedFiles = new ArrayList<>();
         LOGGER.info("Filling ownedFiles with local files for startup.");
-        for (String file : localFiles) {
+        for (String file : localFiles)
+        {
             FileInfo f = new FileInfo();
             f.fileName = file;
             f.fileOwners = new ArrayList<>();
@@ -72,25 +75,34 @@ public class FileManager implements QueueListener {
         LOGGER.info("Filemanager successfully started.");
     }
 
-    public void startFileChecker() {
+    public void startFileChecker()
+    {
         timer = new Timer();
-        timer.schedule(new TimerTask() {
+        timer.schedule(new TimerTask()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 //LOGGER.info("Yo whadup");
                 List<String> l = fileChecker.checkFiles(localFiles);
-                for (String file : l) {
+                for (String file : l)
+                {
                     boolean skip = false;
-                    for (FileInfo fileInfo : ownedFiles) {
-                        if (Objects.equals(fileInfo.fileName, file)) {
+                    for (FileInfo fileInfo : ownedFiles)
+                    {
+                        if (Objects.equals(fileInfo.fileName, file))
+                        {
                             LOGGER.info("File received, am owner, nothing will happen.");
                             if (!localFiles.contains(file))
+                            {
                                 localFiles.add(file);
+                            }
                             skip = true;
                         }
                     }
 
-                    if (!localFiles.contains(file) && !skip) {
+                    if (!localFiles.contains(file) && !skip)
+                    {
                         FileInfo f = new FileInfo();
                         f.fileName = file;
                         f.fileOwners = new ArrayList<>();
@@ -109,8 +121,10 @@ public class FileManager implements QueueListener {
      *
      * @param prevId Previous node id
      */
-    public void startupReplication(NodeInfo prevId) {
-        for (String file : localFiles) {
+    public void startupReplication(NodeInfo prevId)
+    {
+        for (String file : localFiles)
+        {
             replicate(file, prevId);
         }
     }
@@ -121,37 +135,51 @@ public class FileManager implements QueueListener {
      * @param filename the name of the file
      * @param prevId   the id of the previous node
      */
-    private void replicate(String filename, NodeInfo prevId) {
-        try {
+    private void replicate(String filename, NodeInfo prevId)
+    {
+        try
+        {
             NodeInfo node = server.findLocationFile(filename);
-            if (Objects.equals(id.address, node.address)) {
-                if (!Objects.equals(prevId.address, id.address)) {
+            if (Objects.equals(id.address, node.address))
+            {
+                if (!Objects.equals(prevId.address, id.address))
+                {
                     requestDownload(prevId, filename);
                     LOGGER.info("Sending " + filename + " with hash" + HashTableCreator.createHash(filename) + " to the previous neighbor.");
                 }
-            } else {
+            }
+            else
+            {
                 moveFileAndChangeOwner(node, filename);
             }
-        } catch (RemoteException e) {
+        } catch (RemoteException e)
+        {
             e.printStackTrace();
         }
     }
 
-    private void moveFileAndChangeOwner(NodeInfo node, String filename) {
-        for (FileInfo file : ownedFiles) {//Todo this can be optimized
-            if (Objects.equals(file.fileName, filename)) {
-                try {
+    private void moveFileAndChangeOwner(NodeInfo node, String filename)
+    {
+        for (FileInfo file : ownedFiles)
+        {//Todo this can be optimized
+            if (Objects.equals(file.fileName, filename))
+            {
+                try
+                {
                     Registry registry = LocateRegistry.getRegistry(node.address);
                     NodeIntf nodeIntf = (NodeIntf) registry.lookup("NodeIntf");
                     file.fileOwners.add(node);
                     nodeIntf.setOwnerFile(file);
                     ownedFiles.remove(file);
                     LOGGER.info("Set " + node + " as new file owner of file " + filename);
-                } catch (AccessException e) {
+                } catch (AccessException e)
+                {
                     e.printStackTrace();
-                } catch (RemoteException e) {
+                } catch (RemoteException e)
+                {
                     e.printStackTrace();
-                } catch (NotBoundException e) {
+                } catch (NotBoundException e)
+                {
                     e.printStackTrace();
                 }
                 break;
@@ -165,18 +193,28 @@ public class FileManager implements QueueListener {
      *
      * @param next NodeInfo of the next neighbor
      */
-    public void recheckOwnership(NodeInfo next) {
-        for (String file : localFiles) {
-            try {
+    public void recheckOwnership(NodeInfo next)
+    {
+        for (String file : localFiles)
+        {
+            try
+            {
                 NodeInfo node = server.findLocationFile(file);
-                if (Objects.equals(node.address, id.address)) {
+                if (Objects.equals(node.address, id.address))
+                {
                     LOGGER.info("File will not be sent to the next neighbor");
-                } else if (Objects.equals(node.address, next.address)) {
+                }
+                else if (Objects.equals(node.address, next.address))
+                {
                     LOGGER.info("File will be sent to the next neighbor.");
                     moveFileAndChangeOwner(next, file);
-                } else
+                }
+                else
+                {
                     System.out.println("Dere be krakenz here");
-            } catch (RemoteException e) {
+                }
+            } catch (RemoteException e)
+            {
                 e.printStackTrace();
             }
         }
@@ -187,28 +225,35 @@ public class FileManager implements QueueListener {
      *
      * @param file file to download
      */
-    private void requestDownload(NodeInfo nodeInfo, String file) {
-        try {
+    private void requestDownload(NodeInfo nodeInfo, String file)
+    {
+        try
+        {
             Registry registry = LocateRegistry.getRegistry(nodeInfo.address);
             LOGGER.info("Sending " + file + " with hash " + HashTableCreator.createHash(file) + " to node " + nodeInfo.address);
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
             node.requestDownload(id, file);
-            for (FileInfo f : ownedFiles) {
-                if (Objects.equals(f.fileName, file) && !f.fileOwners.contains(nodeInfo)) {
+            for (FileInfo f : ownedFiles)
+            {
+                if (Objects.equals(f.fileName, file) && !f.fileOwners.contains(nodeInfo))
+                {
                     f.fileOwners.add(nodeInfo);
                     LOGGER.info("Added " + nodeInfo + " as owner of file " + f);
                     break;
                 }
             }
-        } catch (RemoteException e) {
+        } catch (RemoteException e)
+        {
             e.printStackTrace();
-        } catch (NotBoundException e) {
+        } catch (NotBoundException e)
+        {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void queueFilled() {
+    public void queueFilled()
+    {
         Tuple<String, String> data = downloadQueue.poll();
         new Thread(new TCPClient(data.x, data.y, downloadLocation)).start();
     }
@@ -219,21 +264,26 @@ public class FileManager implements QueueListener {
      *
      * @param file
      */
-    public void setOwnerFile(FileInfo file) {
+    public void setOwnerFile(FileInfo file)
+    {
         ownedFiles.add(file);
         LOGGER.info("Added new file ownership of file " + file);
     }
 
-    public void removeFromOwnerList(String file, NodeInfo nodeID) {
-        ownedFiles.forEach((fileInfo) -> {
-            if (Objects.equals(file, fileInfo.fileName)) {
+    public void removeFromOwnerList(String file, NodeInfo nodeID)
+    {
+        ownedFiles.forEach((fileInfo) ->
+        {
+            if (Objects.equals(file, fileInfo.fileName))
+            {
                 ownedFiles.remove(fileInfo);
                 LOGGER.info("Removing " + nodeID + " from file list at file " + file);
             }
         });
     }
 
-    public List<String> GetLocalFiles() {
+    public List<String> GetLocalFiles()
+    {
         return localFiles;
     }
 
@@ -242,32 +292,44 @@ public class FileManager implements QueueListener {
      *
      * @param prevID The id of the previous node
      */
-    public void shutdown(NodeInfo prevID) {
+    public void shutdown(NodeInfo prevID)
+    {
 
         timer.purge();
-        try {
+        try
+        {
             Registry registry = LocateRegistry.getRegistry(prevID.address);
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
             registry = LocateRegistry.getRegistry(server.nodeNeighbors(prevID)[0].address);
             NodeIntf nextNode = (NodeIntf) registry.lookup("NodeIntf");
-            for (FileInfo file : ownedFiles) {
+            for (FileInfo file : ownedFiles)
+            {
                 file.fileOwners.remove(id);
                 if (!file.fileOwners.contains(prevID))
+                {
                     nextNode.requestDownload(id, file.fileName);
+                }
                 else
+                {
                     node.requestDownload(id, file.fileName);
+                }
                 node.setOwnerFile(file);
             }
-            for (String entry : localFiles) { //Todo can be optimized
-                if (!ownedFiles.contains(entry)) {
+            for (String entry : localFiles)
+            { //Todo can be optimized
+                if (!ownedFiles.contains(entry))
+                {
                     //Todo ?
                 }
             }
-        } catch (AccessException e) {
+        } catch (AccessException e)
+        {
             e.printStackTrace();
-        } catch (RemoteException e) {
+        } catch (RemoteException e)
+        {
             e.printStackTrace();
-        } catch (NotBoundException e) {
+        } catch (NotBoundException e)
+        {
             e.printStackTrace();
         }
     }

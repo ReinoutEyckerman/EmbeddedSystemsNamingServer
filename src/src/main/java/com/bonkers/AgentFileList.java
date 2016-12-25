@@ -11,11 +11,12 @@ import java.util.List;
 /**
  * TODO Jente
  */
-public class AgentFileList implements Serializable {
+public class AgentFileList implements Serializable
+{
     private static AgentFileList instance = null;
-    private HashMap<File, Boolean> fileMap = new HashMap<>();
     public List<File> fileList = null;
-    public Boolean started = false;
+    public boolean started = false;
+    private HashMap<File, Boolean> fileMap = new HashMap<>();
     private Client client = null;
 
     /**
@@ -23,41 +24,52 @@ public class AgentFileList implements Serializable {
      *
      * @return instance
      */
-    public static AgentFileList getInstance() {
-        if (instance == null) {
+    public static AgentFileList getInstance()
+    {
+        if (instance == null)
+        {
             instance = new AgentFileList();
         }
         return instance;
     }
+
     //TODO Why return? Return is unused, still necessary?
-    public List<File> update(List<File> List) {
+    public List<File> update(List<File> List)
+    {
         fileList = List;
         started = true;
         updateCurrentNodeFiles();
         checkLockRequests();
         checkUnlock();
         fileList = new LinkedList<>();
-        fileMap.forEach(((file, aBoolean) -> {
+        fileMap.forEach(((file, aBoolean) ->
+        {
             fileList.add(file);
         }));
         return fileList;
     }
 
-    public Client getClient() {
+    public Client getClient()
+    {
         return client;
     }
 
-    public void setClient(Client client) {
+    public void setClient(Client client)
+    {
         this.client = client;
     }
 
     /**
      * Get the files of the node the agent runs on and check if files already exist or not
      */
-    private void updateCurrentNodeFiles() {
-        if (client.fm.ownedFiles != null) {
-            if (client.fm.ownedFiles.size() > 0) {
-                client.fm.ownedFiles.forEach((fileInfo) -> {
+    private void updateCurrentNodeFiles()
+    {
+        if (client.fm.ownedFiles != null)
+        {
+            if (client.fm.ownedFiles.size() > 0)
+            {
+                client.fm.ownedFiles.forEach((fileInfo) ->
+                {
                     fileMap.putIfAbsent(new File(fileInfo.fileName), false);
                 });
             }
@@ -66,18 +78,25 @@ public class AgentFileList implements Serializable {
         System.out.println(client.fm.ownedFiles.size() + " " + fileMap.size());
     }
 
-    private void checkLockRequests() {
-        client.lockQueue.forEach((fileName) -> {
-            if (!fileMap.replace(fileName, false, true)) {
+    private void checkLockRequests()
+    {
+        client.lockQueue.forEach((fileName) ->
+        {
+            if (!fileMap.replace(fileName, false, true))
+            {
                 client.lockStatusQueue.add(new Tuple<>(fileName, false));
-            } else {
+            }
+            else
+            {
                 client.lockStatusQueue.add(new Tuple<>(fileName, true));
             }
         });
     }
 
-    private void checkUnlock() {
-        client.unlockQueue.forEach((fileName) -> {
+    private void checkUnlock()
+    {
+        client.unlockQueue.forEach((fileName) ->
+        {
             fileMap.replace(fileName, true, false);
         });
     }

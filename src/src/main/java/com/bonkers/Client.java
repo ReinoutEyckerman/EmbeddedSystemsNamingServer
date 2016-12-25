@@ -20,24 +20,17 @@ import static java.lang.Thread.sleep;
 /**
  * Client class to connect to server
  */
-public class Client implements NodeIntf, ClientIntf, QueueListener {
+public class Client implements NodeIntf, ClientIntf, QueueListener
+{
 
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     public static NodeInfo previd;
-    private static QueueEvent<LogRecord> logRecordQueue = new QueueEvent<>();
     public static List<File> globalFileList = null;
-    /**
-     * Tuples with the hash and IPAddress from itself, previous and nextid.
-     */
-    private NodeInfo id, nextid;//, previd;
+    private static QueueEvent<LogRecord> logRecordQueue = new QueueEvent<>();
     /**
      * File manager, handles file operations for the current node
      */
     public FileManager fm = null;
-    /**
-     * Sets the agent to handle the files on the clients but waits to start it
-     */
-    private AgentFileList agentFileList = null;
     /**
      * Saves the lock and unlock request until the agent gets to the client
      */
@@ -47,7 +40,15 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      * Saves the status if the lock failed the boolean is false else the boolean is true
      */
     public QueueEvent<Tuple<File, Boolean>> lockStatusQueue = new QueueEvent<>();//TODO NAME?
-    private Boolean setStartAgent = false;
+    /**
+     * Tuples with the hash and IPAddress from itself, previous and nextid.
+     */
+    private NodeInfo id, nextid;//, previd;
+    /**
+     * Sets the agent to handle the files on the clients but waits to start it
+     */
+    private AgentFileList agentFileList = null;
+    private boolean isSetStartAgent = false;
     /**
      * Boolean that checks if the bootstrap has completed, essential for knowing if the node is connected properly
      */
@@ -73,17 +74,20 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      * @param downloadFolder The folder to download files to
      * @throws Exception Generic exception for when something fails TODO
      */
-    public Client(String name, File downloadFolder) throws Exception {
+    public Client(String name, File downloadFolder) throws Exception
+    {
         LOGGER.addHandler(Logging.listHandler(logRecordQueue));
         logRecordQueue.addListener(this);
         Thread t = new Thread(new TCPServer(downloadFolder));
         t.start();
-        try {
+        try
+        {
             Registry registry = LocateRegistry.createRegistry(1099);
             Remote remote = UnicastRemoteObject.exportObject(this, 0);
             registry.bind("ClientIntf", remote);
             registry.bind("NodeIntf", remote);
-        } catch (AlreadyBoundException e) {
+        } catch (AlreadyBoundException e)
+        {
             e.printStackTrace();
         }
         this.name = name;
@@ -99,9 +103,12 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
         fm.startFileChecker();
         LOGGER.info("Started up FM.");
         if (!Objects.equals(previd.address, id.address))
+        {
             fm.startupReplication(previd);
+        }
         notifyExistence();
-        if (setStartAgent) {
+        if (isSetStartAgent)
+        {
             agentStarter();
         }
     }
@@ -109,20 +116,27 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     /**
      * Starts Multicastcomms and distributes itself over the network
      */
-    private void bootStrap() {
-        try {
+    private void bootStrap()
+    {
+        try
+        {
             int tries = 0;
-            while (!finishedBootstrap) {
+            while (!finishedBootstrap)
+            {
                 sleep(2000);
-                if (tries < 5) {
+                if (tries < 5)
+                {
                     tries++;
                     multicast.sendMulticast(name);
-                } else if (tries == 5) {
+                }
+                else if (tries == 5)
+                {
                     tries++;
                     LOGGER.info("Multicast limit reached. Stopped retrying");
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             e.printStackTrace();
         }
     }
@@ -134,18 +148,20 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      * @return
      * @throws Exception
      */
-    private int checkError(int error) {
-        switch (error) {
-            case 201:
+    private int checkError(int error)
+    {
+        switch (error)
+        {
+            case 201 :
                 LOGGER.warning("The node name already exists on the server please choose another one");
                 break;
-            case 202:
+            case 202 :
                 LOGGER.warning("You already exist in the name server");
                 break;
-            case 100:
+            case 100 :
                 LOGGER.info("No errors");
                 break;
-            default:
+            default :
                 LOGGER.warning("Unknown error");
                 break;
         }
@@ -157,13 +173,16 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      * It updates the neighbors so their connection can be established, and notifies the server of its shutdown.
      * TODO Replication
      */
-    public void shutdown() {
+    public void shutdown()
+    {
         LOGGER.info("Shutdown");
         fm.shutdown(previd);
 
-        if (previd != null && !Objects.equals(previd.address, id.address) && nextid != null) {
+        if (previd != null && !Objects.equals(previd.address, id.address) && nextid != null)
+        {
             System.out.println(previd.address);
-            try {
+            try
+            {
 
                 Registry registry = LocateRegistry.getRegistry(previd.address);
                 NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
@@ -172,14 +191,17 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
                 node = (NodeIntf) registry.lookup("NodeIntf");
                 node.updatePreviousNeighbor(previd);
 
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 LOGGER.warning("Client exception: " + e.toString());
                 e.printStackTrace();
             }
         }
-        try {
+        try
+        {
             server.nodeShutdown(id);
-        } catch (RemoteException e) {
+        } catch (RemoteException e)
+        {
             e.printStackTrace();
         }
         LOGGER.info("Successful shutdown");
@@ -193,16 +215,23 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      *
      * @param id Integer id/hash of the failing node
      */
-    public void nodeFailure(int id) {
+    public void nodeFailure(int id)
+    {
         NodeInfo nodeFailed;
         if (id == previd.hash)
+        {
             nodeFailed = previd;
+        }
         else if (id == nextid.hash)
+        {
             nodeFailed = nextid;
-        else {
+        }
+        else
+        {
             throw new IllegalArgumentException("What the actual fuck, this node isn't in my table yo");
         }
-        try {
+        try
+        {
             NodeInfo[] neighbors = server.nodeNeighbors(nodeFailed);
             Registry registry = LocateRegistry.getRegistry(neighbors[0].address);
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
@@ -211,112 +240,144 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
             node = (NodeIntf) registry.lookup("NodeIntf");
             node.updatePreviousNeighbor(neighbors[0]);
             server.nodeShutdown(nodeFailed);
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             LOGGER.warning("Client exception: " + e.toString());
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateNextNeighbor(NodeInfo node) {
+    public void updateNextNeighbor(NodeInfo node)
+    {
         LOGGER.info("Updated next neighbor: " + node.address);
         this.nextid = node;
         if (fm != null)
+        {
             fm.recheckOwnership(node);
+        }
     }
 
     @Override
-    public void updatePreviousNeighbor(NodeInfo node) {
+    public void updatePreviousNeighbor(NodeInfo node)
+    {
         LOGGER.info("Updated previous neighbor: " + node.address);
         previd = node;
     }
 
     @Override
-    public void transferAgent(AgentFileList agentFileList) {
+    public void transferAgent(AgentFileList agentFileList)
+    {
         LOGGER.log(Level.INFO, "AgentStarted");
 
         agentFileList.started = true;
         agentFileList.setClient(this);
-        new Thread(() -> {
+        new Thread(() ->
+        {
             agentFileList.update(agentFileList.fileList);
-            if (!nextid.address.equals(id.address)) {
+            if (!nextid.address.equals(id.address))
+            {
                 agentFileList.setClient(null);
-                try {
+                try
+                {
                     Registry registry = LocateRegistry.getRegistry(nextid.address);
                     NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
                     neighbor.transferAgent(agentFileList);
-                } catch (RemoteException e) {
+                } catch (RemoteException e)
+                {
                     e.printStackTrace();
-                } catch (NotBoundException e) {
+                } catch (NotBoundException e)
+                {
                     e.printStackTrace();
                 }
-            } else {
+            }
+            else
+            {
                 agentFileList.started = false;
             }
         }).start();
     }
 
     @Override
-    public void transferFailureAgent(AgentFailure agent) throws RemoteException {
+    public void transferFailureAgent(AgentFailure agent) throws RemoteException
+    {
         Thread agentThread = new Thread(agent);
         agentThread.start();
-        try {
+        try
+        {
             agentThread.join();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException e)
+        {
             e.printStackTrace();
         }
-        if (!agent.startingNode.address.equals(id.address)) {
+        if (!agent.startingNode.address.equals(id.address))
+        {
             Registry registry = LocateRegistry.getRegistry(nextid.address);
-            try {
+            try
+            {
                 NodeIntf neighbor = (NodeIntf) registry.lookup("NodeIntf");
                 neighbor.transferFailureAgent(agent);
-            } catch (NotBoundException e) {
+            } catch (NotBoundException e)
+            {
                 e.printStackTrace();
             }
         }
     }
 
     @Override
-    public void requestDownload(NodeInfo node, String file) throws RemoteException {
+    public void requestDownload(NodeInfo node, String file) throws RemoteException
+    {
         fm.downloadQueue.add(new Tuple<>(node.address, file));
         fm.localFiles.add(file);
     }
 
     @Override
-    public void setOwnerFile(FileInfo file) throws RemoteException {
+    public void setOwnerFile(FileInfo file) throws RemoteException
+    {
         fm.setOwnerFile(file);
     }
 
     @Override
-    public void removeFromOwnerList(String file, NodeInfo node) throws RemoteException {
+    public void removeFromOwnerList(String file, NodeInfo node) throws RemoteException
+    {
         fm.removeFromOwnerList(file, node);
     }
 
 
     @Override
-    public void setStartingInfo(String address, int clientcount) throws RemoteException {
+    public void setStartingInfo(String address, int clientcount) throws RemoteException
+    {
         LOGGER.info("Setting starting info");
-        try {
+        try
+        {
             Registry registry = LocateRegistry.getRegistry(address);
             server = (ServerIntf) registry.lookup("ServerIntf");
             checkError(server.error());
-        } catch (NotBoundException e) {
+        } catch (NotBoundException e)
+        {
             e.printStackTrace();
         }
-        if (clientcount <= 1) {
+        if (clientcount <= 1)
+        {
             previd = nextid = id;
-        } else {
+        }
+        else
+        {
             setNeighbors();
-            if (clientcount == 2) {
-                setStartAgent = false;
+            if (clientcount == 2)
+            {
+                isSetStartAgent = false;
             }
         }
         finishedBootstrap = true;
     }
 
-    private void notifyExistence() {
-        if (!Objects.equals(id, previd)) {
-            try {
+    private void notifyExistence()
+    {
+        if (!Objects.equals(id, previd))
+        {
+            try
+            {
                 LOGGER.info("Notifying neighbors of my existence.");
                 Registry registry = LocateRegistry.getRegistry(previd.address);
                 NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
@@ -324,11 +385,14 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
                 registry = LocateRegistry.getRegistry(nextid.address);
                 node = (NodeIntf) registry.lookup("NodeIntf");
                 node.updatePreviousNeighbor(id);
-            } catch (AccessException e) {
+            } catch (AccessException e)
+            {
                 e.printStackTrace();
-            } catch (RemoteException e) {
+            } catch (RemoteException e)
+            {
                 e.printStackTrace();
-            } catch (NotBoundException e) {
+            } catch (NotBoundException e)
+            {
                 e.printStackTrace();
             }
         }
@@ -337,22 +401,30 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     /**
      * Sets neighbors of current node.
      */
-    private void setNeighbors() {
-        try {
+    private void setNeighbors()
+    {
+        try
+        {
             NodeInfo[] neighbors = server.nodeNeighbors(id);
             if (neighbors[0] != null)
+            {
                 previd = neighbors[0];
+            }
             LOGGER.info("Received " + previd + " as previous neighbor.");
             if (neighbors[1] != null)
+            {
                 nextid = neighbors[1];
+            }
             LOGGER.info("Received " + nextid + " as next neighbor.");
-        } catch (RemoteException e) {
+        } catch (RemoteException e)
+        {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void setNameError() throws RemoteException {
+    public void setNameError() throws RemoteException
+    {
         System.out.println("Error: Name already taken.");
         System.out.println("Exiting...");
         System.exit(1);
@@ -362,17 +434,24 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
      * Method that gets fired when the LockStatusQueue gets filled
      */
     @Override
-    public void queueFilled() {
-        if (lockStatusQueue.queue.size() > 0) {
-            lockStatusQueue.forEach((fileTuple) -> {
-                if (fileTuple.y) {
+    public void queueFilled()
+    {
+        if (lockStatusQueue.queue.size() > 0)
+        {
+            lockStatusQueue.forEach((fileTuple) ->
+            {
+                if (fileTuple.y)
+                {
                     //TODO start download
-                } else {
+                }
+                else
+                {
                     lockQueue.add(fileTuple.x);
                 }
             });
         }
-        if (logRecordQueue.queue.size() > 0) {
+        if (logRecordQueue.queue.size() > 0)
+        {
             LogRecord lr = logRecordQueue.poll();
             //ClientCtrl.setLogs(lr);
         }
@@ -381,7 +460,8 @@ public class Client implements NodeIntf, ClientIntf, QueueListener {
     /**
      * Method to start the agent
      */
-    private void agentStarter() {
+    private void agentStarter()
+    {
         agentFileList = AgentFileList.getInstance();
         agentFileList.started = true;
         agentFileList.setClient(this);

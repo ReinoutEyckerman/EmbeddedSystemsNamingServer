@@ -6,7 +6,8 @@ import java.util.List;
 /**
  * Information object about a file, only the fileowner has this object.
  */
-public class FileInfo implements Serializable {
+public class FileInfo implements Serializable
+{
     /**
      * The filename related
      */
@@ -17,7 +18,8 @@ public class FileInfo implements Serializable {
     public List<NodeInfo> fileOwners;
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return fileName + " with following nodes " + fileOwners;
     }
 

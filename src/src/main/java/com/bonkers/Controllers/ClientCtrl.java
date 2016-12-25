@@ -13,7 +13,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class ClientCtrl implements Initializable {
+public class ClientCtrl implements Initializable
+{
     @FXML
     private static ListView fileList;
     @FXML
@@ -27,7 +28,8 @@ public class ClientCtrl implements Initializable {
     @FXML
     private Button deleteLocalBtn;
 
-    public static void setData(List<File> files) {
+    public static void setData(List<File> files)
+    {
         fileList.getItems().addAll(files);
 
         /*files.forEach((file) -> {
@@ -37,13 +39,15 @@ public class ClientCtrl implements Initializable {
 
     }
 
-    public static void setLogs() throws IOException {
+    public static void setLogs() throws IOException
+    {
         //oLogs.add(logRecord.getMessage());
 
     }
 
     @Override
-    public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+    public void initialize(URL fxmlFileLocation, ResourceBundle resources)
+    {
         assert openBtn != null : "fx:id=\"openBtn\" was not injected: check your FXML file 'simple.fxml'.";
         assert deleteBtn != null : "fx:id=\"deleteBtn\" was not injected: check your FXML file 'simple.fxml'.";
         assert deleteLocalBtn != null : "fx:id=\"deleteLocalBtn\" was not injected: check your FXML file 'simple.fxml'.";

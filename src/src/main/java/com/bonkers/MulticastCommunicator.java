@@ -9,7 +9,8 @@ import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 /**
  * Multicast communication Thread.
  */
-public class MulticastCommunicator extends Thread {
+public class MulticastCommunicator extends Thread
+{
     //https://docs.oracle.com/javase/7/docs/api/java/net/MulticastSocket.html
     /**
      * Multicast address of the group to join.
@@ -27,7 +28,7 @@ public class MulticastCommunicator extends Thread {
     /**
      * Boolean of the finished thread.
      */
-    private Boolean isFinished = false;
+    private boolean isFinished = false;
     /**
      * Multicastsocket of the thread.
      */
@@ -36,7 +37,8 @@ public class MulticastCommunicator extends Thread {
     /**
      * Constructor that automatically joins the multicast group.
      */
-    public MulticastCommunicator() {
+    public MulticastCommunicator()
+    {
         joinGroup();
     }
 
@@ -44,24 +46,31 @@ public class MulticastCommunicator extends Thread {
      * Main server loop, runs and gets multicasts and adds them to the QueueEvent.
      * No interaction required.
      */
-    public void run() {
+    public void run()
+    {
         LOGGER.info("Started multicastserver successfully");
-        while (!isFinished) {
+        while (!isFinished)
+        {
             Tuple<String, String> info = receiveMulticast();
             if (info != null)
+            {
                 packetQueue.add(info);
+            }
         }
     }
 
     /**
      * Join group function. Connects to the multicast group.
      */
-    private void joinGroup() {
-        try {
+    private void joinGroup()
+    {
+        try
+        {
             group = InetAddress.getByName(castAddress);
             castSocket = new MulticastSocket(6789);
             castSocket.joinGroup(group);
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             e.printStackTrace();
         }
     }
@@ -71,12 +80,15 @@ public class MulticastCommunicator extends Thread {
      *
      * @param msg Message to send.
      */
-    public void sendMulticast(String msg) {
-        try {
+    public void sendMulticast(String msg)
+    {
+        try
+        {
             LOGGER.info("Sent " + msg + " as multicast.");
             DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), group, 6789);
             castSocket.send(packet);
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             e.printStackTrace();
         }
     }
@@ -86,16 +98,19 @@ public class MulticastCommunicator extends Thread {
      *
      * @return returns a Tuple containing its information as string and its IP address as InetAddress
      */
-    private Tuple<String, String> receiveMulticast() {
-        try {
+    private Tuple<String, String> receiveMulticast()
+    {
+        try
+        {
             byte[] buf = new byte[2048];
             DatagramPacket recv = new DatagramPacket(buf, buf.length);
             castSocket.receive(recv);
             String address = recv.getAddress().getHostAddress();
-            LOGGER.info("Received a multicast packet from address " + address );
+            LOGGER.info("Received a multicast packet from address " + address);
             String Nodename = new String(buf, 0, recv.getLength());
             return new Tuple<String, String>(Nodename, address);
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             isFinished = true;
             e.printStackTrace();
         }
@@ -105,11 +120,14 @@ public class MulticastCommunicator extends Thread {
     /**
      * Leave Multicast group.
      */
-    public void leaveGroup() {
-        try {
+    public void leaveGroup()
+    {
+        try
+        {
             LOGGER.info("Leaving multicast group.");
             castSocket.leaveGroup(group);
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             e.printStackTrace();
         }
     }

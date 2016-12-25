@@ -12,7 +12,8 @@ import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
  * Thread that allows TCP clients to connect and opens a Connection thread to the client
  * This is implemented on every node, so that every node can connect to every other node for file transfer
  */
-public class TCPServer implements Runnable {
+public class TCPServer implements Runnable
+{
 
     /**
      * Predefined socket port on which the server listens
@@ -21,7 +22,8 @@ public class TCPServer implements Runnable {
     private final File folderLocation;
     private final ExecutorService pool;
 
-    public TCPServer(File folderLocation) {
+    public TCPServer(File folderLocation)
+    {
         this.folderLocation = folderLocation;
         pool = Executors.newFixedThreadPool(10);
     }
@@ -31,20 +33,26 @@ public class TCPServer implements Runnable {
      * and finally gives every client it's own connection threads.
      */
     @Override
-    public void run() {
+    public void run()
+    {
         ServerSocket serversocket = null;
-        try {
+        try
+        {
             serversocket = new ServerSocket(SOCKET_PORT);
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             LOGGER.severe("TCP Server socket already in use. Exiting...");
             System.exit(1);
         }
         LOGGER.info("TCP Server succesfully started.");
-        while (true) {
-            try {
+        while (true)
+        {
+            try
+            {
                 pool.execute(new DownloadConnection(serversocket.accept(), folderLocation));
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 LOGGER.warning("Error " + e + " in connection attempt.");
                 e.printStackTrace();
                 pool.shutdown();

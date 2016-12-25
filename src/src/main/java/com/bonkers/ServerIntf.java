@@ -7,7 +7,8 @@ import java.rmi.RemoteException;
 /**
  * Server interface for RMI communication.
  */
-public interface ServerIntf extends Remote {
+public interface ServerIntf extends Remote
+{
     /**
      * Finds location of file on the server.
      *

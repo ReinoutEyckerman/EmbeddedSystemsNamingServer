@@ -5,7 +5,8 @@ import java.io.Serializable;
 /**
  * Implementation of Node information.
  */
-public class NodeInfo implements Serializable {
+public class NodeInfo implements Serializable
+{
     /**
      * Node Hash
      */
@@ -21,13 +22,15 @@ public class NodeInfo implements Serializable {
      * @param hash    Hash value of the node
      * @param address IP address of the node
      */
-    public NodeInfo(int hash, String address) {
+    public NodeInfo(int hash, String address)
+    {
         this.hash = hash;
         this.address = address;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return address + " with hash " + hash;
     }
 }

@@ -10,7 +10,8 @@ import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
  * Thread that connects to a TCPServer, aka another node. This then downloads the specified file from the connected server.
  * Note: this only downloads a single file. Multiple clients need to be created for multiple downloads. This allows for parallel download.
  */
-public class TCPClient implements Runnable {
+public class TCPClient implements Runnable
+{
     /**
      * Port over which the connection will take place
      */
@@ -55,7 +56,8 @@ public class TCPClient implements Runnable {
      * @param remoteFileLocation Name of the remote file
      * @param downloadLocation   download location
      */
-    public TCPClient(String ip, String remoteFileLocation, File downloadLocation) {
+    public TCPClient(String ip, String remoteFileLocation, File downloadLocation)
+    {
         Server = ip;
         this.downloadLocation = downloadLocation;
         this.remoteFileLocation = remoteFileLocation;
@@ -65,9 +67,11 @@ public class TCPClient implements Runnable {
      * Threading implementation that connects to the server and requests the file to download.
      */
     @Override
-    public void run() {
+    public void run()
+    {
         LOGGER.info("Connecting TCP client to " + Server + " for downloading " + remoteFileLocation);
-        try {
+        try
+        {
             serverSocket = new Socket(Server, SOCKET_PORT);
             os = new DataOutputStream(serverSocket.getOutputStream());
             is = new DataInputStream(serverSocket.getInputStream());
@@ -75,7 +79,8 @@ public class TCPClient implements Runnable {
             os.writeBytes(remoteFileLocation + '\n');
             getFile(downloadLocation.getPath() + "/" + remoteFileLocation);
             exit();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             LOGGER.warning("IO exception caught while downloading file.");
             e.printStackTrace();
         }
@@ -87,7 +92,8 @@ public class TCPClient implements Runnable {
      * @param destinyFilePath The directory to which it will be downloaded
      * @throws IOException
      */
-    private void getFile(String destinyFilePath) throws IOException {
+    private void getFile(String destinyFilePath) throws IOException
+    {
         int bytesRead;
         // receive file
         byte[] buffer = new byte[1024];
@@ -95,7 +101,8 @@ public class TCPClient implements Runnable {
         bos = new BufferedOutputStream(fos);
         long fileLength = is.readLong();
         long bytesReceived = 0;
-        do {
+        do
+        {
             bytesRead = is.read(buffer);
             bos.write(buffer, 0, bytesRead);
             bytesReceived += bytesRead;
@@ -109,12 +116,28 @@ public class TCPClient implements Runnable {
      *
      * @throws IOException Gets thrown when one of the streams throws an error
      */
-    private void exit() throws IOException {
-        if (fos != null) fos.close();
-        if (bos != null) bos.close();
-        if (is != null) is.close();
-        if (serverSocket != null) serverSocket.close();
-        if (os != null) os.close();
+    private void exit() throws IOException
+    {
+        if (fos != null)
+        {
+            fos.close();
+        }
+        if (bos != null)
+        {
+            bos.close();
+        }
+        if (is != null)
+        {
+            is.close();
+        }
+        if (serverSocket != null)
+        {
+            serverSocket.close();
+        }
+        if (os != null)
+        {
+            os.close();
+        }
 
     }
 }
