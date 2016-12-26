@@ -24,8 +24,6 @@ public class HashTableCreator
      */
     public TreeMap<Integer, String> htIp = new TreeMap<>();
 
-    public InetAddress IP = null;
-
     /**
      * Generates hash from string
      *
