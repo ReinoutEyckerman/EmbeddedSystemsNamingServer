@@ -35,6 +35,10 @@ public class HashTableCreator
         return Math.abs(name.hashCode()) % 32768;
     }
 
+    /**
+     * Get amount of nodes currently connected
+     * @return amount of nodes currently connected
+     */
     public int getNodeAmount()
     {
         return htIp.size();

@@ -11,7 +11,6 @@ import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
  */
 public class MulticastCommunicator extends Thread
 {
-    //https://docs.oracle.com/javase/7/docs/api/java/net/MulticastSocket.html
     /**
      * Multicast address of the group to join.
      */

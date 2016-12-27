@@ -43,6 +43,9 @@ public class FileManager implements QueueListener
      * The file checker, used for checking local file updates
      */
     private FileChecker fileChecker;
+    /**
+     * Timer used for checking for new files every x seconds
+     */
     private Timer timer;
 
     /**
@@ -75,6 +78,9 @@ public class FileManager implements QueueListener
         LOGGER.info("Filemanager successfully started.");
     }
 
+    /**
+     * Start timer that checks for new local files every x seconds, and replicates if necessary
+     */
     public void startFileChecker()
     {
         timer = new Timer();
@@ -83,7 +89,6 @@ public class FileManager implements QueueListener
             @Override
             public void run()
             {
-                //LOGGER.info("Yo whadup");
                 List<String> l = fileChecker.checkFiles(localFiles);
                 for (String file : l)
                 {
@@ -158,6 +163,11 @@ public class FileManager implements QueueListener
         }
     }
 
+    /**
+     * Replicate given file to given node and make this node owner of this file
+     * @param node The target node to receive the file
+     * @param filename The name of the file to be transferred
+     */
     private void moveFileAndChangeOwner(NodeInfo node, String filename)
     {
         for (FileInfo file : ownedFiles)
@@ -189,7 +199,7 @@ public class FileManager implements QueueListener
     }
 
     /**
-     * Rechecks ownership of files, this gets run when a nextNeighbor gets added
+     * Rechecks ownership of files, this gets run when a nextNeighbor gets added.
      *
      * @param next NodeInfo of the next neighbor
      */
@@ -211,7 +221,7 @@ public class FileManager implements QueueListener
                 }
                 else
                 {
-                    System.out.println("Dere be krakenz here");
+                    System.out.println("There is a problem if you see this error message. The node this file should be at is not this nor the previous node. Check the following data: File: "+file+" and Node: "+node.toString());
                 }
             } catch (RemoteException e)
             {
@@ -270,6 +280,11 @@ public class FileManager implements QueueListener
         LOGGER.info("Added new file ownership of file " + file);
     }
 
+    /**
+     * Removes given node as download location of the target file
+     * @param file the file it does not have anymore
+     * @param nodeID the node who doesn't have the file
+     */
     public void removeFromOwnerList(String file, NodeInfo nodeID)
     {
         ownedFiles.forEach((fileInfo) ->
@@ -282,6 +297,10 @@ public class FileManager implements QueueListener
         });
     }
 
+    /**
+     * TODO JENTE
+     * @return
+     */
     public List<String> GetLocalFiles()
     {
         return localFiles;
@@ -316,10 +335,13 @@ public class FileManager implements QueueListener
                 node.setOwnerFile(file);
             }
             for (String entry : localFiles)
-            { //Todo can be optimized
+            {
                 if (!ownedFiles.contains(entry))
                 {
-                    //Todo ?
+                    registry = LocateRegistry.getRegistry(server.findLocationFile(entry).address);
+                    node = (NodeIntf) registry.lookup("NodeIntf");
+                    node.removeFromOwnerList( entry,id);
+
                 }
             }
         } catch (AccessException e)

@@ -19,7 +19,13 @@ public class TCPServer implements Runnable
      * Predefined socket port on which the server listens
      */
     private final int SOCKET_PORT = 12346;  // you may change othis
+    /**
+     * Folder location where the files are located
+     */
     private final File folderLocation;
+    /**
+     * Thread pool for limiting the amount of connections
+     */
     private final ExecutorService pool;
 
     public TCPServer(File folderLocation)

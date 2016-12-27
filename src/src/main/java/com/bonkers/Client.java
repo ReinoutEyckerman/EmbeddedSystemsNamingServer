@@ -2,7 +2,7 @@ package com.bonkers;
 
 
 import java.io.File;
-import java.net.InetAddress;
+import java.net.*;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -17,15 +17,24 @@ import java.util.logging.Logger;
 
 import static java.lang.Thread.sleep;
 
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 /**
  * Client class to connect to server
  */
 public class Client implements NodeIntf, ClientIntf, QueueListener
 {
 
-    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    /**
+     *  TODO Jente Waarom precies public static
+     */
     public static NodeInfo previd;
+    /**
+     * TODO Jente nog steeds nodig?
+     */
     public static List<File> globalFileList = null;
+    /**
+     * TODO Jente
+     */
     private static QueueEvent<LogRecord> logRecordQueue = new QueueEvent<>();
     /**
      * File manager, handles file operations for the current node
@@ -35,19 +44,25 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
      * Saves the lock and unlock request until the agent gets to the client
      */
     public Queue<File> lockQueue = new LinkedList<>();
+    /**
+     * TODO Jente
+     */
     public Queue<File> unlockQueue = new LinkedList<>();
     /**
      * Saves the status if the lock failed the boolean is false else the boolean is true
      */
-    public QueueEvent<Tuple<File, Boolean>> lockStatusQueue = new QueueEvent<>();//TODO NAME?
+    public QueueEvent<Tuple<File, Boolean>> lockStatusQueue = new QueueEvent<>();
     /**
-     * Tuples with the hash and IPAddress from itself, previous and nextid.
+     *  Itself and the next neighbor
      */
     private NodeInfo id, nextid;//, previd;
     /**
-     * Sets the agent to handle the files on the clients but waits to start it
+     * Agent singleton that will run whenever it receives a new one.
      */
     private AgentFileList agentFileList = null;
+    /**
+     * Is set on true when this node starts up the agent. No other use.
+     */
     private boolean isSetStartAgent = false;
     /**
      * Boolean that checks if the bootstrap has completed, essential for knowing if the node is connected properly
@@ -72,14 +87,14 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
      *
      * @param name           Name of the client
      * @param downloadFolder The folder to download files to
-     * @throws Exception Generic exception for when something fails TODO
      */
-    public Client(String name, File downloadFolder) throws Exception
+    public Client(String name, File downloadFolder)
     {
         LOGGER.addHandler(Logging.listHandler(logRecordQueue));
         logRecordQueue.addListener(this);
         Thread t = new Thread(new TCPServer(downloadFolder));
         t.start();
+
         try
         {
             Registry registry = LocateRegistry.createRegistry(1099);
@@ -89,16 +104,31 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
         } catch (AlreadyBoundException e)
         {
             e.printStackTrace();
+        } catch (AccessException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
+
         this.name = name;
-        String ip = InetAddress.getLocalHost().toString().split("/")[1];
+        String ip = null;
+        try {
+            ip = InetAddress.getLocalHost().toString().split("/")[1];
+        } catch (java.net.UnknownHostException e) {
+            e.printStackTrace();
+        }
+
         this.id = new NodeInfo(HashTableCreator.createHash(name), ip);
         LOGGER.info("This node's hash is: " + id.hash);
+
         multicast = new MulticastCommunicator();
+
         fm = new FileManager(downloadFolder, id);
+
         bootStrap();
         LOGGER.info("Finished bootstrap");
         lockStatusQueue.addListener(this);
+
         fm.server = server;
         fm.startFileChecker();
         LOGGER.info("Started up FM.");
@@ -114,7 +144,8 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
     }
 
     /**
-     * Starts Multicastcomms and distributes itself over the network
+     * Starts Multicastcommunication thread and distributes itself over the network
+     * WARNING: Bug: it still sends 5 times
      */
     private void bootStrap()
     {
@@ -123,7 +154,6 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
             int tries = 0;
             while (!finishedBootstrap)
             {
-                sleep(2000);
                 if (tries < 5)
                 {
                     tries++;
@@ -134,6 +164,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
                     tries++;
                     LOGGER.info("Multicast limit reached. Stopped retrying");
                 }
+                sleep(2000);
             }
         } catch (Exception e)
         {
@@ -144,9 +175,9 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
     /**
      * Returns errors if there IF THERE WHAT JORIS? Todo joris
      *
-     * @param error
-     * @return
-     * @throws Exception
+     * @param error TODO
+     * @return TODO
+     * @throws Exception TODO
      */
     private int checkError(int error)
     {
@@ -171,7 +202,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
     /**
      * This function gets called on shutdown.
      * It updates the neighbors so their connection can be established, and notifies the server of its shutdown.
-     * TODO Replication
+     * It signals the fm first so that the files it is owner of get relocated properly.
      */
     public void shutdown()
     {
@@ -345,7 +376,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
 
 
     @Override
-    public void setStartingInfo(String address, int clientcount) throws RemoteException
+    public void setStartingInfo(String address, int clientCount) throws RemoteException
     {
         LOGGER.info("Setting starting info");
         try
@@ -357,14 +388,14 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
         {
             e.printStackTrace();
         }
-        if (clientcount <= 1)
+        if (clientCount <= 1)
         {
             previd = nextid = id;
         }
         else
         {
             setNeighbors();
-            if (clientcount == 2)
+            if (clientCount == 2)
             {
                 isSetStartAgent = false;
             }
@@ -372,6 +403,9 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
         finishedBootstrap = true;
     }
 
+    /**
+     * Notifies its neighbors of its existence. Is seperated from original bootstrap because of race conditions
+     */
     private void notifyExistence()
     {
         if (!Objects.equals(id, previd))
@@ -430,9 +464,6 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
         System.exit(1);
     }
 
-    /**
-     * Method that gets fired when the LockStatusQueue gets filled
-     */
     @Override
     public void queueFilled()
     {

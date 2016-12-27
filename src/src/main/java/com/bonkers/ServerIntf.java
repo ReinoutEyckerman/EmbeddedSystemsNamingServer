@@ -19,7 +19,6 @@ public interface ServerIntf extends Remote
     NodeInfo findLocationFile(String FileName) throws RemoteException;
 
     /**
-     * TODO does this even work?
      * Finds location of file on the server using its hash.
      *
      * @param hash Name of the file

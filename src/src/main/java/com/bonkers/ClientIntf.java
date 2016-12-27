@@ -12,11 +12,11 @@ public interface ClientIntf extends Remote
      * Sets starting info for the node so it can function properly
      *
      * @param address     The server's IP address
-     * @param clientcount Amount of clients/nodes currently connected
+     * @param clientCount Amount of clients/nodes currently connected
      * @throws RemoteException
      * @throws Exception
      */
-    void setStartingInfo(String address, int clientcount) throws RemoteException;
+    void setStartingInfo(String address, int clientCount) throws RemoteException;
 
     /**
      * This is created, but not used for it's purpose

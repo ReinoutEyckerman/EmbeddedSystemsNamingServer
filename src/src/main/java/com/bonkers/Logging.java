@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.logging.*;
 
 /**
- * Todo Kenny multithread support?(maybe set a buffer one can write to (QueueEvent)) and javadoc
+ * TODO wie/waar wordt dit gebruikt? Voeg ineens javadoc toe
  */
 public class Logging
 {

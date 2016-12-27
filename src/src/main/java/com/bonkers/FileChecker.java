@@ -25,9 +25,9 @@ public class FileChecker
     }
 
     /**
-     * Check for files locally, should only be used if you want a complete Map, not if you want additions to an existing Map
+     * Check for files locally, should only be used if you want a complete list, not if you want additions to an existing list
      *
-     * @return The Map of files
+     * @return The list of files
      */
     public List checkFiles()
     {
@@ -43,9 +43,9 @@ public class FileChecker
     }
 
     /**
-     * Check for files locally, Updates an already existing Map
+     * Check for files locally, Updates an already existing list
      *
-     * @return The Map of files
+     * @return The list of files
      */
     public List checkFiles(List existingFiles)
     {

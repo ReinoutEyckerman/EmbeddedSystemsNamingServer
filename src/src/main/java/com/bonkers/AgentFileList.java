@@ -13,10 +13,25 @@ import java.util.List;
  */
 public class AgentFileList implements Serializable
 {
+    /**
+     * TODO Jente
+     */
     private static AgentFileList instance = null;
+    /**
+     * TODO Jente
+     */
     public List<File> fileList = null;
+    /**
+     * TODO Jente
+     */
     public boolean started = false;
+    /**
+     * TODO Jente
+     */
     private HashMap<File, Boolean> fileMap = new HashMap<>();
+    /**
+     * TODO Jente
+     */
     private Client client = null;
 
     /**
@@ -34,6 +49,12 @@ public class AgentFileList implements Serializable
     }
 
     //TODO Why return? Return is unused, still necessary?
+
+    /**
+     * TODO Jente
+     * @param List TODO
+     * @return TODO
+     */
     public List<File> update(List<File> List)
     {
         fileList = List;
@@ -49,18 +70,26 @@ public class AgentFileList implements Serializable
         return fileList;
     }
 
+    /**
+     * TODO Jente
+     * @return TODO
+     */
     public Client getClient()
     {
         return client;
     }
 
+    /**
+     * TODO Jente
+     * @param client TODO
+     */
     public void setClient(Client client)
     {
         this.client = client;
     }
 
     /**
-     * Get the files of the node the agent runs on and check if files already exist or not
+     * Get the files of the node the agent runs on and check if files already exist or not TODO Jente then what?
      */
     private void updateCurrentNodeFiles()
     {
@@ -78,6 +107,9 @@ public class AgentFileList implements Serializable
         System.out.println(client.fm.ownedFiles.size() + " " + fileMap.size());
     }
 
+    /**
+     * TODO Jente
+     */
     private void checkLockRequests()
     {
         client.lockQueue.forEach((fileName) ->
@@ -93,6 +125,9 @@ public class AgentFileList implements Serializable
         });
     }
 
+    /**
+     * TODO Jente
+     */
     private void checkUnlock()
     {
         client.unlockQueue.forEach((fileName) ->

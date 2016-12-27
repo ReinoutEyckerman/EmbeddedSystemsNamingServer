@@ -14,6 +14,9 @@ public class DownloadConnection implements Runnable
      * The socket to connect with
      */
     private final Socket socket;
+    /**
+     * The folder path to which the files should be downloaded
+     */
     private final File folderPath;
     /**
      * File input stream read from

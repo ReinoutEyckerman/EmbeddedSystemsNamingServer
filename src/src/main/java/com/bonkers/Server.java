@@ -208,6 +208,9 @@ public class Server implements QueueListener, ServerIntf
         }
     }
 
+    /**
+     * Shutdown for the server, stops the multicast thread
+     */
     public void shutdown()
     {
         System.out.println("Shutdown");

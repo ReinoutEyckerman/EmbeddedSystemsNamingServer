@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 
 /**
  * Startup class
- * Todo public check because ?
  */
 public class Main extends Application
 {
@@ -35,6 +34,9 @@ public class Main extends Application
 
     }
 
+    /**
+     * Starts the logger
+     */
     private static void startLog()
     {
         try

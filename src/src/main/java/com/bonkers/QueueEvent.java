@@ -45,6 +45,10 @@ public class QueueEvent<E> extends PriorityQueue<E>
         return out;
     }
 
+    /**
+     * Poll the queue
+     * @return value of the queue
+     */
     public E poll()
     {
         return queue.poll();
