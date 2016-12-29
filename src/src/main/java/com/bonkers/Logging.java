@@ -26,6 +26,11 @@ public class Logging
         logger.addHandler(fileTxt);
     }
 
+    /**
+     * Handler to put logs in a queue
+     * @param logRecordsQueue
+     * @return
+     */
     public static Handler listHandler(QueueEvent<LogRecord> logRecordsQueue)
     {
         return new Handler()

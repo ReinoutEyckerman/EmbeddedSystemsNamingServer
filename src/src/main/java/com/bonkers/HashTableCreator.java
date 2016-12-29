@@ -8,14 +8,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
  * Class that handles the writing and reading of hashmap.
  * TODO: Potential singleton?
- * TODO: Jente check javadoc comments
  */
 public class HashTableCreator
 {

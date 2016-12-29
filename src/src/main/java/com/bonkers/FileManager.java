@@ -298,8 +298,8 @@ public class FileManager implements QueueListener
     }
 
     /**
-     * TODO JENTE
-     * @return
+     * A getter for localfiles
+     * @return list of local files
      */
     public List<String> GetLocalFiles()
     {
