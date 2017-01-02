@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.util.logging.*;
 
 /**
- * TODO wie/waar wordt dit gebruikt? Voeg ineens javadoc toe
+ * Initialize logger and put logs in a queue for the GUI
  */
 public class Logging
 {
-
-
+    /**
+     * Initialize the logger, create Text formatter for writing to file
+     * @throws IOException
+     */
     static public void setup() throws IOException
     {
 

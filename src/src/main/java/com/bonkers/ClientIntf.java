@@ -17,12 +17,4 @@ public interface ClientIntf extends Remote
      * @throws Exception
      */
     void setStartingInfo(String address, int clientCount) throws RemoteException;
-
-    /**
-     * This is created, but not used for it's purpose
-     * TODO Joris Jente?
-     *
-     * @throws RemoteException
-     */
-    void setNameError() throws RemoteException;
 }

@@ -72,9 +72,6 @@ public class Main extends Application
         LOGGER.info("Closed GUI");
         Platform.exit();
         StartPageCtrl.Shutdown();
-        //StartPageCtrl.client.shutdown();
-        //client.shutdown();
-        //Todo shutdown
     }
 
 }

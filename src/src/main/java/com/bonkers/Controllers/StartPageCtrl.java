@@ -8,21 +8,19 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class StartPageCtrl implements Initializable, Runnable
 {
     private static Client client;
     private static Server server;
-    private File file = new File(System.getProperty("user.dir") + "/tmp");
+    private  static File file = new File(System.getProperty("user.dir") + "/tmp");
     @FXML
     private Button submitBtn;
     @FXML
@@ -170,5 +168,27 @@ public class StartPageCtrl implements Initializable, Runnable
     public void onEnter(ActionEvent actionEvent) throws Exception
     {
         ClickedSubmitBtn(actionEvent);
+    }
+    public static void AskNewName(){
+        TextInputDialog alert = new TextInputDialog();
+        alert.setTitle("Error");
+        alert.setHeaderText("The node name already exists on the server please choose another one");
+        alert.setContentText("Please enter a new name:");
+
+        Optional<String> result = alert.showAndWait();
+        if (result.isPresent()){
+            new Thread(() ->
+            {
+                try
+                {
+                    client = new Client(result.get(), file);
+
+                } catch (Exception e)
+                {
+                    System.out.println("Cannot start client");
+                    e.printStackTrace();
+                }
+            }).start();
+        }
     }
 }

@@ -231,6 +231,8 @@ public class Server implements QueueListener, ServerIntf
                 e.printStackTrace();
             }
         }
+        LOGGER.info("Successful shutdown");
+        System.exit(0);
     }
 }
 

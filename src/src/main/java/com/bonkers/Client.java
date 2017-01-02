@@ -1,6 +1,8 @@
 package com.bonkers;
 
 
+import com.bonkers.Controllers.StartPageCtrl;
+
 import java.io.File;
 import java.net.*;
 import java.rmi.*;
@@ -173,30 +175,27 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
     }
 
     /**
-     * Returns errors if there IF THERE WHAT JORIS? Todo joris
-     *
-     * @param error TODO
-     * @return TODO
-     * @throws Exception TODO
+     * Checks error from server, if there is an error, do something.
+     * //Todo finish
+     * @param error     error from server
      */
-    private int checkError(int error)
+    private void checkError(int error)
     {
-        switch (error)
-        {
-            case 201 :
+        switch (error) {
+            case 201:
                 LOGGER.warning("The node name already exists on the server please choose another one");
+                StartPageCtrl.AskNewName();
                 break;
-            case 202 :
+            case 202:
                 LOGGER.warning("You already exist in the name server");
                 break;
-            case 100 :
+            case 100:
                 LOGGER.info("No errors");
                 break;
-            default :
+            default:
                 LOGGER.warning("Unknown error");
                 break;
         }
-        return error;
     }
 
     /**
@@ -454,14 +453,6 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
         {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void setNameError() throws RemoteException
-    {
-        System.out.println("Error: Name already taken.");
-        System.out.println("Exiting...");
-        System.exit(1);
     }
 
     @Override
