@@ -1,7 +1,12 @@
 package com.bonkers;
 
 
+import com.bonkers.Controllers.ClientCtrl;
 import com.bonkers.Controllers.StartPageCtrl;
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 
 import java.io.File;
 import java.net.*;
@@ -33,7 +38,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
     /**
      * TODO Jente nog steeds nodig?
      */
-    public static List<File> globalFileList = null;
+    public static ObservableList<File> globalFileList = FXCollections.observableArrayList();
     /**
      * TODO Jente
      */
@@ -302,6 +307,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
 
         agentFileList.started = true;
         agentFileList.setClient(this);
+        globalFileList.clear();
         new Thread(() ->
         {
             agentFileList.update(agentFileList.fileList);
@@ -396,7 +402,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
             setNeighbors();
             if (clientCount == 2)
             {
-                isSetStartAgent = false;
+                isSetStartAgent = true;
             }
         }
         finishedBootstrap = true;

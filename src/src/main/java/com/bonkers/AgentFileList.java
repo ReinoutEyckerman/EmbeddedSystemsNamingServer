@@ -1,6 +1,7 @@
 package com.bonkers;
 
 import com.bonkers.Controllers.ClientCtrl;
+import javafx.collections.FXCollections;
 
 import java.io.File;
 import java.io.Serializable;
@@ -67,6 +68,8 @@ public class AgentFileList implements Serializable
         {
             fileList.add(file);
         }));
+        ClientCtrl.oFiles.removeAll(ClientCtrl.oFiles);
+        ClientCtrl.oFiles.addAll(FXCollections.observableArrayList(fileList));
         return fileList;
     }
 
@@ -102,7 +105,6 @@ public class AgentFileList implements Serializable
                     fileMap.putIfAbsent(new File(fileInfo.fileName), false);
                 });
             }
-            ClientCtrl.setData(fileList);
         }
         System.out.println(client.fm.ownedFiles.size() + " " + fileMap.size());
     }
