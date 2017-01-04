@@ -32,15 +32,11 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
 {
 
     /**
-     *  TODO Jente Waarom precies public static
+     *  to get previd for filemanager
      */
     public static NodeInfo previd;
     /**
-     * TODO Jente nog steeds nodig?
-     */
-    public static ObservableList<File> globalFileList = FXCollections.observableArrayList();
-    /**
-     * TODO Jente
+     * queue logs get placed in
      */
     private static QueueEvent<LogRecord> logRecordQueue = new QueueEvent<>();
     /**
@@ -52,7 +48,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
      */
     public Queue<File> lockQueue = new LinkedList<>();
     /**
-     * TODO Jente
+     * saves unlock requests
      */
     public Queue<File> unlockQueue = new LinkedList<>();
     /**
@@ -307,7 +303,6 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
 
         agentFileList.started = true;
         agentFileList.setClient(this);
-        globalFileList.clear();
         new Thread(() ->
         {
             agentFileList.update(agentFileList.fileList);

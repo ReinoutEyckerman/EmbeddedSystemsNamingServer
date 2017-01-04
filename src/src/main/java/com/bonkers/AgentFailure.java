@@ -8,22 +8,18 @@ import java.util.List;
  */
 public class AgentFailure implements Runnable, Serializable {
     /**
-     * TODO Jente
+     * Node it's starting from
      */
     public final NodeInfo startingNode;
     /**
-     * TODO Jente
-     */
-    private List<Tuple<String, Boolean>> fileList;
-    /**
-     * TODO Jente
+     * Failing Node info
      */
     private NodeInfo failingNode;
 
     /**
-     * TODO Jente
-     * @param failingNode TODO
-     * @param startingNode TODO
+     * setting params right
+     * @param failingNode Failing Node info
+     * @param startingNode Node it's starting from
      */
     public AgentFailure(NodeInfo failingNode, NodeInfo startingNode) {
         this.failingNode = failingNode;
@@ -36,10 +32,10 @@ public class AgentFailure implements Runnable, Serializable {
     }
 
     /**
-     * TODO Jente
+     * Searching for failing node
      */
     private void searchFailingNode() {
-        //TODO Get current files something something
+        //create list of all nodes in network
         List<String> list = null;
         for (String search : list) {
             int hash = HashTableCreator.createHash(search);

@@ -15,23 +15,23 @@ import java.util.List;
 public class AgentFileList implements Serializable
 {
     /**
-     * TODO Jente
+     * instance of agent
      */
     private static AgentFileList instance = null;
     /**
-     * TODO Jente
+     * file list
      */
     public List<File> fileList = null;
     /**
-     * TODO Jente
+     * is agnet started
      */
     public boolean started = false;
     /**
-     * TODO Jente
+     * hashmap of all files
      */
     private HashMap<File, Boolean> fileMap = new HashMap<>();
     /**
-     * TODO Jente
+     * client it's on
      */
     private Client client = null;
 
@@ -49,12 +49,10 @@ public class AgentFileList implements Serializable
         return instance;
     }
 
-    //TODO Why return? Return is unused, still necessary?
-
     /**
-     * TODO Jente
-     * @param List TODO
-     * @return TODO
+     * update file lists and lock and unlock requests
+     * @param List list of files
+     * @return list of files
      */
     public List<File> update(List<File> List)
     {
@@ -74,8 +72,8 @@ public class AgentFileList implements Serializable
     }
 
     /**
-     * TODO Jente
-     * @return TODO
+     * get which client it's on
+     * @return client it's on
      */
     public Client getClient()
     {
@@ -83,8 +81,8 @@ public class AgentFileList implements Serializable
     }
 
     /**
-     * TODO Jente
-     * @param client TODO
+     * set client its on
+     * @param client client it's on
      */
     public void setClient(Client client)
     {
@@ -92,7 +90,7 @@ public class AgentFileList implements Serializable
     }
 
     /**
-     * Get the files of the node the agent runs on and check if files already exist or not TODO Jente then what?
+     * Get the files of the node the agent runs on and check if files already exist or not then put them in a list
      */
     private void updateCurrentNodeFiles()
     {
@@ -110,7 +108,7 @@ public class AgentFileList implements Serializable
     }
 
     /**
-     * TODO Jente
+     * checks if there are lock requests and execute them if it is possible
      */
     private void checkLockRequests()
     {
@@ -128,7 +126,7 @@ public class AgentFileList implements Serializable
     }
 
     /**
-     * TODO Jente
+     * checks if there are unlock requests and execute them
      */
     private void checkUnlock()
     {
