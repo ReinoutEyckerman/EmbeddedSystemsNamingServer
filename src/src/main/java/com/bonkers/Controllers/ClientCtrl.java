@@ -1,8 +1,6 @@
 package com.bonkers.Controllers;
 
 import com.bonkers.AgentFileList;
-
-import com.bonkers.FileManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -15,9 +13,6 @@ import javafx.scene.input.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class ClientCtrl implements Initializable
@@ -121,13 +116,4 @@ public class ClientCtrl implements Initializable
         f.delete();
         //TODO ownership
     }
-/*
-    @Override
-    public void onChanged(Change c) {
-        if(oLogs.size() > 0)
-            //logsList.setItems(oLogs);
-        if(oFiles.size() >0){}
-            //fileList.setItems(oFiles);
-    }
-*/
 }

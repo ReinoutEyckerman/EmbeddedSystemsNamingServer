@@ -171,7 +171,7 @@ public class FileManager implements QueueListener
     private void moveFileAndChangeOwner(NodeInfo node, String filename)
     {
         for (FileInfo file : ownedFiles)
-        {//Todo this can be optimized
+        {
             if (Objects.equals(file.fileName, filename))
             {
                 try
@@ -272,7 +272,7 @@ public class FileManager implements QueueListener
     /**
      * Sets the ownership of a file, gets called via RMI
      *
-     * @param file
+     * @param file The file to set ownership of
      */
     public void setOwnerFile(FileInfo file)
     {

@@ -1,30 +1,22 @@
 package com.bonkers;
 
 
-import com.bonkers.Controllers.ClientCtrl;
 import com.bonkers.Controllers.StartPageCtrl;
-import javafx.beans.Observable;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 
 import java.io.File;
-import java.net.*;
+import java.net.InetAddress;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-
-import static java.lang.Thread.sleep;
 
 import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+import static java.lang.Thread.sleep;
 /**
  * Client class to connect to server
  */
@@ -176,8 +168,7 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
     }
 
     /**
-     * Checks error from server, if there is an error, do something.
-     * //Todo finish
+     * Checks error from server, if there is an error, print something.
      * @param error     error from server
      */
     private void checkError(int error)

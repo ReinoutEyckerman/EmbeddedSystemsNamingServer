@@ -80,9 +80,9 @@ public class Server implements QueueListener, ServerIntf
     }
 
     /**
-     * Sets the starting info at the new node. //TODO better naming? Node gets added at checkdoubles
+     * Sets the starting info at the new node.
      *
-     * @param t
+     * @param t The information of the node as a tuple of ("Name", "Address")
      */
     private void addNode(Tuple<String, String> t)
     {
@@ -126,7 +126,7 @@ public class Server implements QueueListener, ServerIntf
             hashTableCreator.createHashTable(ip, name);
         }
         return resp;
-    }//TODO THIS IS USELESS
+    }
 
     @Override
     public NodeInfo findLocationFile(String file)
