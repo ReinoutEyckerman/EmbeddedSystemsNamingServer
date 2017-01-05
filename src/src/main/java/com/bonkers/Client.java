@@ -75,7 +75,10 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
      * Server RMI interface.
      */
     private ServerIntf server;
-
+    /**
+     * Thread that holds the TCP Server runnable
+     */
+    private Thread tcpServer;
     /**
      * Client constructor.
      * Initiates Bootstrap and the filemanager, does all essential bootup stuff
@@ -87,8 +90,8 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
     {
         LOGGER.addHandler(Logging.listHandler(logRecordQueue));
         logRecordQueue.addListener(this);
-        Thread t = new Thread(new TCPServer(downloadFolder));
-        t.start();
+        tcpServer = new Thread(new TCPServer(downloadFolder));
+        tcpServer.start();
 
         try
         {
@@ -199,7 +202,8 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
     {
         LOGGER.info("Shutdown");
         fm.shutdown(previd);
-
+        tcpServer.interrupt();
+        multicast.leaveGroup();
         if (previd != null && !Objects.equals(previd.address, id.address) && nextid != null)
         {
             System.out.println(previd.address);
@@ -250,7 +254,8 @@ public class Client implements NodeIntf, ClientIntf, QueueListener
         }
         else
         {
-            throw new IllegalArgumentException("What the actual fuck, this node isn't in my table yo");
+            LOGGER.info("Node does not appear to be a neighbor. Potential Error. Skipping...");
+            return;
         }
         try
         {

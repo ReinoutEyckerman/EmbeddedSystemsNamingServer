@@ -18,7 +18,7 @@ public class TCPServer implements Runnable
     /**
      * Predefined socket port on which the server listens
      */
-    private final int SOCKET_PORT = 12346;  // you may change othis
+    private final int SOCKET_PORT = 12346;
     /**
      * Folder location where the files are located
      */
