@@ -23,7 +23,7 @@ public class AgentFileList implements Serializable
      */
     public List<File> fileList = null;
     /**
-     * is agnet started
+     * is agent started
      */
     public boolean started = false;
     /**
@@ -67,7 +67,9 @@ public class AgentFileList implements Serializable
             fileList.add(file);
         }));
         ClientCtrl.oFiles.removeAll(ClientCtrl.oFiles);
+        ClientCtrl.LocalFiles.removeAll(ClientCtrl.LocalFiles);
         ClientCtrl.oFiles.addAll(FXCollections.observableArrayList(fileList));
+        ClientCtrl.LocalFiles.addAll(FXCollections.observableArrayList(client.fm.localFiles));
         return fileList;
     }
 
@@ -77,7 +79,7 @@ public class AgentFileList implements Serializable
      */
     public Client getClient()
     {
-        return client;
+        return this.client;
     }
 
     /**
