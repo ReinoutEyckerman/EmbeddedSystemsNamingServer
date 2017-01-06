@@ -213,24 +213,7 @@ public class Server implements QueueListener, ServerIntf
      */
     public void shutdown()
     {
-        System.out.println("Shutdown");
         multicast.interrupt();
-
-        if (registry != null)
-        {
-            try
-            {
-                registry.unbind("ServerIntf");
-                UnicastRemoteObject.unexportObject(registry, true);
-                Thread.sleep(2000);
-            } catch (NoSuchObjectException e)
-            {
-                e.printStackTrace();
-            } catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
         LOGGER.info("Successful shutdown");
         System.exit(0);
     }
