@@ -4,6 +4,7 @@ package com.bonkers;
 import com.bonkers.Controllers.ServerCtrl;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import javafx.application.Platform;
 
 import java.io.File;
 import java.io.FileReader;
@@ -137,11 +138,17 @@ public class HashTableCreator
     }
 
     private void ClientsToGUI(){
-        ServerCtrl.Clients.removeAll(ServerCtrl.Clients);
-        Set<Integer> keys = htIp.keySet();
-        for(Integer key: keys){
-            ServerCtrl.Clients.add(key+"    "+htIp.get(key));
-        }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                ServerCtrl.Clients.removeAll(ServerCtrl.Clients);
+                Set<Integer> keys = htIp.keySet();
+                for(Integer key: keys){
+                    ServerCtrl.Clients.add(key+"    "+htIp.get(key));
+                }
+            }
+        });
+
     }
 }
 
