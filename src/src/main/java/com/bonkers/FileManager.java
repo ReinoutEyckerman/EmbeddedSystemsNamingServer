@@ -57,7 +57,6 @@ public class FileManager implements QueueListener
     public FileManager(File downloadLocation, NodeInfo id)
     {
         LOGGER.info("Starting filemanager...");
-        new File(System.getProperty("user.dir") + "/tmp").mkdirs();
         this.downloadLocation = downloadLocation;
         this.id = id;
         downloadQueue = new QueueEvent<>();
@@ -320,13 +319,13 @@ public class FileManager implements QueueListener
             Registry registry = LocateRegistry.getRegistry(prevID.address);
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
             registry = LocateRegistry.getRegistry(server.nodeNeighbors(prevID)[0].address);
-            NodeIntf nextNode = (NodeIntf) registry.lookup("NodeIntf");
+            NodeIntf hopNode = (NodeIntf) registry.lookup("NodeIntf");
             for (FileInfo file : ownedFiles)
             {
                 file.fileOwners.remove(id);
-                if (!file.fileOwners.contains(prevID))
+                if (file.fileOwners.contains(prevID))
                 {
-                    nextNode.requestDownload(id, file.fileName);
+                    hopNode.requestDownload(id, file.fileName);
                 }
                 else
                 {
