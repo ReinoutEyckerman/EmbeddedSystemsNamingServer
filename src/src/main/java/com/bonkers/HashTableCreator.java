@@ -1,6 +1,7 @@
 package com.bonkers;
 
 
+import com.bonkers.Controllers.ServerCtrl;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
@@ -9,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -54,6 +56,7 @@ public class HashTableCreator
         htIp = readHashtable();
         htIp.put(digest, ip);
         writeHashtable();
+        ClientsToGUI();
     }
 
     /**
@@ -132,6 +135,14 @@ public class HashTableCreator
             }
         }
         return new NodeInfo(htIp.lastEntry().getKey(), htIp.lastEntry().getValue());
+    }
+
+    private void ClientsToGUI(){
+        ServerCtrl.Clients.removeAll(ServerCtrl.Clients);
+        Set<Integer> keys = htIp.keySet();
+        for(Integer key: keys){
+            ServerCtrl.Clients.add(key+"    "+htIp.get(key));
+        }
     }
 }
 

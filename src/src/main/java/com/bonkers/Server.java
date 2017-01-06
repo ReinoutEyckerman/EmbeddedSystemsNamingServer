@@ -27,7 +27,7 @@ public class Server implements QueueListener, ServerIntf
     /**
      * The hash table, essential to its functionality
      */
-    private HashTableCreator hashTableCreator = null;
+    public static HashTableCreator hashTableCreator = null;
     /**
      * The multicast listener, listens to multicast clients wanting to joing
      */
