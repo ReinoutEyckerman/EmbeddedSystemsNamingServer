@@ -14,7 +14,6 @@ public interface ClientIntf extends Remote
      * @param address     The server's IP address
      * @param clientCount Amount of clients/nodes currently connected
      * @throws RemoteException
-     * @throws Exception
      */
     void setStartingInfo(String address, int clientCount) throws RemoteException;
 }

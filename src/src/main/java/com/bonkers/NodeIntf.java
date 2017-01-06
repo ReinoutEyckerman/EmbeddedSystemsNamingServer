@@ -56,8 +56,8 @@ public interface NodeIntf extends Remote
 
     /**
      * Remove the calling node from the fileinfo with the specified file.
-     * @param file
-     * @param node
+     * @param file The file of which the specified node has to be removed
+     * @param node The node to remove
      * @throws RemoteException
      */
     void removeFromOwnerList(String file, NodeInfo node) throws RemoteException;

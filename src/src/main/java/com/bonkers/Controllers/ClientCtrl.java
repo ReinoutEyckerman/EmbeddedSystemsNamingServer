@@ -2,7 +2,6 @@ package com.bonkers.Controllers;
 
 import com.bonkers.AgentFileList;
 
-import com.bonkers.FileManager;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -14,11 +13,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class ClientCtrl implements Initializable
