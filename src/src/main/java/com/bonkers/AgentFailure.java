@@ -1,6 +1,9 @@
 package com.bonkers;
 
+import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.io.Serializable;
+import java.net.Socket;
 import java.util.List;
 
 /**
@@ -15,6 +18,10 @@ public class AgentFailure implements Runnable, Serializable {
      * Failing Node info
      */
     private NodeInfo failingNode;
+    /**
+     * Socket to check failing node
+     */
+    Socket socket;
 
     /**
      * setting params right
@@ -28,17 +35,37 @@ public class AgentFailure implements Runnable, Serializable {
 
     @Override
     public void run() {
-        searchFailingNode();
+        checkFailure();
     }
 
     /**
-     * Searching for failing node
+     * checking failing node
      */
-    private void searchFailingNode() {
-        //create list of all nodes in network
-        List<String> list = null;
-        for (String search : list) {
-            int hash = HashTableCreator.createHash(search);
+    private void checkFailure() {
+        try {
+            socket = new Socket(failingNode.address, 5879);
+            socket.setSoTimeout(10000);
+        } catch (InterruptedIOException e){
+            reportFailure();
+            if (socket != null && !socket.isClosed()) {
+                try {
+                    socket.close();
+                } catch (IOException f)
+                {
+                    f.printStackTrace(System.err);
+                }
+            }
+        }catch (IOException e)
+        {
+            e.printStackTrace();
         }
+    }
+
+    /**
+     * Reports failure to neighbours of failing node
+     */
+    private void reportFailure()
+    {
+        //TODO write code to report failure to neighbours of failing node
     }
 }

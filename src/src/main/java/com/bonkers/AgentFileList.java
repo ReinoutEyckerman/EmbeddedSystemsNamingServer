@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * TODO Jente
+ * Agent to update files on the nodes
  */
 public class AgentFileList implements Serializable
 {
