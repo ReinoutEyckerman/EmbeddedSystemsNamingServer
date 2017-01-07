@@ -1,19 +1,21 @@
 package com.bonkers;
 
 
+import com.bonkers.Controllers.ServerCtrl;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import javafx.application.Platform;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
  * Class that handles the writing and reading of hashmap.
- * TODO: Potential singleton?
  */
 public class HashTableCreator
 {
@@ -54,6 +56,7 @@ public class HashTableCreator
         htIp = readHashtable();
         htIp.put(digest, ip);
         writeHashtable();
+        ClientsToGUI();
     }
 
     /**
@@ -132,6 +135,20 @@ public class HashTableCreator
             }
         }
         return new NodeInfo(htIp.lastEntry().getKey(), htIp.lastEntry().getValue());
+    }
+
+    private void ClientsToGUI(){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                ServerCtrl.Clients.removeAll(ServerCtrl.Clients);
+                Set<Integer> keys = htIp.keySet();
+                for(Integer key: keys){
+                    ServerCtrl.Clients.add(key+"    "+htIp.get(key));
+                }
+            }
+        });
+
     }
 }
 

@@ -1,7 +1,10 @@
 package com.bonkers.Controllers;
 
+import com.bonkers.Client;
+import com.bonkers.HashTableCreator;
 import com.bonkers.Server;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +22,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class ServerCtrl implements Initializable
 {
@@ -31,6 +35,17 @@ public class ServerCtrl implements Initializable
     private Button shutdownBtn;
     @FXML
     private Button RestartBtn;
+
+    public static ObservableList<String> Clients = FXCollections.observableArrayList();{
+    Clients.addListener(new ListChangeListener<String>() {
+        @Override
+        public void onChanged(Change<? extends String> c) {
+            if (Clients.size()>0){
+               nodeList.setItems(Clients);
+            }
+        }
+    });
+}
 
     public static void PrintErrors()
     {
@@ -70,7 +85,8 @@ public class ServerCtrl implements Initializable
 
     public void RestartApp(ActionEvent actionEvent) throws Exception
     {
-        StartPageCtrl.Shutdown();
+        test();
+       /* StartPageCtrl.Shutdown();
         Stage stage;
         Parent root;
         //get reference to the button's stage
@@ -90,6 +106,15 @@ public class ServerCtrl implements Initializable
             f.delete();
         }
         Server server = new Server();
-        ServerCtrl.PrintErrors();
+        ServerCtrl.PrintErrors();*/
+    }
+    private void test()
+    {
+
+
+        System.out.println(Server.hashTableCreator.htIp.size());
+        Object key = Server.hashTableCreator.htIp.keySet().toArray()[0];
+        System.out.println(Server.hashTableCreator.htIp.get(key));
+
     }
 }

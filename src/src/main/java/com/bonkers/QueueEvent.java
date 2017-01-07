@@ -25,8 +25,7 @@ public class QueueEvent<E> extends PriorityQueue<E>
      * Actual queue with data.
      */
     public Queue<E> queue = new LinkedList<E>();
-    // usual methods for adding/removing listeners
-    //TODO DISABLE PUBLIC
+
     /**
      * List of listeners that subscribed to the add event
      */

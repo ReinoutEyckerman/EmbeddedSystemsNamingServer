@@ -27,7 +27,7 @@ public class Server implements QueueListener, ServerIntf
     /**
      * The hash table, essential to its functionality
      */
-    private HashTableCreator hashTableCreator = null;
+    public static HashTableCreator hashTableCreator = null;
     /**
      * The multicast listener, listens to multicast clients wanting to joing
      */
@@ -80,9 +80,9 @@ public class Server implements QueueListener, ServerIntf
     }
 
     /**
-     * Sets the starting info at the new node. //TODO better naming? Node gets added at checkdoubles
+     * Sets the starting info at the new node.
      *
-     * @param t
+     * @param t The information of the node as a tuple of ("Name", "Address")
      */
     private void addNode(Tuple<String, String> t)
     {
@@ -126,7 +126,7 @@ public class Server implements QueueListener, ServerIntf
             hashTableCreator.createHashTable(ip, name);
         }
         return resp;
-    }//TODO THIS IS USELESS
+    }
 
     @Override
     public NodeInfo findLocationFile(String file)
@@ -213,24 +213,7 @@ public class Server implements QueueListener, ServerIntf
      */
     public void shutdown()
     {
-        System.out.println("Shutdown");
         multicast.interrupt();
-
-        if (registry != null)
-        {
-            try
-            {
-                registry.unbind("ServerIntf");
-                UnicastRemoteObject.unexportObject(registry, true);
-                Thread.sleep(2000);
-            } catch (NoSuchObjectException e)
-            {
-                e.printStackTrace();
-            } catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
         LOGGER.info("Successful shutdown");
         System.exit(0);
     }

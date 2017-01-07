@@ -2,7 +2,7 @@ package com.bonkers.Controllers;
 
 import com.bonkers.AgentFileList;
 
-import com.bonkers.FileManager;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -13,11 +13,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class ClientCtrl implements Initializable
@@ -25,10 +21,15 @@ public class ClientCtrl implements Initializable
     @FXML
     private ListView fileList;
     @FXML
-    private static ListView logsList;
+    private Button openBtn;
+    @FXML
+    private Button deleteBtn;
+    @FXML
+    private Button deleteLocalBtn;
+    @FXML
+    private Button logoutBtn;
 
     AgentFileList agent = new AgentFileList();
-
 
     public static ObservableList<String> LocalFiles = FXCollections.observableArrayList();
     private static ObservableList<String> oLogs = FXCollections.observableArrayList();
@@ -46,7 +47,7 @@ public class ClientCtrl implements Initializable
                     for (int i=0;i<oFiles.size();i++){
                         sFiles.add(oFiles.get(i).toString());
                     }
-                    setData();
+                    fileList.setItems(sFiles);
                     count = oFiles.size();
                 }
 
@@ -56,22 +57,6 @@ public class ClientCtrl implements Initializable
         }
     });
 }
-    @FXML
-    private Button openBtn;
-    @FXML
-    private Button deleteBtn;
-    @FXML
-    private Button deleteLocalBtn;
-
-    public void setData(){
-        fileList.setItems(sFiles);
-    }
-
-    public static void setLogs() throws IOException
-    {
-        //oLogs.add(logRecord.getMessage());
-
-    }
 
     @Override
     public void initialize(URL fxmlFileLocation, ResourceBundle resources)
@@ -80,11 +65,7 @@ public class ClientCtrl implements Initializable
         assert deleteBtn != null : "fx:id=\"deleteBtn\" was not injected: check your FXML file 'simple.fxml'.";
         assert deleteLocalBtn != null : "fx:id=\"deleteLocalBtn\" was not injected: check your FXML file 'simple.fxml'.";
         assert fileList != null : "fx:id=\"fileList\" was not injected: check your FXML file 'simple.fxml'.";
-        assert logsList != null : "fx:id=\"logsList\" was not injected: check your FXML file 'simple.fxml'.";
-
-
-        //setData(Client.globalFileList);
-
+        assert logoutBtn != null : "fx:id=\"logoutBtn\" was not injected: check your FXML file 'simple.fxml'.";
     }
 
     @FXML
@@ -105,12 +86,7 @@ public class ClientCtrl implements Initializable
                 }
                 else
                     deleteLocalBtn.setVisible(false);
-
             }
-        }
-        if (oFiles.size()>0){
-
-
         }
     }
 
@@ -121,13 +97,9 @@ public class ClientCtrl implements Initializable
         f.delete();
         //TODO ownership
     }
-/*
-    @Override
-    public void onChanged(Change c) {
-        if(oLogs.size() > 0)
-            //logsList.setItems(oLogs);
-        if(oFiles.size() >0){}
-            //fileList.setItems(oFiles);
+    @FXML
+    public void Logout(MouseEvent mouseEvent) {
+        Platform.exit();
+        StartPageCtrl.Shutdown();
     }
-*/
 }
