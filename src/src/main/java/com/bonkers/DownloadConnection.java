@@ -3,8 +3,6 @@ package com.bonkers;
 import java.io.*;
 import java.net.Socket;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
-
 /***
  * The actual and technical downloading of a file. Well, more uploading, this is the thread that a tcpserver uses to connect a client node with
  */
@@ -31,9 +29,11 @@ public class DownloadConnection implements Runnable
      */
     private DataOutputStream os = null;
 
+    private Logging LOGGER = new Logging();
+
     public DownloadConnection(Socket client, File folderPath)
     {
-        LOGGER.info("Accepted connection from " + client.getInetAddress());
+        LOGGER.logger.info("Accepted connection from " + client.getInetAddress());
         this.socket = client;
         this.folderPath = folderPath;
     }
@@ -50,7 +50,7 @@ public class DownloadConnection implements Runnable
             exit();
         } catch (IOException e)
         {
-            LOGGER.severe("ConnectionIOException caught. ");
+            LOGGER.logger.severe("ConnectionIOException caught. ");
             e.printStackTrace();
         }
     }
@@ -69,14 +69,14 @@ public class DownloadConnection implements Runnable
         byte[] buffer = new byte[1024];
         fis = new FileInputStream(myFile);
         bis = new BufferedInputStream(fis);
-        LOGGER.info("Sending " + filepath + "(" + myFile.length() + " bytes)");
+        LOGGER.logger.info("Sending " + filepath + "(" + myFile.length() + " bytes)");
         int count;
         while ((count = fis.read(buffer)) > 0)
         {
             os.write(buffer, 0, count);
         }
         os.flush();
-        LOGGER.info("File sent.");
+        LOGGER.logger.info("File sent.");
     }
 
     /**

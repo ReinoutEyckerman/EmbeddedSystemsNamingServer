@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class Main extends Application
 {
-    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static Logging LOGGER = new Logging();
 
     /**
      * Main function.
@@ -29,7 +29,7 @@ public class Main extends Application
     public static void main(String[] args) throws Exception
     {
         startLog();
-        LOGGER.info("Ip: " + InetAddress.getLocalHost().getHostAddress());
+        LOGGER.logger.info("Ip: " + InetAddress.getLocalHost().getHostAddress());
         launch(args);
 
     }
@@ -41,7 +41,7 @@ public class Main extends Application
     {
         try
         {
-            Logging.setup();
+            LOGGER.setup();
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -69,7 +69,7 @@ public class Main extends Application
     @SuppressWarnings("restriction")
     private void closeProgram()
     {
-        LOGGER.info("Closed GUI");
+        LOGGER.logger.info("Closed GUI");
         Platform.exit();
         StartPageCtrl.Shutdown();
     }

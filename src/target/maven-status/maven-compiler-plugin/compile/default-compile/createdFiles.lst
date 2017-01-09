@@ -1,0 +1,17 @@
+com\bonkers\Logging$1.class
+com\bonkers\Main.class
+com\bonkers\NodeIntf.class
+com\bonkers\MulticastCommunicator.class
+com\bonkers\TCPServer.class
+com\bonkers\TCPClient.class
+com\bonkers\Client.class
+com\bonkers\FileManager$1.class
+com\bonkers\AgentFailure.class
+com\bonkers\Logging.class
+com\bonkers\ClientIntf.class
+com\bonkers\Controllers\ClientCtrl.class
+com\bonkers\Controllers\ClientCtrl$1.class
+com\bonkers\Controllers\StartPageCtrl.class
+com\bonkers\FileManager.class
+com\bonkers\Server.class
+com\bonkers\ServerIntf.class

@@ -1,23 +1,23 @@
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/NodeInfo.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/FileManager.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/Main.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/FileInfo.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/TCPClient.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/AgentFileList.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/Controllers/ClientCtrl.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/ServerIntf.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/HashTableCreator.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/MulticastCommunicator.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/Logging.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/Client.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/FileChecker.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/Controllers/ServerCtrl.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/ClientIntf.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/Controllers/StartPageCtrl.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/Server.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/Tuple.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/NodeIntf.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/DownloadConnection.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/QueueEvent.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/TCPServer.java
-/home/reinout/repos/SystemY/src/src/main/java/com/bonkers/AgentFailure.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\AgentFileList.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\Main.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\TCPServer.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\Client.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\ServerIntf.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\DownloadConnection.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\Logging.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\AgentFailure.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\Controllers\StartPageCtrl.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\HashTableCreator.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\MulticastCommunicator.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\NodeIntf.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\Controllers\ServerCtrl.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\ClientIntf.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\NodeInfo.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\TCPClient.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\Server.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\FileInfo.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\Tuple.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\Controllers\ClientCtrl.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\FileChecker.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\QueueEvent.java
+D:\Schooljaar16-17\Semester1\Gedistribueerde systemen\SystemY\src\src\main\java\com\bonkers\FileManager.java
