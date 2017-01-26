@@ -8,6 +8,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.*;
 
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+
 /**
  * It is he, FileManager, Manager of Files, Replicator of objects!
  */
@@ -46,8 +48,6 @@ public class FileManager implements QueueListener
      */
     private Timer timer;
 
-    private Logging LOGGER = new Logging();
-
     /**
      * The constructor, sets up the basic file list
      *
@@ -56,7 +56,7 @@ public class FileManager implements QueueListener
      */
     public FileManager(File downloadLocation, NodeInfo id)
     {
-        LOGGER.logger.info("Starting filemanager...");
+        LOGGER.info("Starting filemanager...");
         this.downloadLocation = downloadLocation;
         this.id = id;
         downloadQueue = new QueueEvent<>();
@@ -64,7 +64,7 @@ public class FileManager implements QueueListener
         fileChecker = new FileChecker(downloadLocation);
         localFiles = fileChecker.checkFiles();
         ownedFiles = new ArrayList<>();
-        LOGGER.logger.info("Filling ownedFiles with local files for startup.");
+        LOGGER.info("Filling ownedFiles with local files for startup.");
         for (String file : localFiles)
         {
             FileInfo f = new FileInfo();
@@ -72,9 +72,9 @@ public class FileManager implements QueueListener
             f.fileOwners = new ArrayList<>();
             f.fileOwners.add(id);
             ownedFiles.add(f);
-            LOGGER.logger.info("Added " + f);
+            LOGGER.info("Added " + f);
         }
-        LOGGER.logger.info("Filemanager successfully started.");
+        LOGGER.info("Filemanager successfully started.");
     }
 
     /**
@@ -96,7 +96,7 @@ public class FileManager implements QueueListener
                     {
                         if (Objects.equals(fileInfo.fileName, file))
                         {
-                            LOGGER.logger.info("File received, am owner, nothing will happen.");
+                            LOGGER.info("File received, am owner, nothing will happen.");
                             if (!localFiles.contains(file))
                             {
                                 localFiles.add(file);
@@ -149,7 +149,7 @@ public class FileManager implements QueueListener
                 if (!Objects.equals(prevId.address, id.address))
                 {
                     requestDownload(prevId, filename);
-                    LOGGER.logger.info("Sending " + filename + " with hash" + HashTableCreator.createHash(filename) + " to the previous neighbor.");
+                    LOGGER.info("Sending " + filename + " with hash" + HashTableCreator.createHash(filename) + " to the previous neighbor.");
                 }
             }
             else
@@ -180,7 +180,7 @@ public class FileManager implements QueueListener
                     file.fileOwners.add(node);
                     nodeIntf.setOwnerFile(file);
                     ownedFiles.remove(file);
-                    LOGGER.logger.info("Set " + node + " as new file owner of file " + filename);
+                    LOGGER.info("Set " + node + " as new file owner of file " + filename);
                 } catch (AccessException e)
                 {
                     e.printStackTrace();
@@ -211,11 +211,11 @@ public class FileManager implements QueueListener
                 NodeInfo node = server.findLocationFile(file);
                 if (Objects.equals(node.address, id.address))
                 {
-                    LOGGER.logger.info("File will not be sent to the next neighbor");
+                    LOGGER.info("File will not be sent to the next neighbor");
                 }
                 else if (Objects.equals(node.address, next.address))
                 {
-                    LOGGER.logger.info("File will be sent to the next neighbor.");
+                    LOGGER.info("File will be sent to the next neighbor.");
                     moveFileAndChangeOwner(next, file);
                 }
                 else
@@ -239,7 +239,7 @@ public class FileManager implements QueueListener
         try
         {
             Registry registry = LocateRegistry.getRegistry(nodeInfo.address);
-            LOGGER.logger.info("Sending " + file + " with hash " + HashTableCreator.createHash(file) + " to node " + nodeInfo.address);
+            LOGGER.info("Sending " + file + " with hash " + HashTableCreator.createHash(file) + " to node " + nodeInfo.address);
             NodeIntf node = (NodeIntf) registry.lookup("NodeIntf");
             node.requestDownload(id, file);
             for (FileInfo f : ownedFiles)
@@ -247,7 +247,7 @@ public class FileManager implements QueueListener
                 if (Objects.equals(f.fileName, file) && !f.fileOwners.contains(nodeInfo))
                 {
                     f.fileOwners.add(nodeInfo);
-                    LOGGER.logger.info("Added " + nodeInfo + " as owner of file " + f);
+                    LOGGER.info("Added " + nodeInfo + " as owner of file " + f);
                     break;
                 }
             }
@@ -276,7 +276,7 @@ public class FileManager implements QueueListener
     public void setOwnerFile(FileInfo file)
     {
         ownedFiles.add(file);
-        LOGGER.logger.info("Added new file ownership of file " + file);
+        LOGGER.info("Added new file ownership of file " + file);
     }
 
     /**
@@ -291,7 +291,7 @@ public class FileManager implements QueueListener
             if (Objects.equals(file, fileInfo.fileName))
             {
                 ownedFiles.remove(fileInfo);
-                LOGGER.logger.info("Removing " + nodeID + " from file list at file " + file);
+                LOGGER.info("Removing " + nodeID + " from file list at file " + file);
             }
         });
     }

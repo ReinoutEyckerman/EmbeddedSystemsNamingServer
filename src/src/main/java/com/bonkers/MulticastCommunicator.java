@@ -4,6 +4,8 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+
 /**
  * Multicast communication Thread.
  */
@@ -31,8 +33,6 @@ public class MulticastCommunicator extends Thread
      */
     private MulticastSocket castSocket = null;
 
-    private Logging LOGGER = new Logging();
-
     /**
      * Constructor that automatically joins the multicast group.
      */
@@ -47,7 +47,7 @@ public class MulticastCommunicator extends Thread
      */
     public void run()
     {
-        LOGGER.logger.info("Started multicastserver successfully");
+        LOGGER.info("Started multicastserver successfully");
         while (!isFinished)
         {
             Tuple<String, String> info = receiveMulticast();
@@ -83,7 +83,7 @@ public class MulticastCommunicator extends Thread
     {
         try
         {
-            LOGGER.logger.info("Sent " + msg + " as multicast.");
+            LOGGER.info("Sent " + msg + " as multicast.");
             DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), group, 6789);
             castSocket.send(packet);
         } catch (Exception e)
@@ -105,7 +105,7 @@ public class MulticastCommunicator extends Thread
             DatagramPacket recv = new DatagramPacket(buf, buf.length);
             castSocket.receive(recv);
             String address = recv.getAddress().getHostAddress();
-            LOGGER.logger.info("Received a multicast packet from address " + address);
+            LOGGER.info("Received a multicast packet from address " + address);
             String Nodename = new String(buf, 0, recv.getLength());
             return new Tuple<String, String>(Nodename, address);
         } catch (Exception e)
@@ -123,7 +123,7 @@ public class MulticastCommunicator extends Thread
     {
         try
         {
-            LOGGER.logger.info("Leaving multicast group.");
+            LOGGER.info("Leaving multicast group.");
             castSocket.leaveGroup(group);
         } catch (Exception e)
         {

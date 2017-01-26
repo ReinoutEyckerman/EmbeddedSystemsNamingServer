@@ -4,6 +4,8 @@ package com.bonkers;
 import java.io.*;
 import java.net.Socket;
 
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+
 /**
  * Thread that connects to a TCPServer, aka another node. This then downloads the specified file from the connected server.
  * Note: this only downloads a single file. Multiple clients need to be created for multiple downloads. This allows for parallel download.
@@ -47,8 +49,6 @@ public class TCPClient implements Runnable
      */
     private DataInputStream is = null;
 
-    Logging LOGGER = new Logging();
-
     /**
      * Constructor
      *
@@ -69,7 +69,7 @@ public class TCPClient implements Runnable
     @Override
     public void run()
     {
-        LOGGER.logger.info("Connecting TCP client to " + Server + " for downloading " + remoteFileLocation);
+        LOGGER.info("Connecting TCP client to " + Server + " for downloading " + remoteFileLocation);
         try
         {
             serverSocket = new Socket(Server, SOCKET_PORT);
@@ -81,7 +81,7 @@ public class TCPClient implements Runnable
             exit();
         } catch (IOException e)
         {
-            LOGGER.logger.warning("IO exception caught while downloading file.");
+            LOGGER.warning("IO exception caught while downloading file.");
             e.printStackTrace();
         }
     }
@@ -108,7 +108,7 @@ public class TCPClient implements Runnable
             bytesReceived += bytesRead;
         } while (bytesReceived < fileLength);
         bos.flush(); //Force buffered bytes to be written
-        LOGGER.logger.info("File " + destinyFilePath + " downloaded.");
+        LOGGER.info("File " + destinyFilePath + " downloaded.");
     }
 
     /**

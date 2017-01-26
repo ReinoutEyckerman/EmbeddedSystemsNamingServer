@@ -3,6 +3,7 @@ package com.bonkers;
 import java.net.InetAddress;
 import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 /**
  * Server class that accepts client connections.
@@ -30,8 +33,6 @@ public class Server implements QueueListener, ServerIntf
      */
     private MulticastCommunicator multicast = null;
     private Registry registry;
-
-    private Logging LOGGER = new Logging();
 
     /**
      * Main server object constructor, creates MulticastCommunicator and Hashtablecreator, and subscribes on the queueEvent object
@@ -68,10 +69,10 @@ public class Server implements QueueListener, ServerIntf
     {
         Tuple<String, String> t = multicast.packetQueue.poll();
         error = checkDoubles(t.x, t.y);
-        LOGGER.logger.info("Multicast packet received from " + t.x + " at " + t.y);
+        LOGGER.info("Multicast packet received from " + t.x + " at " + t.y);
         if (error != 100)
         {
-            LOGGER.logger.info("Dropping " + t.x + " at " + t.y + " with error code: " + error);
+            LOGGER.info("Dropping " + t.x + " at " + t.y + " with error code: " + error);
             return;
         }
         addNode(t);
@@ -90,7 +91,7 @@ public class Server implements QueueListener, ServerIntf
             Registry registry = LocateRegistry.getRegistry(t.y);
             ClientIntf stub = (ClientIntf) registry.lookup("ClientIntf");
             String[] host = InetAddress.getLocalHost().toString().split("/");
-            LOGGER.logger.info("Setting starting info at " + t.x);
+            LOGGER.info("Setting starting info at " + t.x);
             stub.setStartingInfo(host[1], hashTableCreator.getNodeAmount());
         } catch (Exception e)
         {
@@ -130,15 +131,15 @@ public class Server implements QueueListener, ServerIntf
     @Override
     public NodeInfo findLocationFile(String file)
     {
-        LOGGER.logger.info("Location of file " + file + " requested.");
+        LOGGER.info("Location of file " + file + " requested.");
         return findLocationHash(HashTableCreator.createHash(file));
     }
 
     @Override
     public NodeInfo findLocationHash(int hash)
     {
-        LOGGER.logger.info("Location of hash " + hash + " requested.");
-        LOGGER.logger.info("Returning " + hashTableCreator.findHost(hash));
+        LOGGER.info("Location of hash " + hash + " requested.");
+        LOGGER.info("Returning " + hashTableCreator.findHost(hash));
         return hashTableCreator.findHost(hash);
     }
 
@@ -151,7 +152,7 @@ public class Server implements QueueListener, ServerIntf
     @Override
     public void nodeShutdown(NodeInfo node)
     {
-        LOGGER.logger.info("Received node shutdown of node " + node.toString());
+        LOGGER.info("Received node shutdown of node " + node.toString());
         hashTableCreator.htIp = hashTableCreator.readHashtable();
         if (hashTableCreator.htIp.containsKey(node.hash))
         {
@@ -162,13 +163,13 @@ public class Server implements QueueListener, ServerIntf
         {
             throw new IllegalArgumentException("Somehow, the node that shut down didn't exist");
         }
-        LOGGER.logger.info("Removed " + node.toString() + " successfully.");
+        LOGGER.info("Removed " + node.toString() + " successfully.");
     }
 
     @Override
     public NodeInfo[] nodeNeighbors(NodeInfo node)
     {
-        LOGGER.logger.info("Node neighbors requested of node " + node.toString());
+        LOGGER.info("Node neighbors requested of node " + node.toString());
         Map hashmap = hashTableCreator.readHashtable();
         List list = new ArrayList(hashmap.keySet());
         Collections.sort(list);
@@ -213,7 +214,7 @@ public class Server implements QueueListener, ServerIntf
     public void shutdown()
     {
         multicast.interrupt();
-        LOGGER.logger.info("Successful shutdown");
+        LOGGER.info("Successful shutdown");
         System.exit(0);
     }
 }

@@ -8,17 +8,15 @@ import java.util.logging.*;
  */
 public class Logging
 {
-
-    public Logger logger;
     /**
      * Initialize the logger, create Text formatter for writing to file
      * @throws IOException
      */
-    public void setup() throws IOException
+    static public void setup() throws IOException
     {
 
         // get the global logger to configure it
-        logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+        Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 
         logger.setLevel(Level.INFO);
